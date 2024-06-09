@@ -59,7 +59,7 @@ namespace GEO {
 		FOR(i, nbv) num.push_back(i);
 		export_mesh.facets.create_polygon(num);
 		char filename[1024];
-		sprintf(filename, "C:/DATA/2dcontours/nimp2D%i.obj", dump_contour_save_id++);
+		snprintf(filename, 1024, "C:/DATA/2dcontours/nimp2D%i.obj", dump_contour_save_id++);
 		mesh_save(export_mesh, filename);
 	}	
 	
@@ -72,7 +72,7 @@ namespace GEO {
 		FOR(i, nbv) num.push_back(i);
 		export_mesh.facets.create_polygon(num);
 		char filename[1024];
-		sprintf(filename, "C:/DATA/2dcontours/nimp3D%i.obj", dump_contour_save_id++);
+		snprintf(filename, 1024, "C:/DATA/2dcontours/nimp3D%i.obj", dump_contour_save_id++);
 		mesh_save(export_mesh, filename);
 	}
 
