@@ -295,8 +295,8 @@ namespace GEO {
 				index_t nvv = m->vertices.create_vertex();
 				pyr_Z.push_back(facet_normal(m, f));
 
-				double d = 0;
-				FOR(e, 4) d += .25*(X(m)[m->facets.vertex(f, e)] - X(m)[m->facets.vertex(f, (e + 1) % 4)]).length();
+				//double d = 0;
+				//FOR(e, 4) d += .25*(X(m)[m->facets.vertex(f, e)] - X(m)[m->facets.vertex(f, (e + 1) % 4)]).length();
 				X(m)[nvv] = facet_bary(m, f);// +.2*d*n;
 				to_kill[f] = 1;
 
