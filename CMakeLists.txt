@@ -13,9 +13,9 @@ set_target_properties(exploragram PROPERTIES
                       SOVERSION ${VORPALINE_VERSION_MAJOR}
 		      FOLDER "GEOGRAM")
 
-if(UNIX AND VORPALINE_BUILD_DYNAMIC)
-    target_link_libraries(exploragram pthread dl)
-endif()
+#if(UNIX AND VORPALINE_BUILD_DYNAMIC)
+#    target_link_libraries(exploragram pthread dl)
+#endif()
 
 if(WIN32)
     target_link_libraries(exploragram psapi)
