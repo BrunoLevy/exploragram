@@ -45,7 +45,7 @@
 namespace GEO {
 
 
-	static vec3 change_tet_basis(vec3 in, vec3  P[4], vec3 P_img[4]) { // TODO sortir ça + trglgrad dans un fichier apart
+	static vec3 change_tet_basis(vec3 in, vec3  P[4], vec3 P_img[4]) { // TODO sortir ceci + trglgrad dans un fichier apart
 		Matrix<12, double> M;
 		M.load_zero();
 		double RHS[12];

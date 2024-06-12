@@ -192,7 +192,7 @@ namespace GEO {
      * INPUT: facets with xyz geometry and uv coordinates s.t. no edge is of size 0
      singular bool per triangle
      *         integer values of uv --- interpolated along edge 'e' ---  matches on both side of 'e'
-     on presuppose que les U ont été pre-snappés sur la grille entiere
+     on presuppose que les U ont ete pre-snappes sur la grille entiere
      * OUTPUT: facets with uv coordinates s.t.
      *               a new vertex is inserted (with interpolated xyz and uv) at every integer values of uv along edges
      *               nothing prevents some vertices around a facet to share the same uv's

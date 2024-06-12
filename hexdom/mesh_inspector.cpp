@@ -121,7 +121,7 @@ namespace GEO {
         // edge connectivity
         FacetsExtraConnectivity fec(m);
         int nb_0_opp = 0;
-        int nb_1_opp = 0;
+        //int nb_1_opp = 0;
         int nb_multiple_opp = 0;
         int nb_duplicated_edge = 0;
         FOR(h, m->facet_corners.nb()) {
@@ -141,7 +141,7 @@ namespace GEO {
                 cir = fec.c2c[cir];
             } while (cir != h);
             if (result == NOT_AN_ID)nb_0_opp++;
-            else nb_1_opp++;
+            //else nb_1_opp++;
         }
 
 

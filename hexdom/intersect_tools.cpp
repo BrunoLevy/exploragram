@@ -270,11 +270,11 @@ namespace GEO {
 					 FOR(i, trash.size()) {
 						 //if (trash[i].first > 2 || trash[i].second > 2) conflict = true;
 					 }
-					 static int nb_intersects = 0;
+					 // static int nb_intersects = 0;
 					 if (conflict) {
-						 nb_intersects++;
-						 //save_conflict("gna"+ String::to_string(nb_intersects), P[quad_split[trP][0]], P[quad_split[trP][1]], P[quad_split[trP][2]],
-						// Q[quad_split[trQ][0]], Q[quad_split[trQ][1]], Q[quad_split[trQ][2]]);
+                                                 // nb_intersects++;
+						 // save_conflict("gna"+ String::to_string(nb_intersects), P[quad_split[trP][0]], P[quad_split[trP][1]], P[quad_split[trP][2]],
+						 // Q[quad_split[trQ][0]], Q[quad_split[trQ][1]], Q[quad_split[trQ][2]]);
 						 return true;
 					 }
 				 }
