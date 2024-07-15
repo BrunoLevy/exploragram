@@ -49,100 +49,100 @@ double LogTime::time(unsigned int i)                             { return double
 
 unsigned int LogTime::dec(unsigned int i){
     if (i == (unsigned int)(-1))
-    i = (unsigned int)(check.size() - 1);
+        i = (unsigned int)(check.size() - 1);
     unsigned int res = 0;
     i = check[i].up;
     while (i != (unsigned int)(-1)) {
-    res++;
-    i = check[i].up;
+        res++;
+        i = check[i].up;
     }
     return res;
 }
 
 unsigned int LogTime::lastdec(){
-        if (!check.empty())
+    if (!check.empty())
         return dec((unsigned int)(check.size() - 1));
-        return 0;
+    return 0;
 }
 
 void LogTime::debug(){
     GEO::Logger::out("HexDom")  <<  std::endl;
     GEO::Logger::out("HexDom")  << "--------------BEGIN DEBUG-------------------" <<  std::endl;
     for (size_t i = 0; i < check.size(); i++) {
-    std::cerr << std::string((unsigned int)(4 * dec((unsigned int)(i))), ' ') << i << "  r = " << check[i].right << " u = " << check[i].up
-          << "\tstart" << check[i].t << "\tname" << check[i].n << std::endl;
+        std::cerr << std::string((unsigned int)(4 * dec((unsigned int)(i))), ' ') << i << "  r = " << check[i].right << " u = " << check[i].up
+                  << "\tstart" << check[i].t << "\tname" << check[i].n << std::endl;
     }
     GEO::Logger::out("HexDom")  <<  std::endl;
     GEO::Logger::out("HexDom")  <<"-------------- END  DEBUG-------------------" <<  std::endl;
 }
 
 std::string LogTime::cur_stack(){
-        std::string res;
-        std::vector<unsigned int> stack;
+    std::string res;
+    std::vector<unsigned int> stack;
     {
         unsigned int i = (unsigned int)(check.size() - 1);
         while (i != (unsigned int)(-1)) { stack.push_back(i); i = check[i].up; }
     }
-        for (int i = int(stack.size()) - 1; i >= 0; i--) {
+    for (int i = int(stack.size()) - 1; i >= 0; i--) {
         res.append(check[stack[size_t(i)]].n);
         if (i > 0) res.append(" ==> ");
-        }
-        return res;
+    }
+    return res;
 }
 
 void LogTime::report(std::ostream &out, unsigned int timing_depth){
-        if (check.empty()) return;
-        if (check.back().n != "the end") { add_step("the end"); }
+    if (check.empty()) return;
+    if (check.back().n != "the end") { add_step("the end"); }
 
-        if (timing_depth != (unsigned int)(-1)) {
-                out << "\n***********************************************************" << std::endl;
-                out << "                  TIMING SUMMARY " << std::endl;
-                for (unsigned int i = 0; i < check.size() - 1; i++){
-                        if (dec(i)>timing_depth) continue;
-                        if (is_start_section(i))
-                                out << std::string(4 * dec(i), ' ') << time(i) << "\t====>  " << check[i].n << std::endl;
-                        else if (!is_end_section(i)){
-                                if (check[i].n != "begin section"){
-                                        out << std::string(4 * dec(i), ' ') << time(i) << "\t" << check[i].n << std::endl;
-                                }
-                        }
-                }
-
-                out << double(check[check.size() - 1].t - check[0].t) / double(CLOCKS_PER_SEC) << "\tTOTAL" << std::endl;
-        }
+    if (timing_depth != (unsigned int)(-1)) {
         out << "\n***********************************************************" << std::endl;
-        out << "                  OUPUT VALUES" << std::endl;
-        for (size_t i = 0; i < out_values.size(); i++)
-                out << out_values[i].second << " \t" << out_values[i].first << std::endl;
+        out << "                  TIMING SUMMARY " << std::endl;
+        for (unsigned int i = 0; i < check.size() - 1; i++){
+            if (dec(i)>timing_depth) continue;
+            if (is_start_section(i))
+                out << std::string(4 * dec(i), ' ') << time(i) << "\t====>  " << check[i].n << std::endl;
+            else if (!is_end_section(i)){
+                if (check[i].n != "begin section"){
+                    out << std::string(4 * dec(i), ' ') << time(i) << "\t" << check[i].n << std::endl;
+                }
+            }
+        }
+
+        out << double(check[check.size() - 1].t - check[0].t) / double(CLOCKS_PER_SEC) << "\tTOTAL" << std::endl;
+    }
+    out << "\n***********************************************************" << std::endl;
+    out << "                  OUPUT VALUES" << std::endl;
+    for (size_t i = 0; i < out_values.size(); i++)
+        out << out_values[i].second << " \t" << out_values[i].first << std::endl;
 
 }
 
 
 
 void LogTime::report_py(std::ostream &out, unsigned int timing_depth){
-        if (check.empty()) return;
-        if (check.back().n != "the end") { add_step("the end"); }
+    if (check.empty()) return;
+    if (check.back().n != "the end") { add_step("the end"); }
 
-        out << "{ \"charlie\": 2";
-        // bool first = true;
-        if (timing_depth != (unsigned int)(-1)) {
-         for (unsigned int i = 0; i < check.size() - 1; i++){
-                        if (dec(i)>timing_depth) continue;
-                        if (is_start_section(i)) out <<",\"TIME_" << check[i].n  <<"\" :  "<< time(i);
-                        else if (!is_end_section(i)){
-                                if (check[i].n != "begin section"){
-                                        out << ",\"TIME_" << check[i].n << "\":  " << time(i)  ;
-                                }
-                        }
+    out << "{ \"charlie\": 2";
+    // bool first = true;
+    if (timing_depth != (unsigned int)(-1)) {
+        for (unsigned int i = 0; i < check.size() - 1; i++){
+            if (dec(i)>timing_depth) continue;
+            if (is_start_section(i)) out <<",\"TIME_" << check[i].n  <<"\" :  "<< time(i);
+            else if (!is_end_section(i)){
+                if (check[i].n != "begin section"){
+                    out << ",\"TIME_" << check[i].n << "\":  " << time(i)  ;
                 }
-
-                //out << "\ttest[\'TIME_TOTAL\'] = " << double(check[check.size() - 1].t - check[0].t) / double(CLOCKS_PER_SEC) << std::endl;
+            }
         }
-        for (size_t i = 0; i < out_values.size(); i++)
-            out << ", \"" << out_values[i].first << "\": " << out_values[i].second ;
-        for (size_t i = 0; i < out_strings.size(); i++)
-            out << ",\"" << out_strings[i].first << "\": \"" << out_strings[i].second <<"\"";
-        out << "}" << std::endl;
+
+        //out << "\ttest[\'TIME_TOTAL\'] = " << double(check[check.size() - 1].t - check[0].t) / double(CLOCKS_PER_SEC) << std::endl;
+    }
+    for (size_t i = 0; i < out_values.size(); i++)
+        out << ", \"" << out_values[i].first << "\": " << out_values[i].second ;
+    for (size_t i = 0; i < out_strings.size(); i++)
+        out << ",\"" << out_strings[i].first << "\": \"" << out_strings[i].second <<"\"";
+    out << "}" << std::endl;
 
 }
 
@@ -163,31 +163,31 @@ void LogTime::add_string(std::string str , std::string val) {
 }
 
 void LogTime::add_step(const std::string& name){
-        if (check.empty()){
-            CheckPoint c(name + post_fix, (unsigned int)(-1));
-                check.push_back(c);
-        }
-        else {
-                CheckPoint c(name + post_fix, check.back().up);
-                check.back().right = (unsigned int)(check.size());
-                check.push_back(c);
-        }
-        const char *symbol = "#>=_-~..............";
-        GEO::Logger::out("HexDom")  << std::endl << std::string(4 * lastdec(), ' ') << std::string(80 - 4 * lastdec(), symbol[dec()]) <<  std::endl;
-        GEO::Logger::out("HexDom")  << std::string(4 * lastdec() + 4, ' ') << cur_stack() << std::endl <<  std::endl;
+    if (check.empty()){
+        CheckPoint c(name + post_fix, (unsigned int)(-1));
+        check.push_back(c);
+    }
+    else {
+        CheckPoint c(name + post_fix, check.back().up);
+        check.back().right = (unsigned int)(check.size());
+        check.push_back(c);
+    }
+    const char *symbol = "#>=_-~..............";
+    GEO::Logger::out("HexDom")  << std::endl << std::string(4 * lastdec(), ' ') << std::string(80 - 4 * lastdec(), symbol[dec()]) <<  std::endl;
+    GEO::Logger::out("HexDom")  << std::string(4 * lastdec() + 4, ' ') << cur_stack() << std::endl <<  std::endl;
 }
 
 void LogTime::start_section(const std::string& secname, const std::string& name ){
-        add_step(secname + post_fix);
-        CheckPoint c(name + post_fix, (unsigned int)(check.size()) - 1);
-        check.push_back(c);
+    add_step(secname + post_fix);
+    CheckPoint c(name + post_fix, (unsigned int)(check.size()) - 1);
+    check.push_back(c);
 }
 void LogTime::end_section(){
-        unsigned int u = check.back().up;
-        check[u].right = (unsigned int)(check.size());
-        check.back().right = (unsigned int)(check.size());
-        CheckPoint c("end section", check[u].up);
-        check.push_back(c);
+    unsigned int u = check.back().up;
+    check[u].right = (unsigned int)(check.size());
+    check.back().right = (unsigned int)(check.size());
+    CheckPoint c("end section", check[u].up);
+    check.push_back(c);
 }
 
 
@@ -197,12 +197,11 @@ void LogTime::show(){
 }
 
 void LogTime::drop_file(std::string filename, bool append, unsigned int timing_depth){
-        std::ofstream f;
-        if (append)
-                f.open(filename.c_str(), std::fstream::app);
-        else
-                f.open(filename.c_str());
-        report_py(f, timing_depth);
-        f.close();
+    std::ofstream f;
+    if (append)
+        f.open(filename.c_str(), std::fstream::app);
+    else
+        f.open(filename.c_str());
+    report_py(f, timing_depth);
+    f.close();
 }
-

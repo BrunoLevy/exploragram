@@ -144,7 +144,7 @@ namespace {
         );
 
         Logger::out("Sample") << " generating a level with " << e - m
-            << " samples" << std::endl;
+                              << " samples" << std::endl;
 
         try {
             ProgressTask progress("Lloyd", 100);
@@ -448,7 +448,7 @@ namespace GEO {
                     mass[v] =
                         ::sqrt(AABB.squared_distance(
                                    vec3(M.vertices.point_ptr(v)))
-                        );
+                              );
                 }
             } else {
                 MeshFacetsAABB AABB(M);

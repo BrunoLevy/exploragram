@@ -156,18 +156,18 @@ namespace GEO {
 
     }
 
-       /*
-    *     _____                _             ____                  _       _
-    *    / ____|              (_)           |  _ \                | |     (_)
-    *   | |     __ _ _ __ _ __ _  ___ _ __  | |_) | __ _ _   _  __| | ___  _ _ __
-    *   | |    / _` | '__| '__| |/ _ \ '__| |  _ < / _` | | | |/ _` |/ _ \| | '_ \
-    *   | |___| (_| | |  | |  | |  __/ |    | |_) | (_| | |_| | (_| | (_) | | | | |
-    *    \_____\__,_|_|  |_|  |_|\___|_|    |____/ \__,_|\__,_|\__,_|\___/|_|_| |_|
-    */
+    /*
+     *     _____                _             ____                  _       _
+     *    / ____|              (_)           |  _ \                | |     (_)
+     *   | |     __ _ _ __ _ __ _  ___ _ __  | |_) | __ _ _   _  __| | ___  _ _ __
+     *   | |    / _` | '__| '__| |/ _ \ '__| |  _ < / _` | | | |/ _` |/ _ \| | '_ \
+     *   | |___| (_| | |  | |  | |  __/ |    | |_) | (_| | |_| | (_| | (_) | | | | |
+     *    \_____\__,_|_|  |_|  |_|\___|_|    |____/ \__,_|\__,_|\__,_|\___/|_|_| |_|
+     */
 
 
 
-        static bool in_volume(Mesh* surface, vec3 request) {
+    static bool in_volume(Mesh* surface, vec3 request) {
         int accum = 0;
         vec2 R(request[0], request[1]);
         FOR(f, surface->facets.nb()) {
@@ -271,7 +271,7 @@ namespace GEO {
     }
 
 
-        static void stuff_with_tets_and_pyramids(Mesh* m) {
+    static void stuff_with_tets_and_pyramids(Mesh* m) {
         if (m->vertices.nb() == 0 || m->facets.nb()==0)  return;
         m->edges.clear();
         check_no_intersecting_faces(m);
@@ -319,23 +319,23 @@ namespace GEO {
             vector<double> max_pyr_top_coeff(pyr_top_index.size(), .5);
             bool done = false;
             while (!done){
-                    Mesh copy;
-                    copy.copy(*m);
-                    create_non_manifold_facet_adjacence(&copy);
+                Mesh copy;
+                copy.copy(*m);
+                create_non_manifold_facet_adjacence(&copy);
 
-                    FOR(v, pyr_top_index.size())
-                        X(&copy)[pyr_top_index[v]] = X(m)[pyr_top_index[v]]
-                        - max_pyr_top_coeff[v]*ave_edge_length * pyr_Z[v];
+                FOR(v, pyr_top_index.size())
+                    X(&copy)[pyr_top_index[v]] = X(m)[pyr_top_index[v]]
+                    - max_pyr_top_coeff[v]*ave_edge_length * pyr_Z[v];
 
-                    vector<index_t> intersections = get_intersecting_faces(&copy);
-                    done = (intersections.size() == 0);
-                    vector<bool> vertexpb(copy.vertices.nb(), false);
-                    FOR(i, intersections.size())  FOR(lv, 3) vertexpb[copy.facets.vertex(intersections[i], lv)] = true;
+                vector<index_t> intersections = get_intersecting_faces(&copy);
+                done = (intersections.size() == 0);
+                vector<bool> vertexpb(copy.vertices.nb(), false);
+                FOR(i, intersections.size())  FOR(lv, 3) vertexpb[copy.facets.vertex(intersections[i], lv)] = true;
 
-                    FOR(v, pyr_top_index.size()) if (vertexpb[pyr_top_index[v]]) {
-                        if (max_pyr_top_coeff[v] > .02)max_pyr_top_coeff[v] /= 2.;
-                        else max_pyr_top_coeff[v] = 0;
-                    }
+                FOR(v, pyr_top_index.size()) if (vertexpb[pyr_top_index[v]]) {
+                    if (max_pyr_top_coeff[v] > .02)max_pyr_top_coeff[v] /= 2.;
+                    else max_pyr_top_coeff[v] = 0;
+                }
             }
 
             FOR(v, pyr_top_index.size()) X(m)[pyr_top_index[v]]
@@ -418,7 +418,7 @@ namespace GEO {
 
         result->cells.connect();
         result->facets.clear();
-    //    result->cells.compute_borders();
+        //    result->cells.compute_borders();
         return;
     }
 

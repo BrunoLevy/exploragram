@@ -167,7 +167,7 @@ namespace GEO {
     //};
 
     static mat3 AxisPermutations[24] = {
-    mat3_from_coeffs(1,0,0,0,1,0,0,0,1),
+        mat3_from_coeffs(1,0,0,0,1,0,0,0,1),
         mat3_from_coeffs(0,-1,0,1,0,0,0,0,1),mat3_from_coeffs(-1,0,0,0,-1,0,0,0,1),mat3_from_coeffs(0,1,0,-1,0,0,0,0,1),mat3_from_coeffs(0,0,1,1,0,0,0,1,0),
         mat3_from_coeffs(-1,0,0,0,0,1,0,1,0),mat3_from_coeffs(0,0,-1,-1,0,0,0,1,0),mat3_from_coeffs(1,0,0,0,0,-1,0,1,0),mat3_from_coeffs(0,1,0,0,0,1,1,0,0),
         mat3_from_coeffs(0,0,-1,0,1,0,1,0,0),mat3_from_coeffs(0,-1,0,0,0,-1,1,0,0),mat3_from_coeffs(0,0,1,0,-1,0,1,0,0),mat3_from_coeffs(0,0,-1,0,-1,0,-1,0,0),
@@ -179,91 +179,91 @@ namespace GEO {
     static index_t AxisPermutations_inv[24] = { 0,3,2,1,8,5,15,22,4,14,21,11,12,23,9,6,16,17,18,19,20,10,7,13 };
 
     void AxisPermutation::aligns_B_wrt_ref(mat3 ref, mat3 B) {
-            ref= normalize_columns(ref);
-            B = normalize_columns(B);
-            index_t best_i = 0;
-            double best_score = 1e20;
-            FOR(i, 24) {
-                double score = Frobenius_norm(B*AxisPermutations[i]-ref);
-                if (score < best_score) {
-                    best_i = i;
-                    best_score = score;
-                }
+        ref= normalize_columns(ref);
+        B = normalize_columns(B);
+        index_t best_i = 0;
+        double best_score = 1e20;
+        FOR(i, 24) {
+            double score = Frobenius_norm(B*AxisPermutations[i]-ref);
+            if (score < best_score) {
+                best_i = i;
+                best_score = score;
             }
-            mid = best_i;
         }
+        mid = best_i;
+    }
 
-     void AxisPermutation::make_col2_equal_to_z(mat3 B, vec3 z) {
-            B = normalize_columns(B);
-            index_t best_i = 0;
-            double best_score = 1e20;
-            FOR(i, 24) {
-                double score = (col(B*AxisPermutations[i],2) - z).length2();
-                if (score < best_score) {
-                    best_i = i;
-                    best_score = score;
-                }
+    void AxisPermutation::make_col2_equal_to_z(mat3 B, vec3 z) {
+        B = normalize_columns(B);
+        index_t best_i = 0;
+        double best_score = 1e20;
+        FOR(i, 24) {
+            double score = (col(B*AxisPermutations[i],2) - z).length2();
+            if (score < best_score) {
+                best_i = i;
+                best_score = score;
             }
-            mid = best_i;
         }
+        mid = best_i;
+    }
 
     const mat3& AxisPermutation::get_mat() const {
-    return AxisPermutations[mid];
+        return AxisPermutations[mid];
     }
 
     AxisPermutation AxisPermutation::inverse() {
-    return AxisPermutation(AxisPermutations_inv[mid]);
+        return AxisPermutation(AxisPermutations_inv[mid]);
     }
 
     /***********************************************************************************************************************************/
 
     void Frame::make_z_equal_to(vec3 z) {
-    z = normalize(z);
-    vec3 x(1, 0, 0);
-    vec3 y = cross(z, x);
-    if (y.length2() < .1) {
-        x = vec3(0, 1, 0);
-        y = cross(z, x);
-    }
-    y = normalize(y);
-    x = cross(y, z);
-    FOR(d, 3) r(d, 0) = x[d];
-    FOR(d, 3) r(d, 1) = y[d];
-    FOR(d, 3) r(d, 2) = z[d];
+        z = normalize(z);
+        vec3 x(1, 0, 0);
+        vec3 y = cross(z, x);
+        if (y.length2() < .1) {
+            x = vec3(0, 1, 0);
+            y = cross(z, x);
+        }
+        y = normalize(y);
+        x = cross(y, z);
+        FOR(d, 3) r(d, 0) = x[d];
+        FOR(d, 3) r(d, 1) = y[d];
+        FOR(d, 3) r(d, 2) = z[d];
     }
 
     mat3 Frame::average_frame(vector<mat3>& data) {
-    SphericalHarmonicL4 sum;
-    FOR(i, data.size()) {
-        SphericalHarmonicL4 nv;
-        nv[4] = std::sqrt(7. / 12.);
-        nv[8] = std::sqrt(5. / 12.);
-        nv.euler_rot(mat3_to_euler(data[i]));
-        sum = sum + nv;
-    }
-    sum = sum*(1. / sum.norm());
-    return sum.project_mat3();
+        SphericalHarmonicL4 sum;
+        FOR(i, data.size()) {
+            SphericalHarmonicL4 nv;
+            nv[4] = std::sqrt(7. / 12.);
+            nv[8] = std::sqrt(5. / 12.);
+            nv.euler_rot(mat3_to_euler(data[i]));
+            sum = sum + nv;
+        }
+        sum = sum*(1. / sum.norm());
+        return sum.project_mat3();
     }
 
     mat3 Frame::representative_frame(vector<vec3>& bunch_of_vectors, vector<double>& w) {
-    SphericalHarmonicL4 sum;
-    FOR(i,bunch_of_vectors.size()) {
-        vec3 n = normalize(bunch_of_vectors[i]);
-        mat3 r;
-        Frame(r).make_z_equal_to(n);
-        SphericalHarmonicL4 nv;
-        nv[4] = std::sqrt(7. / 12.);
-        nv.euler_rot(mat3_to_euler(r));
-        nv = nv * w[i];
-        sum = sum + nv;
-    }
-    sum = sum*(1. / sum.norm());
-    return sum.project_mat3();
+        SphericalHarmonicL4 sum;
+        FOR(i,bunch_of_vectors.size()) {
+            vec3 n = normalize(bunch_of_vectors[i]);
+            mat3 r;
+            Frame(r).make_z_equal_to(n);
+            SphericalHarmonicL4 nv;
+            nv[4] = std::sqrt(7. / 12.);
+            nv.euler_rot(mat3_to_euler(r));
+            nv = nv * w[i];
+            sum = sum + nv;
+        }
+        sum = sum*(1. / sum.norm());
+        return sum.project_mat3();
     }
 
     mat3 Frame::representative_frame(vector<vec3>& bunch_of_vectors) {
-    vector<double> w(bunch_of_vectors.size(), 1);
-    return  representative_frame(bunch_of_vectors, w);
+        vector<double> w(bunch_of_vectors.size(), 1);
+        return  representative_frame(bunch_of_vectors, w);
     }
 
     /***********************************************************************************************************************************/
@@ -306,4 +306,3 @@ namespace GEO {
     }
 
 }
-

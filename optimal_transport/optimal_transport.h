@@ -51,7 +51,7 @@ namespace GEO {
      *  with OptimalTransport.
      */
     enum OTLinearSolver {
-    OT_PRECG, OT_SUPERLU, OT_CHOLMOD
+        OT_PRECG, OT_SUPERLU, OT_CHOLMOD
     };
 }
 
@@ -90,18 +90,18 @@ namespace GEO {
      */
     class EXPLORAGRAM_API OptimalTransportMap {
     public:
-        /**
-         * \brief OptimalTransportMap constructor.
-         * \param[in] mesh the source distribution, represented as a nd mesh.
-         * \param[in] delaunay factory name of the Delaunay triangulation.
-         * \param[in] BRIO true if vertices are already ordered using BRIO
-         */
-        OptimalTransportMap(
+    /**
+     * \brief OptimalTransportMap constructor.
+     * \param[in] mesh the source distribution, represented as a nd mesh.
+     * \param[in] delaunay factory name of the Delaunay triangulation.
+     * \param[in] BRIO true if vertices are already ordered using BRIO
+     */
+    OptimalTransportMap(
         index_t dimension,
-            Mesh* mesh,
-            const std::string& delaunay = "default",
-            bool BRIO = false
-        );
+        Mesh* mesh,
+        const std::string& delaunay = "default",
+        bool BRIO = false
+    );
 
     /**
      * \brief OptimalTransportMap destructor.
@@ -116,36 +116,36 @@ namespace GEO {
         return dimension_;
     }
 
-        /**
-         * \brief Gets the mesh.
-         * \return a reference to the mesh
-         */
-        Mesh& mesh() {
-            return *mesh_;
-        }
+    /**
+     * \brief Gets the mesh.
+     * \return a reference to the mesh
+     */
+    Mesh& mesh() {
+        return *mesh_;
+    }
 
-        /**
-         * \brief Sets whether Newton algorithm should be used.
-         * \details It is (for now) incompatible with multilevel.
-         * \param[in] x if set, Newton algorithm is used instead
-         *  of BFGS.
-         */
-        void set_Newton(bool x) {
-            newton_ = x;
-        }
+    /**
+     * \brief Sets whether Newton algorithm should be used.
+     * \details It is (for now) incompatible with multilevel.
+     * \param[in] x if set, Newton algorithm is used instead
+     *  of BFGS.
+     */
+    void set_Newton(bool x) {
+        newton_ = x;
+    }
 
-        /**
-         * \brief Sets the points that define the target distribution.
+    /**
+     * \brief Sets the points that define the target distribution.
      * \details If air particles are used, then set_air_particles() needs
      *  to be called before set_points().
-         * \param[in] nb_points number of points in the target distribution
-         * \param[in] points an array of size nb_points * dimension() with the
+     * \param[in] nb_points number of points in the target distribution
+     * \param[in] points an array of size nb_points * dimension() with the
      *  coordinates of the Diracs centers in the target
-         *  distribution.
+     *  distribution.
      * \param[in] stride number of doubles between two consecutive points.
      *  If 0 (default), then point coordinates are considered to be packed.
-         */
-        void set_points(
+     */
+    void set_points(
         index_t nb_points, const double* points, index_t stride=0
     );
 
@@ -210,14 +210,14 @@ namespace GEO {
         Laguerre_centroids_ = x;
     }
 
-        /**
-         * \brief Sets the maximum error.
-         * \param eps acceptable relative deviation for the measure of a
-         *   Voronoi cell.
-         */
-        void set_epsilon(double eps) {
-            epsilon_ = eps;
-        }
+    /**
+     * \brief Sets the maximum error.
+     * \param eps acceptable relative deviation for the measure of a
+     *   Voronoi cell.
+     */
+    void set_epsilon(double eps) {
+        epsilon_ = eps;
+    }
 
 
     /**
@@ -259,16 +259,16 @@ namespace GEO {
         linesearch_init_iter_ = init_iter;
     }
 
-        /**
-         * \brief Sets the weight of the regularization term.
-         * \details The regularization term (norm of the weight vector) cancels
-         *  the translational degree of freedom of the weights.
-         * \param[in] eps_reg the weight of the regularization term. Use 0.0 for
-         *  no regularization.
-         */
-        void set_regularization(double eps_reg) {
-            epsilon_regularization_ = eps_reg;
-        }
+    /**
+     * \brief Sets the weight of the regularization term.
+     * \details The regularization term (norm of the weight vector) cancels
+     *  the translational degree of freedom of the weights.
+     * \param[in] eps_reg the weight of the regularization term. Use 0.0 for
+     *  no regularization.
+     */
+    void set_regularization(double eps_reg) {
+        epsilon_regularization_ = eps_reg;
+    }
 
 
     /**
@@ -282,13 +282,13 @@ namespace GEO {
         linear_solver_ = solver;
     }
 
-        /**
-         * \brief Computes the weights that realize the optimal
-         *  transport map between the source mesh and the target
-         *  pointset.
-         * \param[in] max_iterations maximum number of solver iterations.
-         */
-        void optimize(index_t max_iterations);
+    /**
+     * \brief Computes the weights that realize the optimal
+     *  transport map between the source mesh and the target
+     *  pointset.
+     * \param[in] max_iterations maximum number of solver iterations.
+     */
+    void optimize(index_t max_iterations);
 
     /**
      * \brief Enable/disable messages during optimization.
@@ -299,209 +299,209 @@ namespace GEO {
         verbose_ = x;
     }
 
-        /**
-         * \brief Computes the weights that realize the optimal
-         *  transport map between the source mesh and the target
-         *  pointset.
+    /**
+     * \brief Computes the weights that realize the optimal
+     *  transport map between the source mesh and the target
+     *  pointset.
      * \details The algorithm is described in http://arxiv.org/abs/1603.05579
      *   Kitawaga, Merigot, Thibert, A Newton Algorithm for semi-discrete OT.
-         * \param[in] max_iterations maximum number of solver iterations.
-         * \param[in] n number of weights to optimize, used in hierarchical
-         *  mode. If zero, optimizes all the weights.
-         */
-        void optimize_full_Newton(index_t max_iterations, index_t n=0);
+     * \param[in] max_iterations maximum number of solver iterations.
+     * \param[in] n number of weights to optimize, used in hierarchical
+     *  mode. If zero, optimizes all the weights.
+     */
+    void optimize_full_Newton(index_t max_iterations, index_t n=0);
 
-        /**
-         * \brief Optimizes one level of the multilevel algorithm.
-         * \details The function supposes that the sequence [0,b)
-         *  has been previously optimized. It is used to initialize
-         *  the sequence [b,e). The whole sequence [0,e) is then
-         *  optimized.
-         * \param[in] b index fo the first point in the level
-         * \param[in] e one position past the last index of the level
-         * \param[in] max_iterations maximum number of iterations
-         */
-        void optimize_level(index_t b, index_t e, index_t max_iterations);
+    /**
+     * \brief Optimizes one level of the multilevel algorithm.
+     * \details The function supposes that the sequence [0,b)
+     *  has been previously optimized. It is used to initialize
+     *  the sequence [b,e). The whole sequence [0,e) is then
+     *  optimized.
+     * \param[in] b index fo the first point in the level
+     * \param[in] e one position past the last index of the level
+     * \param[in] max_iterations maximum number of iterations
+     */
+    void optimize_level(index_t b, index_t e, index_t max_iterations);
 
-        /**
-         * \brief Multi-level optimization.
-         * \details The points specified by set_points() need to have
-         *   a hierarchical structure. They can be constructed by
-         *   compute_hierarchical_sampling().
-         * \param[in] levels sample indices that correspond to level l are
-         *   in the range levels[l] (included) ... levels[l+1] (excluded)
-         * \param[in] max_iterations maximum number of iterations
-         * \see compute_hierarchical_sampling()
-         */
-        void optimize_levels(
-            const vector<index_t>& levels, index_t max_iterations
-        );
+    /**
+     * \brief Multi-level optimization.
+     * \details The points specified by set_points() need to have
+     *   a hierarchical structure. They can be constructed by
+     *   compute_hierarchical_sampling().
+     * \param[in] levels sample indices that correspond to level l are
+     *   in the range levels[l] (included) ... levels[l+1] (excluded)
+     * \param[in] max_iterations maximum number of iterations
+     * \see compute_hierarchical_sampling()
+     */
+    void optimize_levels(
+        const vector<index_t>& levels, index_t max_iterations
+    );
 
-        /**
-         * \brief Gets the number of points.
-         * \return The number of points, that was previously defined
-         *  by set_points()
-         */
-        index_t nb_points() const {
-            return weights_.size();
-        }
+    /**
+     * \brief Gets the number of points.
+     * \return The number of points, that was previously defined
+     *  by set_points()
+     */
+    index_t nb_points() const {
+        return weights_.size();
+    }
 
-        /**
-         * \brief Gets a point.
-         * \param[in] i index of the point
-         * \return a const pointer to the coordinates of the
+    /**
+     * \brief Gets a point.
+     * \param[in] i index of the point
+     * \return a const pointer to the coordinates of the
      *  (dimension()+1)d point \p i
-         */
-        const double* point_ptr(index_t i) const {
-            geo_debug_assert(i < nb_points());
-            return &(points_dimp1_[dimp1_ * i]);
+     */
+    const double* point_ptr(index_t i) const {
+        geo_debug_assert(i < nb_points());
+        return &(points_dimp1_[dimp1_ * i]);
+    }
+
+    /**
+     * \brief Gets weight of a point.
+     * \param[in] i index of the point
+     * \return the weight that was computed for point \p i
+     */
+    double weight(index_t i) const {
+        return weights_[i];
+    }
+
+    /**
+     * \brief Sets a weight of a point.
+     * \param[in] i index of the point
+     * \param[in] val new value of the weight
+     */
+    void set_weight(index_t i, double val) {
+        weights_[i] = val;
+    }
+
+    /**
+     * \brief Gets the d+1-th coordinate of the embedding for a point.
+     * \param[in] i index of the point
+     * \return the d+1-th coordinate that was computed for point \p i
+     */
+    double potential(index_t i) const {
+        return points_dimp1_[dimp1_*i + dimension_];
+    }
+
+    /**
+     * \brief Callback for the numerical solver.
+     * \details Evaluates the objective function and its gradient.
+     * \param[in] n number of variables
+     * \param[in] x current value of the variables
+     * \param[out] f current value of the objective function
+     * \param[out] g gradient of the objective function
+     */
+    static void funcgrad_CB(
+        index_t n, double* x, double& f, double* g
+    );
+
+    /**
+     * \brief Callback for the numerical solver.
+     * \param[in] n number of variables
+     * \param[in] x current value of the variables
+     * \param[in] f current value of the objective function
+     * \param[in] g gradient of the objective function
+     * \param[in] gnorm norm of the gradient of the objective function
+     */
+    static void newiteration_CB(
+        index_t n, const double* x, double f, const double* g, double gnorm
+    );
+
+    /**
+     * \brief Gets the restricted Voronoi diagram.
+     * \return a pointer to the restricted Voronoi diagram
+     */
+    RestrictedVoronoiDiagram* RVD() {
+        return RVD_;
+    }
+
+    /**
+     * \brief Sets whether the restricted Voronoi diagram at
+     *  each iteration should be saved.
+     * \details If flag is set, then each iteration is saved
+     *  in file "RVD_nnn.geogram".
+     * \param[in] x true if each iteration should be saved,
+     *  false otherwise.
+     * \param[in] show_RVD_seed if true, the seed associated
+     *  with each restricted Voronoi cell is connected to it
+     * \param[in] last_iter_only if true, only the last iteration
+     *  is saved
+     */
+    void set_save_RVD_iter(
+        bool x,
+        bool show_RVD_seed = false,
+        bool last_iter_only = false
+    ) {
+        if(last_iter_only) {
+            save_RVD_iter_ = false;
+            save_RVD_last_iter_ = true;
+        } else {
+            save_RVD_iter_ = x;
         }
-
-        /**
-         * \brief Gets weight of a point.
-         * \param[in] i index of the point
-         * \return the weight that was computed for point \p i
-         */
-        double weight(index_t i) const {
-            return weights_[i];
-        }
-
-        /**
-         * \brief Sets a weight of a point.
-         * \param[in] i index of the point
-         * \param[in] val new value of the weight
-         */
-        void set_weight(index_t i, double val) {
-            weights_[i] = val;
-        }
-
-        /**
-         * \brief Gets the d+1-th coordinate of the embedding for a point.
-         * \param[in] i index of the point
-         * \return the d+1-th coordinate that was computed for point \p i
-         */
-        double potential(index_t i) const {
-            return points_dimp1_[dimp1_*i + dimension_];
-        }
-
-        /**
-         * \brief Callback for the numerical solver.
-         * \details Evaluates the objective function and its gradient.
-         * \param[in] n number of variables
-         * \param[in] x current value of the variables
-         * \param[out] f current value of the objective function
-         * \param[out] g gradient of the objective function
-         */
-        static void funcgrad_CB(
-            index_t n, double* x, double& f, double* g
-        );
-
-        /**
-         * \brief Callback for the numerical solver.
-         * \param[in] n number of variables
-         * \param[in] x current value of the variables
-         * \param[in] f current value of the objective function
-         * \param[in] g gradient of the objective function
-         * \param[in] gnorm norm of the gradient of the objective function
-         */
-        static void newiteration_CB(
-            index_t n, const double* x, double f, const double* g, double gnorm
-        );
-
-        /**
-         * \brief Gets the restricted Voronoi diagram.
-         * \return a pointer to the restricted Voronoi diagram
-         */
-        RestrictedVoronoiDiagram* RVD() {
-            return RVD_;
-        }
-
-        /**
-         * \brief Sets whether the restricted Voronoi diagram at
-         *  each iteration should be saved.
-         * \details If flag is set, then each iteration is saved
-         *  in file "RVD_nnn.geogram".
-         * \param[in] x true if each iteration should be saved,
-         *  false otherwise.
-         * \param[in] show_RVD_seed if true, the seed associated
-         *  with each restricted Voronoi cell is connected to it
-         * \param[in] last_iter_only if true, only the last iteration
-         *  is saved
-         */
-        void set_save_RVD_iter(
-            bool x,
-            bool show_RVD_seed = false,
-            bool last_iter_only = false
-        ) {
-            if(last_iter_only) {
-                save_RVD_iter_ = false;
-                save_RVD_last_iter_ = true;
-            } else {
-                save_RVD_iter_ = x;
-            }
-            show_RVD_seed_ = show_RVD_seed;
-        }
+        show_RVD_seed_ = show_RVD_seed;
+    }
 
     /**
      * \brief Computes a mesh with the restricted Voronoi diagram.
      * \param[out] M a reference to the computed restricted Voronoi diagram.
      */
-        virtual void get_RVD(Mesh& M) = 0;
+    virtual void get_RVD(Mesh& M) = 0;
 
-        /**
-         * \brief Computes the centroids of the Laguerre cells.
-         * \param[out] centroids a pointer to the dimension()*nb_points
+    /**
+     * \brief Computes the centroids of the Laguerre cells.
+     * \param[out] centroids a pointer to the dimension()*nb_points
      *  coordinates of the centroids.
-         */
-        virtual void compute_Laguerre_centroids(double* centroids) = 0;
+     */
+    virtual void compute_Laguerre_centroids(double* centroids) = 0;
 
-        /**
-         * \brief Updates the sparsity pattern of the Hessian right after
-         *  a new Laguerre diagram was computed.
-         */
-        void update_sparsity_pattern();
+    /**
+     * \brief Updates the sparsity pattern of the Hessian right after
+     *  a new Laguerre diagram was computed.
+     */
+    void update_sparsity_pattern();
 
-        /**
-         * \brief Starts a new linear system.
-         * \param[in] n the dimension of the system
+    /**
+     * \brief Starts a new linear system.
+     * \param[in] n the dimension of the system
      * \param[in] x pointer to a contiguous array of \p n doubles,
      *  where the solution will be stored.
-         */
-        void new_linear_system(index_t n, double* x);
+     */
+    void new_linear_system(index_t n, double* x);
 
-        /**
-         * \brief Adds a coefficient to the matrix of the system.
-         * \param[in] i , j the indices of the coefficient
-         * \param[in] a the value to be added to the coefficient
-         */
-        void add_ij_coefficient(index_t i, index_t j, double a) {
+    /**
+     * \brief Adds a coefficient to the matrix of the system.
+     * \param[in] i , j the indices of the coefficient
+     * \param[in] a the value to be added to the coefficient
+     */
+    void add_ij_coefficient(index_t i, index_t j, double a) {
         if(!user_H_g_) {
-        nlAddIJCoefficient(i,j,a);
+            nlAddIJCoefficient(i,j,a);
         } else {
-        if(user_H_ != nullptr) {
-            geo_debug_assert(user_H_->type == NL_MATRIX_SPARSE_DYNAMIC);
-            nlSparseMatrixAdd((NLSparseMatrix*)user_H_, i, j, a);
-        }
+            if(user_H_ != nullptr) {
+                geo_debug_assert(user_H_->type == NL_MATRIX_SPARSE_DYNAMIC);
+                nlSparseMatrixAdd((NLSparseMatrix*)user_H_, i, j, a);
+            }
         }
     }
 
-        /**
-         * \brief Adds a coefficient to the right hand side.
-         * \param[in] i the index of the coefficient
-         * \param[in] a the value to be added to the coefficient
-         */
-        void add_i_right_hand_side(index_t i, double a) {
+    /**
+     * \brief Adds a coefficient to the right hand side.
+     * \param[in] i the index of the coefficient
+     * \param[in] a the value to be added to the coefficient
+     */
+    void add_i_right_hand_side(index_t i, double a) {
         if(!user_H_g_) {
-        nlAddIRightHandSide(i,a);
+            nlAddIRightHandSide(i,a);
         }
     }
 
-        /**
-         * \brief Solves a linear system.
-         * \details The solution is stored in the vector that
+    /**
+     * \brief Solves a linear system.
+     * \details The solution is stored in the vector that
      *  was previously specified to new_linear_system().
-         */
-        void solve_linear_system();
+     */
+    void solve_linear_system();
 
     /**
      * \brief Sets the initial value of the weight associated
@@ -543,32 +543,32 @@ namespace GEO {
      * \return the desired mass at point p.
      */
     double nu(index_t p) const {
-      return nu_.size() == 0 ? constant_nu_ : nu_[p];
+        return nu_.size() == 0 ? constant_nu_ : nu_[p];
     }
 
 
-        /**
-         * \brief Callback for the numerical solver.
-         */
-        virtual void newiteration();
+    /**
+     * \brief Callback for the numerical solver.
+     */
+    virtual void newiteration();
 
-        /**
-         * \brief Saves the RVD at each iteration if
-         *   specified on command line (just for debugging/
-         *   explaining the algorithm).
-         * \param[in] id index to be used for the file, that
-         *   will be named RVD_id.meshb
-         */
-        void save_RVD(index_t id);
+    /**
+     * \brief Saves the RVD at each iteration if
+     *   specified on command line (just for debugging/
+     *   explaining the algorithm).
+     * \param[in] id index to be used for the file, that
+     *   will be named RVD_id.meshb
+     */
+    void save_RVD(index_t id);
 
-        /**
-         * \brief Computes the objective function and its gradient.
-         * \param[in] n number of variables
-         * \param[in] w current value of the variables
-         * \param[out] f current value of the objective function
-         * \param[out] g gradient of the objective function
-         */
-        void funcgrad(index_t n, double* w, double& f, double* g);
+    /**
+     * \brief Computes the objective function and its gradient.
+     * \param[in] n number of variables
+     * \param[in] w current value of the variables
+     * \param[out] f current value of the objective function
+     * \param[out] g gradient of the objective function
+     */
+    void funcgrad(index_t n, double* w, double& f, double* g);
 
     /**
      * \brief Calls the callback for each intersection between a
@@ -576,81 +576,81 @@ namespace GEO {
      */
     virtual void call_callback_on_RVD() = 0;
 
-        /**
-         * \brief Computes the objective function, its gradient and its Hessian.
-         * \details Gradient and Hessian are used to solve a Newton
-         *  step H p = -g
-         * \param[in] n number of variables
-         * \param[in] w current value of the variables
-         * \param[out] f current value of the objective function
-         * \param[out] g gradient of the objective function
-         */
-        void eval_func_grad_Hessian(
-            index_t n, const double* w,
-            double& f, double* g
-        );
+    /**
+     * \brief Computes the objective function, its gradient and its Hessian.
+     * \details Gradient and Hessian are used to solve a Newton
+     *  step H p = -g
+     * \param[in] n number of variables
+     * \param[in] w current value of the variables
+     * \param[out] f current value of the objective function
+     * \param[out] g gradient of the objective function
+     */
+    void eval_func_grad_Hessian(
+        index_t n, const double* w,
+        double& f, double* g
+    );
 
-        /**
-         * \brief Computes the stopping criterion of the solver.
-         * \details The stopping criterion is determined from
-         *  the user-specified epsilon, number of samples and
-         *  target measure of a cell (constant_nu_).
-         * \param n number of samples
-         * \return the gradient threshold
-         * \see set_epsilon()
-         */
-        double gradient_threshold(index_t n) const {
-            return ::sqrt(double(n) * geo_sqr(epsilon_ * constant_nu_));
-        }
+    /**
+     * \brief Computes the stopping criterion of the solver.
+     * \details The stopping criterion is determined from
+     *  the user-specified epsilon, number of samples and
+     *  target measure of a cell (constant_nu_).
+     * \param n number of samples
+     * \return the gradient threshold
+     * \see set_epsilon()
+     */
+    double gradient_threshold(index_t n) const {
+        return ::sqrt(double(n) * geo_sqr(epsilon_ * constant_nu_));
+    }
 
-      public:
+    public:
 
     /**
      * \brief Base class for the callbacks executed for each intersection
      *  between a Laguerre cell and a simplex of the background mesh.
      */
-     class Callback {
-     public:
+    class Callback {
+    public:
         /**
          * \brief Callback constructor.
          * \param[in] OTM a pointer to the OptimalTransportMap
          */
-         Callback(
-          OptimalTransportMap* OTM
-         ) : OTM_(OTM),
+        Callback(
+            OptimalTransportMap* OTM
+        ) : OTM_(OTM),
             Newton_step_(false),
-        eval_F_(false),
+            eval_F_(false),
             n_(0),
             w_(nullptr),
             g_(nullptr),
-        mg_(nullptr) {
-        weighted_ =
-            OTM->mesh().vertices.attributes().is_defined("weight");
+            mg_(nullptr) {
+            weighted_ =
+                OTM->mesh().vertices.attributes().is_defined("weight");
         }
 
-       /**
-        * \brief Callback destructor.
-        */
+        /**
+         * \brief Callback destructor.
+         */
         virtual ~Callback();
 
-       /**
-        * \brief Sets where centroids should be output.
-        * \details This computes mass times centroid. The mass can
-        *  be retreived (and used to divide) from the gradient.
-        * \param[in] mg a pointer to the dimension()*nb_points coordinates
-        *  of the centroids times the mass of the Laguerre cells
-        */
+        /**
+         * \brief Sets where centroids should be output.
+         * \details This computes mass times centroid. The mass can
+         *  be retreived (and used to divide) from the gradient.
+         * \param[in] mg a pointer to the dimension()*nb_points coordinates
+         *  of the centroids times the mass of the Laguerre cells
+         */
         void set_Laguerre_centroids(double* mg) {
-        mg_ = mg;
+            mg_ = mg;
         }
 
-       /**
-        * \brief Tests whether Laguerre centroids should be computed.
-        * \retval true if Laguerre centroids should be computed.
-        * \retval false otherwise.
-        */
+        /**
+         * \brief Tests whether Laguerre centroids should be computed.
+         * \retval true if Laguerre centroids should be computed.
+         * \retval false otherwise.
+         */
         bool has_Laguerre_centroids() const {
-        return (mg_ != nullptr);
+            return (mg_ != nullptr);
         }
 
         /**
@@ -660,17 +660,17 @@ namespace GEO {
          *  of the Laguerre cells.
          */
         double* Laguerre_centroids() {
-        return mg_;
+            return mg_;
         }
 
-       /**
-        * \brief Sets the weight vector
-        * \param[in] w a const pointer to the weight vector.
-        * \param[in] n the number of weights in the weight vector.
-        */
+        /**
+         * \brief Sets the weight vector
+         * \param[in] w a const pointer to the weight vector.
+         * \param[in] n the number of weights in the weight vector.
+         */
         void set_w(const double* w, index_t n) {
-        w_ = w;
-        n_ = n;
+            w_ = w;
+            n_ = n;
         }
 
         /**
@@ -681,7 +681,7 @@ namespace GEO {
          *  step, false otherwise.
          */
         void set_Newton_step(bool Newton) {
-        Newton_step_ = Newton;
+            Newton_step_ = Newton;
         }
 
         /**
@@ -690,7 +690,7 @@ namespace GEO {
          * \retval false otherwise.
          */
         bool is_Newton_step() const {
-        return Newton_step_;
+            return Newton_step_;
         }
 
         /**
@@ -699,7 +699,7 @@ namespace GEO {
          * \param[in] nb the number of threads.
          */
         void set_nb_threads(index_t nb) {
-        funcval_.assign(nb, 0.0);
+            funcval_.assign(nb, 0.0);
         }
 
         /**
@@ -707,7 +707,7 @@ namespace GEO {
          * \param[in] g a pointer to an array of nb points doubles.
          */
         void set_g(double* g) {
-        g_ = g;
+            g_ = g;
         }
 
         /**
@@ -719,7 +719,7 @@ namespace GEO {
          *  evaluated, false otherwise. Default is false.
          */
         void set_eval_F(bool x) {
-        eval_F_ = x;
+            eval_F_ = x;
         }
 
         /**
@@ -728,14 +728,14 @@ namespace GEO {
          * \retval the value of the objective function.
          */
         double funcval() const {
-        double result = 0.0;
-        FOR(i,funcval_.size()) {
-            result += funcval_[i];
-        }
-        return result;
+            double result = 0.0;
+            FOR(i,funcval_.size()) {
+                result += funcval_[i];
+            }
+            return result;
         }
 
-      protected:
+    protected:
         OptimalTransportMap* OTM_;
         bool weighted_;
         bool Newton_step_;
@@ -747,62 +747,62 @@ namespace GEO {
         double* mg_;
     };
 
-      protected:
-        static OptimalTransportMap* instance_;
+    protected:
+    static OptimalTransportMap* instance_;
     index_t dimension_;
     index_t dimp1_; /**< \brief dimension_ + 1 */
-        Mesh* mesh_;
-        Delaunay_var delaunay_;
-        RestrictedVoronoiDiagram_var RVD_;
-        vector<double> points_dimp1_;
-        vector<double> weights_;
-        double total_mass_;
-        double constant_nu_; /**< \brief Value of one of the Diracs if cte. */
+    Mesh* mesh_;
+    Delaunay_var delaunay_;
+    RestrictedVoronoiDiagram_var RVD_;
+    vector<double> points_dimp1_;
+    vector<double> weights_;
+    double total_mass_;
+    double constant_nu_; /**< \brief Value of one of the Diracs if cte. */
     vector<double> nu_;  /**< \brief Value of all the Diracs. */
-        double epsilon_;
-        /**< \brief Acceptable relative deviation for the measure of a cell */
-        index_t current_call_iter_;
+    double epsilon_;
+    /**< \brief Acceptable relative deviation for the measure of a cell */
+    index_t current_call_iter_;
 
     Callback* callback_;
 
-        std::string last_stats_;
-        bool pretty_log_;
-        index_t level_;
+    std::string last_stats_;
+    bool pretty_log_;
+    index_t level_;
 
-        bool save_RVD_iter_;
-        bool save_RVD_last_iter_;
-        bool show_RVD_seed_;
-        index_t current_iter_;
-        bool newton_;
+    bool save_RVD_iter_;
+    bool save_RVD_last_iter_;
+    bool show_RVD_seed_;
+    index_t current_iter_;
+    bool newton_;
     bool verbose_;
 
-        /**
-         * \brief Add a regularization term to remove
-         *  translational degree of freedom for the
-         *  weights.
-         */
-        double epsilon_regularization_;
+    /**
+     * \brief Add a regularization term to remove
+     *  translational degree of freedom for the
+     *  weights.
+     */
+    double epsilon_regularization_;
 
-        /**
-         * \brief Number of empty cells in last iteration.
-         */
-        index_t nbZ_;
+    /**
+     * \brief Number of empty cells in last iteration.
+     */
+    index_t nbZ_;
 
-        /**
-         * \brief Norm of the gradient in last iteration.
-         */
-        double g_norm_;
+    /**
+     * \brief Norm of the gradient in last iteration.
+     */
+    double g_norm_;
 
-        /**
-         * \brief Measure of the smallest Laguerre cell.
-         */
-        double measure_of_smallest_cell_;
+    /**
+     * \brief Measure of the smallest Laguerre cell.
+     */
+    double measure_of_smallest_cell_;
 
-        /**
-         * \brief True if w did not change, thus there is
-         *  no need to recompute the power diagram.
-         */
-        bool w_did_not_change_;
+    /**
+     * \brief True if w did not change, thus there is
+     *  no need to recompute the power diagram.
+     */
+    bool w_did_not_change_;
 
     /** \brief If user-specified, then Laguerre centroids are output here */
     double* Laguerre_centroids_;

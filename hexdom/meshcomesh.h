@@ -45,9 +45,9 @@
 #include <exploragram/hexdom/polygon.h>
 #include <exploragram/hexdom/intersect_tools.h>
 
-    /**
-     * \file exploragram/hexdom/MESHCOMESH.h
-     */
+/**
+ * \file exploragram/hexdom/MESHCOMESH.h
+ */
 
 namespace GEO {
     struct TrFan {

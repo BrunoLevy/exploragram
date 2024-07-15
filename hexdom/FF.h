@@ -55,8 +55,8 @@ namespace GEO {
         ~FFopt();
 
         /**
-     * methods in the order yuo have to call them
-     */
+         * methods in the order yuo have to call them
+         */
 
 
         // FF_init() is use to initialize the FF with  http://arxiv.org/abs/1507.03351              (mandatory)
@@ -66,7 +66,7 @@ namespace GEO {
         void FF_smooth();
 
         // size of cols(B,d)
-    void compute_Bid_norm();
+        void compute_Bid_norm();
 
         // brush FF (before solving PGP) and U (after solving PGP)                                  (optional)
         void brush_frame();

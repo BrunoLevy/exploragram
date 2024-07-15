@@ -56,7 +56,7 @@ namespace GEO {
      */
 
     inline bool is_identity_auvp(const mat3& m, double eps = 1e-15) {
-    // [BL] TODO: test extra-diagonal elements ? (can be a big cow without that !!!)
+        // [BL] TODO: test extra-diagonal elements ? (can be a big cow without that !!!)
         return std::abs(m(0, 0) - 1.) < eps && std::abs(m(1, 1) - 1.) < eps && std::abs(m(2, 2) - 1.) < eps;
     }
 
@@ -91,7 +91,7 @@ namespace GEO {
     struct EXPLORAGRAM_API AxisPermutation {
         AxisPermutation(index_t id=0) {  mid = id; }
         void aligns_B_wrt_ref(mat3 ref, mat3 B);
-    void make_col2_equal_to_z(mat3 B, vec3 z);
+        void make_col2_equal_to_z(mat3 B, vec3 z);
         const mat3& get_mat() const;
         bool is_identity() { return mid == 0; }
         double operator()(index_t i, index_t j) {return get_mat()(i, j); }
@@ -116,11 +116,11 @@ namespace GEO {
 
         inline mat3 apply_permutation(AxisPermutation& ap) {return r*ap.get_mat();}
 
-    void make_z_equal_to(vec3 z);
+        void make_z_equal_to(vec3 z);
 
-    static mat3 average_frame(vector<mat3>& data);
-    static mat3 representative_frame(vector<vec3>& bunch_of_vectors, vector<double>& w);
-    static mat3 representative_frame(vector<vec3>& bunch_of_vectors);
+        static mat3 average_frame(vector<mat3>& data);
+        static mat3 representative_frame(vector<vec3>& bunch_of_vectors, vector<double>& w);
+        static mat3 representative_frame(vector<vec3>& bunch_of_vectors);
     };
 
     /***

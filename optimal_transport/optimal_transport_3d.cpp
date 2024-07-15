@@ -145,485 +145,485 @@ namespace {
      *  Newton and BFGS mode.
      */
     class OTMPolyhedronCallback :
-    public OptimalTransportMap::Callback,
-    public RVDPolyhedronCallback {
+        public OptimalTransportMap::Callback,
+        public RVDPolyhedronCallback {
 
     public:
-    /**
-     * \brief OTMPolyhedronCallback constructor.
-     * \param[in] OTM a pointer to the OptimalTransportMap3d
-     */
-    OTMPolyhedronCallback(OptimalTransportMap3d* OTM) :
-        OptimalTransportMap::Callback(OTM) {
-    }
-
-    /**
-     * \copydoc RVDPolyhedronCallback::operator()
-     */
-    void operator() (
-        index_t v,
-        index_t t,
-        const GEOGen::ConvexCell& C
-    ) const override {
-        // v can be an air particle.
-        if(v >= n_) {
-        return;
+        /**
+         * \brief OTMPolyhedronCallback constructor.
+         * \param[in] OTM a pointer to the OptimalTransportMap3d
+         */
+        OTMPolyhedronCallback(OptimalTransportMap3d* OTM) :
+            OptimalTransportMap::Callback(OTM) {
         }
 
-        geo_argused(t);
+        /**
+         * \copydoc RVDPolyhedronCallback::operator()
+         */
+        void operator() (
+            index_t v,
+            index_t t,
+            const GEOGen::ConvexCell& C
+        ) const override {
+            // v can be an air particle.
+            if(v >= n_) {
+                return;
+            }
 
-        double m, mgx, mgy, mgz;
-        compute_m_and_mg(C, m, mgx, mgy, mgz);
+            geo_argused(t);
 
-        if(spinlocks_ != nullptr) {
-        spinlocks_->acquire_spinlock(v);
+            double m, mgx, mgy, mgz;
+            compute_m_and_mg(C, m, mgx, mgy, mgz);
+
+            if(spinlocks_ != nullptr) {
+                spinlocks_->acquire_spinlock(v);
+            }
+
+            // +m because we maximize F <=> minimize -F
+            g_[v] += m;
+
+            if(Newton_step_) {
+                // ... but here -m because Newton step =
+                //  solve H p = -g    (minus g in the RHS).
+                OTM_->add_i_right_hand_side(v,-m);
+            }
+
+            if(mg_ != nullptr) {
+                mg_[3*v] += mgx;
+                mg_[3*v+1] += mgy;
+                mg_[3*v+2] += mgz;
+            }
+
+            if(spinlocks_ != nullptr) {
+                spinlocks_->release_spinlock(v);
+            }
+
+            if(Newton_step_) {
+                // Spinlocks are managed internally by update_Hessian().
+                update_Hessian(C, v);
+            }
+
+            if(eval_F_) {
+                Thread* thread = Thread::current();
+                index_t current_thread_id =
+                    (thread == nullptr) ? 0 : thread->id();
+                double F = weighted_ ? eval_F_weighted(C, v) : eval_F(C, v);
+                const_cast<OTMPolyhedronCallback*>(this)->
+                    funcval_[current_thread_id] += F;
+            }
         }
-
-        // +m because we maximize F <=> minimize -F
-        g_[v] += m;
-
-        if(Newton_step_) {
-        // ... but here -m because Newton step =
-        //  solve H p = -g    (minus g in the RHS).
-        OTM_->add_i_right_hand_side(v,-m);
-        }
-
-        if(mg_ != nullptr) {
-        mg_[3*v] += mgx;
-        mg_[3*v+1] += mgy;
-        mg_[3*v+2] += mgz;
-        }
-
-        if(spinlocks_ != nullptr) {
-        spinlocks_->release_spinlock(v);
-        }
-
-        if(Newton_step_) {
-        // Spinlocks are managed internally by update_Hessian().
-        update_Hessian(C, v);
-        }
-
-        if(eval_F_) {
-        Thread* thread = Thread::current();
-        index_t current_thread_id =
-            (thread == nullptr) ? 0 : thread->id();
-        double F = weighted_ ? eval_F_weighted(C, v) : eval_F(C, v);
-        const_cast<OTMPolyhedronCallback*>(this)->
-            funcval_[current_thread_id] += F;
-        }
-    }
 
     protected:
 
-    /**
-     * \brief Computes the mass and mass times centroid of the
-     *  current ConvexCell.
-     * \details Weights are taken into account if present.
-     * \param[in] C a const reference to the current ConvexCell
-     * \param[out] m , mgx , mgy , mgz the mass and the mass times the
-     *  centroid of the ConvexCell. mgx, mgy and mgz are not computed
-     *  if mg_ is nullptr.
-     */
-    void compute_m_and_mg(
-        const GEOGen::ConvexCell& C,
-        double& m, double& mgx, double& mgy, double& mgz
-    ) const {
+        /**
+         * \brief Computes the mass and mass times centroid of the
+         *  current ConvexCell.
+         * \details Weights are taken into account if present.
+         * \param[in] C a const reference to the current ConvexCell
+         * \param[out] m , mgx , mgy , mgz the mass and the mass times the
+         *  centroid of the ConvexCell. mgx, mgy and mgz are not computed
+         *  if mg_ is nullptr.
+         */
+        void compute_m_and_mg(
+            const GEOGen::ConvexCell& C,
+            double& m, double& mgx, double& mgy, double& mgz
+        ) const {
 
-        m = 0.0;
-        mgx = 0.0;
-        mgy = 0.0;
-        mgz = 0.0;
-
-
-        // Find one vertex V0 of the Convex Cell. It will be then decomposed
-        // into tetrahedra radiating from V0.
-        const GEOGen::Vertex* V0 = nullptr;
-        for(index_t ct=0; ct < C.max_t(); ++ct) {
-        if(C.triangle_is_used(ct)) {
-            V0 = &C.triangle_dual(ct);
-            break;
-        }
-        }
-        if(V0 == nullptr) {
-        return;
-        }
+            m = 0.0;
+            mgx = 0.0;
+            mgy = 0.0;
+            mgz = 0.0;
 
 
-        // Iterate on all the vertices of the convex cell.
-        // The vertices associated to no triangle are skipped.
-        // Note: the convex cell is in dual form, thus a
-        // vertex of the ConvexCell corresponds to a polygonal
-        // facet.
-        for(index_t cv = 0; cv < C.max_v(); ++cv) {
-        signed_index_t ct = C.vertex_triangle(cv);
-        if(ct == -1) {
-            continue;
-        }
-        geo_debug_assert(C.triangle_is_used(index_t(ct)));
-
-
-        // Iterate around the facet vertices (that correspond
-        // to the current vertex in dual form). The polygonal
-        // facet is triangulated. The triangles that contain
-        // the vertex V0 are skipped (their volume is zero).
-        GEOGen::ConvexCell::Corner first(
-            index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
-        );
-        const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
-        const GEOGen::Vertex* V2 = nullptr;
-        const GEOGen::Vertex* V3 = nullptr;
-        const double* p0 = V0->point();
-        GEOGen::ConvexCell::Corner c = first;
-        do {
-            V2 = V3;
-            V3 = &C.triangle_dual(c.t);
-            if(
-            V2 != nullptr && V3 != V1 &&
-            V1 != V0 && V2 != V0 && V3 != V0
-            ) {
-            const double* p1 = V1->point();
-            const double* p2 = V2->point();
-            const double* p3 = V3->point();
-            double cur_m = GEO::Geom::tetra_volume<3>(p0,p1,p2,p3);
-            if(weighted_) {
-                double w0 = V0->weight();
-                double w1 = V1->weight();
-                double w2 = V2->weight();
-                double w3 = V3->weight();
-                double S =  w0+w1+w2+w3;
-                if(mg_ != nullptr) {
-                mgx += 0.25*cur_m*(
-                    w0*p0[0]+w1*p1[0]+w2*p2[0]+w3*p3[0]
-                );
-                mgy += 0.25*cur_m*(
-                    w0*p0[1]+w1*p1[1]+w2*p2[1]+w3*p3[1]
-                );
-                mgz += 0.25*cur_m*(
-                    w0*p0[2]+w1*p1[2]+w2*p2[2]+w3*p3[2]
-                );
-                }
-                cur_m *= (S/4.0);
-            } else {
-                if(mg_ != nullptr) {
-                mgx += 0.25*cur_m*(p0[0]+p1[0]+p2[0]+p3[0]);
-                mgy += 0.25*cur_m*(p0[1]+p1[1]+p2[1]+p3[1]);
-                mgz += 0.25*cur_m*(p0[2]+p1[2]+p2[2]+p3[2]);
+            // Find one vertex V0 of the Convex Cell. It will be then decomposed
+            // into tetrahedra radiating from V0.
+            const GEOGen::Vertex* V0 = nullptr;
+            for(index_t ct=0; ct < C.max_t(); ++ct) {
+                if(C.triangle_is_used(ct)) {
+                    V0 = &C.triangle_dual(ct);
+                    break;
                 }
             }
-            m += cur_m;
+            if(V0 == nullptr) {
+                return;
             }
-            C.move_to_next_around_vertex(c);
-        } while(c != first);
-        }
 
-    }
 
-    /**
-     * \brief Updates the Hessian according to the current ConvexCell.
-     * \param[in] C a const reference to the current ConvexCell
-     * \param[in] v the current seed
-     */
-    void update_Hessian(
-        const GEOGen::ConvexCell& C, index_t v
-    ) const {
-        // The coefficient of the Hessian associated to a pair of
-        // adjacent cells Lag(i),Lag(j) is :
-        // - mass(Lag(i) /\ Lag(j)) / (2*distance(pi,pj))
+            // Iterate on all the vertices of the convex cell.
+            // The vertices associated to no triangle are skipped.
+            // Note: the convex cell is in dual form, thus a
+            // vertex of the ConvexCell corresponds to a polygonal
+            // facet.
+            for(index_t cv = 0; cv < C.max_v(); ++cv) {
+                signed_index_t ct = C.vertex_triangle(cv);
+                if(ct == -1) {
+                    continue;
+                }
+                geo_debug_assert(C.triangle_is_used(index_t(ct)));
 
-        const double* p0 = OTM_->point_ptr(v);
 
-        // Iterate on all the vertices of the convex cell.
-        // The vertices associated to no triangle are skipped.
-        // Note: the convex cell is in dual form, thus a
-        // vertex of the ConvexCell corresponds to a polygonal
-        // facet.
-
-        for(index_t cv = 0; cv < C.max_v(); ++cv) {
-        signed_index_t ct = C.vertex_triangle(cv);
-        if(ct == -1) {
-            continue;
-        }
-        geo_debug_assert(C.triangle_is_used(index_t(ct)));
-
-        // Get index of adjacent seed if any.
-        index_t v_adj = index_t(-1);
-        signed_index_t adjacent = C.vertex_id(cv);
-        if(adjacent > 0) {
-            // Positive adjacent indices correspond to
-            // Voronoi seed - Voronoi seed link
-            v_adj = index_t(adjacent - 1);
-        }
-        if(v_adj == index_t(-1)) {
-            continue;
-        }
-
-        double hij = 0;
-
-        // Iterate around the facet vertices (that correspond
-        // to the current vertex in dual form). The polygonal
-        // facet is triangulated.
-
-        GEOGen::ConvexCell::Corner first(
-            index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
-        );
-        const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
-        const GEOGen::Vertex* V2 = nullptr;
-        const GEOGen::Vertex* V3 = nullptr;
-        GEOGen::ConvexCell::Corner c = first;
-        do {
-            V2 = V3;
-            V3 = &C.triangle_dual(c.t);
-            if(V2 != nullptr && V3 != V1) {
-            double cur_m = GEO::Geom::triangle_area_3d(
-                V1->point(),V2->point(),V3->point()
-            );
-            if(weighted_) {
-                cur_m *= (
-                V1->weight()+V2->weight()+V3->weight()
-                )/3.0;
-            }
-            hij += cur_m;
-            }
-            C.move_to_next_around_vertex(c);
-        } while(c != first);
-
-        const double* p1 = OTM_->point_ptr(v_adj);
-        hij /= (2.0 * GEO::Geom::distance(p0,p1,3));
-
-        if(spinlocks_ != nullptr) {
-            spinlocks_->acquire_spinlock(v);
-        }
-
-        // Diagonal is positive, extra-diagonal
-        // coefficients are negative,
-        // this is a convex function.
-
-        if(v_adj < n_) {
-            OTM_->add_ij_coefficient(
-            v, v_adj, -hij
-            );
-        }
-        OTM_->add_ij_coefficient(
-            v, v, hij
+                // Iterate around the facet vertices (that correspond
+                // to the current vertex in dual form). The polygonal
+                // facet is triangulated. The triangles that contain
+                // the vertex V0 are skipped (their volume is zero).
+                GEOGen::ConvexCell::Corner first(
+                    index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
                 );
+                const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
+                const GEOGen::Vertex* V2 = nullptr;
+                const GEOGen::Vertex* V3 = nullptr;
+                const double* p0 = V0->point();
+                GEOGen::ConvexCell::Corner c = first;
+                do {
+                    V2 = V3;
+                    V3 = &C.triangle_dual(c.t);
+                    if(
+                        V2 != nullptr && V3 != V1 &&
+                        V1 != V0 && V2 != V0 && V3 != V0
+                    ) {
+                        const double* p1 = V1->point();
+                        const double* p2 = V2->point();
+                        const double* p3 = V3->point();
+                        double cur_m = GEO::Geom::tetra_volume<3>(p0,p1,p2,p3);
+                        if(weighted_) {
+                            double w0 = V0->weight();
+                            double w1 = V1->weight();
+                            double w2 = V2->weight();
+                            double w3 = V3->weight();
+                            double S =  w0+w1+w2+w3;
+                            if(mg_ != nullptr) {
+                                mgx += 0.25*cur_m*(
+                                    w0*p0[0]+w1*p1[0]+w2*p2[0]+w3*p3[0]
+                                );
+                                mgy += 0.25*cur_m*(
+                                    w0*p0[1]+w1*p1[1]+w2*p2[1]+w3*p3[1]
+                                );
+                                mgz += 0.25*cur_m*(
+                                    w0*p0[2]+w1*p1[2]+w2*p2[2]+w3*p3[2]
+                                );
+                            }
+                            cur_m *= (S/4.0);
+                        } else {
+                            if(mg_ != nullptr) {
+                                mgx += 0.25*cur_m*(p0[0]+p1[0]+p2[0]+p3[0]);
+                                mgy += 0.25*cur_m*(p0[1]+p1[1]+p2[1]+p3[1]);
+                                mgz += 0.25*cur_m*(p0[2]+p1[2]+p2[2]+p3[2]);
+                            }
+                        }
+                        m += cur_m;
+                    }
+                    C.move_to_next_around_vertex(c);
+                } while(c != first);
+            }
 
-        if(spinlocks_ != nullptr) {
-            spinlocks_->release_spinlock(v);
         }
-        }
-    }
 
-    /**
-     * \brief Computes the contribution of the current ConvexCell
-     *  to the objective function, in the uniform (non-weighted)
-     *  case.
-     * \param[in] C a const reference to the current ConvexCell
-     * \param[in] v the current seed
-     */
-    double eval_F(const GEOGen::ConvexCell& C, index_t v) const {
+        /**
+         * \brief Updates the Hessian according to the current ConvexCell.
+         * \param[in] C a const reference to the current ConvexCell
+         * \param[in] v the current seed
+         */
+        void update_Hessian(
+            const GEOGen::ConvexCell& C, index_t v
+        ) const {
+            // The coefficient of the Hessian associated to a pair of
+            // adjacent cells Lag(i),Lag(j) is :
+            // - mass(Lag(i) /\ Lag(j)) / (2*distance(pi,pj))
 
-        // Note: we compute F as a sum of integrals over (signed)
-        // tetrahedra; formed by vertex v and triplets of cell
-        // vertices. The contribution of F is simpler to compute
-        // if v is a vertex of the tetrahedron. Since we use
-        // signed tetrahedra, portions of tetrahedra that are
-        // outside the cell cancel-out ("a-la" Stokes theorem).
-
-        geo_debug_assert(!weighted_);
-
-        double F = 0.0;
-
-        // Iterate on all the vertices of the convex cell.
-        // The vertices associated to no triangle are skipped.
-        // Note: the convex cell is in dual form, thus a
-        // vertex of the ConvexCell corresponds to a polygonal
-        // facet.
-
-        for(index_t cv = 0; cv < C.max_v(); ++cv) {
-        signed_index_t ct = C.vertex_triangle(cv);
-        if(ct == -1) {
-            continue;
-        }
-        geo_debug_assert(C.triangle_is_used(index_t(ct)));
-
-
-        // Iterate around the facet vertices (that correspond
-        // to the current vertex in dual form). The polygonal
-        // facet is triangulated.
-
-        GEOGen::ConvexCell::Corner first(
-            index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
-        );
-        const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
-        const GEOGen::Vertex* V2 = nullptr;
-        const GEOGen::Vertex* V3 = nullptr;
-        GEOGen::ConvexCell::Corner c = first;
-        do {
-            V2 = V3;
-            V3 = &C.triangle_dual(c.t);
-            if(V2 != nullptr && V3 != V1) {
             const double* p0 = OTM_->point_ptr(v);
-            const double* p1 = V1->point();
-            const double* p2 = V2->point();
-            const double* p3 = V3->point();
-            double m = Geom::tetra_signed_volume(p0, p1, p2, p3);
-            double fT = 0.0;
-            for(coord_index_t cc = 0; cc < 3; ++cc) {
-                double Uc = p1[cc] - p0[cc];
-                double Vc = p2[cc] - p0[cc];
-                double Wc = p3[cc] - p0[cc];
-                fT +=
-                Uc * Uc +
-                Vc * Vc +
-                Wc * Wc +
-                Uc * Vc +
-                Vc * Wc +
-                Wc * Uc;
+
+            // Iterate on all the vertices of the convex cell.
+            // The vertices associated to no triangle are skipped.
+            // Note: the convex cell is in dual form, thus a
+            // vertex of the ConvexCell corresponds to a polygonal
+            // facet.
+
+            for(index_t cv = 0; cv < C.max_v(); ++cv) {
+                signed_index_t ct = C.vertex_triangle(cv);
+                if(ct == -1) {
+                    continue;
+                }
+                geo_debug_assert(C.triangle_is_used(index_t(ct)));
+
+                // Get index of adjacent seed if any.
+                index_t v_adj = index_t(-1);
+                signed_index_t adjacent = C.vertex_id(cv);
+                if(adjacent > 0) {
+                    // Positive adjacent indices correspond to
+                    // Voronoi seed - Voronoi seed link
+                    v_adj = index_t(adjacent - 1);
+                }
+                if(v_adj == index_t(-1)) {
+                    continue;
+                }
+
+                double hij = 0;
+
+                // Iterate around the facet vertices (that correspond
+                // to the current vertex in dual form). The polygonal
+                // facet is triangulated.
+
+                GEOGen::ConvexCell::Corner first(
+                    index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
+                );
+                const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
+                const GEOGen::Vertex* V2 = nullptr;
+                const GEOGen::Vertex* V3 = nullptr;
+                GEOGen::ConvexCell::Corner c = first;
+                do {
+                    V2 = V3;
+                    V3 = &C.triangle_dual(c.t);
+                    if(V2 != nullptr && V3 != V1) {
+                        double cur_m = GEO::Geom::triangle_area_3d(
+                            V1->point(),V2->point(),V3->point()
+                        );
+                        if(weighted_) {
+                            cur_m *= (
+                                V1->weight()+V2->weight()+V3->weight()
+                            )/3.0;
+                        }
+                        hij += cur_m;
+                    }
+                    C.move_to_next_around_vertex(c);
+                } while(c != first);
+
+                const double* p1 = OTM_->point_ptr(v_adj);
+                hij /= (2.0 * GEO::Geom::distance(p0,p1,3));
+
+                if(spinlocks_ != nullptr) {
+                    spinlocks_->acquire_spinlock(v);
+                }
+
+                // Diagonal is positive, extra-diagonal
+                // coefficients are negative,
+                // this is a convex function.
+
+                if(v_adj < n_) {
+                    OTM_->add_ij_coefficient(
+                        v, v_adj, -hij
+                    );
+                }
+                OTM_->add_ij_coefficient(
+                    v, v, hij
+                );
+
+                if(spinlocks_ != nullptr) {
+                    spinlocks_->release_spinlock(v);
+                }
             }
-            fT = m * (fT / 10.0 - w_[v]);
-            F += fT;
-            }
-            C.move_to_next_around_vertex(c);
-        } while(c != first);
         }
+
+        /**
+         * \brief Computes the contribution of the current ConvexCell
+         *  to the objective function, in the uniform (non-weighted)
+         *  case.
+         * \param[in] C a const reference to the current ConvexCell
+         * \param[in] v the current seed
+         */
+        double eval_F(const GEOGen::ConvexCell& C, index_t v) const {
+
+            // Note: we compute F as a sum of integrals over (signed)
+            // tetrahedra; formed by vertex v and triplets of cell
+            // vertices. The contribution of F is simpler to compute
+            // if v is a vertex of the tetrahedron. Since we use
+            // signed tetrahedra, portions of tetrahedra that are
+            // outside the cell cancel-out ("a-la" Stokes theorem).
+
+            geo_debug_assert(!weighted_);
+
+            double F = 0.0;
+
+            // Iterate on all the vertices of the convex cell.
+            // The vertices associated to no triangle are skipped.
+            // Note: the convex cell is in dual form, thus a
+            // vertex of the ConvexCell corresponds to a polygonal
+            // facet.
+
+            for(index_t cv = 0; cv < C.max_v(); ++cv) {
+                signed_index_t ct = C.vertex_triangle(cv);
+                if(ct == -1) {
+                    continue;
+                }
+                geo_debug_assert(C.triangle_is_used(index_t(ct)));
+
+
+                // Iterate around the facet vertices (that correspond
+                // to the current vertex in dual form). The polygonal
+                // facet is triangulated.
+
+                GEOGen::ConvexCell::Corner first(
+                    index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
+                );
+                const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
+                const GEOGen::Vertex* V2 = nullptr;
+                const GEOGen::Vertex* V3 = nullptr;
+                GEOGen::ConvexCell::Corner c = first;
+                do {
+                    V2 = V3;
+                    V3 = &C.triangle_dual(c.t);
+                    if(V2 != nullptr && V3 != V1) {
+                        const double* p0 = OTM_->point_ptr(v);
+                        const double* p1 = V1->point();
+                        const double* p2 = V2->point();
+                        const double* p3 = V3->point();
+                        double m = Geom::tetra_signed_volume(p0, p1, p2, p3);
+                        double fT = 0.0;
+                        for(coord_index_t cc = 0; cc < 3; ++cc) {
+                            double Uc = p1[cc] - p0[cc];
+                            double Vc = p2[cc] - p0[cc];
+                            double Wc = p3[cc] - p0[cc];
+                            fT +=
+                                Uc * Uc +
+                                Vc * Vc +
+                                Wc * Wc +
+                                Uc * Vc +
+                                Vc * Wc +
+                                Wc * Uc;
+                        }
+                        fT = m * (fT / 10.0 - w_[v]);
+                        F += fT;
+                    }
+                    C.move_to_next_around_vertex(c);
+                } while(c != first);
+            }
             // -F because we maximize F <=> minimize -F
-        return -F;
-    }
-
-
-    /**
-     * \brief Computes the contribution of the current ConvexCell
-     *  to the objective function, in the weighted case.
-     * \param[in] C a const reference to the current ConvexCell
-     * \param[in] v the current seed
-     */
-    double eval_F_weighted(const GEOGen::ConvexCell& C, index_t v) const {
-        double F = 0.0;
-
-
-        // Find one vertex V0 of the Convex Cell. It will be then decomposed
-        // into tetrahedra radiating from V0.
-        const GEOGen::Vertex* V0 = nullptr;
-        for(index_t ct=0; ct < C.max_t(); ++ct) {
-        if(C.triangle_is_used(ct)) {
-            V0 = &C.triangle_dual(ct);
-            break;
-        }
-        }
-        if(V0 == nullptr) {
-        return F;
+            return -F;
         }
 
-        // Iterate on all the vertices of the convex cell.
-        // The vertices associated to no triangle are skipped.
-        // Note: the convex cell is in dual form, thus a
-        // vertex of the ConvexCell corresponds to a polygonal
-        // facet.
-        for(index_t cv = 0; cv < C.max_v(); ++cv) {
-        signed_index_t ct = C.vertex_triangle(cv);
-        if(ct == -1) {
-            continue;
-        }
-        geo_debug_assert(C.triangle_is_used(index_t(ct)));
+
+        /**
+         * \brief Computes the contribution of the current ConvexCell
+         *  to the objective function, in the weighted case.
+         * \param[in] C a const reference to the current ConvexCell
+         * \param[in] v the current seed
+         */
+        double eval_F_weighted(const GEOGen::ConvexCell& C, index_t v) const {
+            double F = 0.0;
 
 
-        // Iterate around the facet vertices (that correspond
-        // to the current vertex in dual form). The polygonal
-        // facet is triangulated. The triangles that contain
-        // the vertex V0 are skipped (their volume is zero).
-        GEOGen::ConvexCell::Corner first(
-            index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
-        );
-        const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
-        const GEOGen::Vertex* V2 = nullptr;
-        const GEOGen::Vertex* V3 = nullptr;
-        GEOGen::ConvexCell::Corner c = first;
-        do {
-            V2 = V3;
-            V3 = &C.triangle_dual(c.t);
-            if(
-            V2 != nullptr && V3 != V1 &&
-            V1 != V0 && V2 != V0 && V3 != V0
-            ) {
-
-            const double* p0 = V0->point();
-            const double* p1 = V1->point();
-            const double* p2 = V2->point();
-            const double* p3 = V3->point();
-
-            double p0_mass = V0->weight();
-            double p1_mass = V1->weight();
-            double p2_mass = V2->weight();
-            double p3_mass = V3->weight();
-
-            const double* q = OTM_->point_ptr(v);
-
-            double Tvol = GEO::Geom::tetra_volume<3>(p0,p1,p2,p3);
-            double Sp = p0_mass + p1_mass + p2_mass + p3_mass;
-
-            double m = (Tvol * Sp) / 4.0;
-            double rho[4], alpha[4];
-
-            rho[0] = p0_mass;
-            rho[1] = p1_mass;
-            rho[2] = p2_mass;
-            rho[3] = p3_mass;
-
-            alpha[0] = Sp + rho[0];
-            alpha[1] = Sp + rho[1];
-            alpha[2] = Sp + rho[2];
-            alpha[3] = Sp + rho[3];
-
-            double dotprod_00 = 0.0;
-            double dotprod_10 = 0.0;
-            double dotprod_11 = 0.0;
-            double dotprod_20 = 0.0;
-            double dotprod_21 = 0.0;
-            double dotprod_22 = 0.0;
-            double dotprod_30 = 0.0;
-            double dotprod_31 = 0.0;
-            double dotprod_32 = 0.0;
-            double dotprod_33 = 0.0;
-
-            for(coord_index_t cc = 0; cc < 3; ++cc) {
-                double sp0 = q[cc] - p0[cc];
-                double sp1 = q[cc] - p1[cc];
-                double sp2 = q[cc] - p2[cc];
-                double sp3 = q[cc] - p3[cc];
-                dotprod_00 += sp0 * sp0;
-                dotprod_10 += sp1 * sp0;
-                dotprod_11 += sp1 * sp1;
-                dotprod_20 += sp2 * sp0;
-                dotprod_21 += sp2 * sp1;
-                dotprod_22 += sp2 * sp2;
-                dotprod_30 += sp3 * sp0;
-                dotprod_31 += sp3 * sp1;
-                dotprod_32 += sp3 * sp2;
-                dotprod_33 += sp3 * sp3;
+            // Find one vertex V0 of the Convex Cell. It will be then decomposed
+            // into tetrahedra radiating from V0.
+            const GEOGen::Vertex* V0 = nullptr;
+            for(index_t ct=0; ct < C.max_t(); ++ct) {
+                if(C.triangle_is_used(ct)) {
+                    V0 = &C.triangle_dual(ct);
+                    break;
+                }
+            }
+            if(V0 == nullptr) {
+                return F;
             }
 
-            double fT = 0.0;
-            fT += (alpha[0] + rho[0]) * dotprod_00;
-            fT += (alpha[1] + rho[0]) * dotprod_10;
-            fT += (alpha[1] + rho[1]) * dotprod_11;
-            fT += (alpha[2] + rho[0]) * dotprod_20;
-            fT += (alpha[2] + rho[1]) * dotprod_21;
-            fT += (alpha[2] + rho[2]) * dotprod_22;
-            fT += (alpha[3] + rho[0]) * dotprod_30;
-            fT += (alpha[3] + rho[1]) * dotprod_31;
-            fT += (alpha[3] + rho[2]) * dotprod_32;
-            fT += (alpha[3] + rho[3]) * dotprod_33;
+            // Iterate on all the vertices of the convex cell.
+            // The vertices associated to no triangle are skipped.
+            // Note: the convex cell is in dual form, thus a
+            // vertex of the ConvexCell corresponds to a polygonal
+            // facet.
+            for(index_t cv = 0; cv < C.max_v(); ++cv) {
+                signed_index_t ct = C.vertex_triangle(cv);
+                if(ct == -1) {
+                    continue;
+                }
+                geo_debug_assert(C.triangle_is_used(index_t(ct)));
 
-            fT = Tvol * fT / 60.0 - m * w_[v];
 
-            F += fT;
+                // Iterate around the facet vertices (that correspond
+                // to the current vertex in dual form). The polygonal
+                // facet is triangulated. The triangles that contain
+                // the vertex V0 are skipped (their volume is zero).
+                GEOGen::ConvexCell::Corner first(
+                    index_t(ct), C.find_triangle_vertex(index_t(ct), cv)
+                );
+                const GEOGen::Vertex* V1 = &C.triangle_dual(first.t);
+                const GEOGen::Vertex* V2 = nullptr;
+                const GEOGen::Vertex* V3 = nullptr;
+                GEOGen::ConvexCell::Corner c = first;
+                do {
+                    V2 = V3;
+                    V3 = &C.triangle_dual(c.t);
+                    if(
+                        V2 != nullptr && V3 != V1 &&
+                        V1 != V0 && V2 != V0 && V3 != V0
+                    ) {
+
+                        const double* p0 = V0->point();
+                        const double* p1 = V1->point();
+                        const double* p2 = V2->point();
+                        const double* p3 = V3->point();
+
+                        double p0_mass = V0->weight();
+                        double p1_mass = V1->weight();
+                        double p2_mass = V2->weight();
+                        double p3_mass = V3->weight();
+
+                        const double* q = OTM_->point_ptr(v);
+
+                        double Tvol = GEO::Geom::tetra_volume<3>(p0,p1,p2,p3);
+                        double Sp = p0_mass + p1_mass + p2_mass + p3_mass;
+
+                        double m = (Tvol * Sp) / 4.0;
+                        double rho[4], alpha[4];
+
+                        rho[0] = p0_mass;
+                        rho[1] = p1_mass;
+                        rho[2] = p2_mass;
+                        rho[3] = p3_mass;
+
+                        alpha[0] = Sp + rho[0];
+                        alpha[1] = Sp + rho[1];
+                        alpha[2] = Sp + rho[2];
+                        alpha[3] = Sp + rho[3];
+
+                        double dotprod_00 = 0.0;
+                        double dotprod_10 = 0.0;
+                        double dotprod_11 = 0.0;
+                        double dotprod_20 = 0.0;
+                        double dotprod_21 = 0.0;
+                        double dotprod_22 = 0.0;
+                        double dotprod_30 = 0.0;
+                        double dotprod_31 = 0.0;
+                        double dotprod_32 = 0.0;
+                        double dotprod_33 = 0.0;
+
+                        for(coord_index_t cc = 0; cc < 3; ++cc) {
+                            double sp0 = q[cc] - p0[cc];
+                            double sp1 = q[cc] - p1[cc];
+                            double sp2 = q[cc] - p2[cc];
+                            double sp3 = q[cc] - p3[cc];
+                            dotprod_00 += sp0 * sp0;
+                            dotprod_10 += sp1 * sp0;
+                            dotprod_11 += sp1 * sp1;
+                            dotprod_20 += sp2 * sp0;
+                            dotprod_21 += sp2 * sp1;
+                            dotprod_22 += sp2 * sp2;
+                            dotprod_30 += sp3 * sp0;
+                            dotprod_31 += sp3 * sp1;
+                            dotprod_32 += sp3 * sp2;
+                            dotprod_33 += sp3 * sp3;
+                        }
+
+                        double fT = 0.0;
+                        fT += (alpha[0] + rho[0]) * dotprod_00;
+                        fT += (alpha[1] + rho[0]) * dotprod_10;
+                        fT += (alpha[1] + rho[1]) * dotprod_11;
+                        fT += (alpha[2] + rho[0]) * dotprod_20;
+                        fT += (alpha[2] + rho[1]) * dotprod_21;
+                        fT += (alpha[2] + rho[2]) * dotprod_22;
+                        fT += (alpha[3] + rho[0]) * dotprod_30;
+                        fT += (alpha[3] + rho[1]) * dotprod_31;
+                        fT += (alpha[3] + rho[2]) * dotprod_32;
+                        fT += (alpha[3] + rho[3]) * dotprod_33;
+
+                        fT = Tvol * fT / 60.0 - m * w_[v];
+
+                        F += fT;
+                    }
+                    C.move_to_next_around_vertex(c);
+                } while(c != first);
             }
-            C.move_to_next_around_vertex(c);
-        } while(c != first);
-        }
             // -F because we maximize F <=> minimize -F
-        return -F;
-    }
+            return -F;
+        }
 
     };
 
@@ -679,24 +679,24 @@ namespace {
 
 /**********************************************************************/
 
-   /**
-    * \brief Gets the Delaunay implementation that best fits
-    *  user desire.
-    * \param[in] user_delaunay the desired implementation.
-    * \return the available implementation nearest to user desire.
-    */
-   std::string default_delaunay(const std::string& user_delaunay)  {
-      std::string result = "PDEL";
-      if(user_delaunay != "default") {
-     result = user_delaunay;
-      }
+    /**
+     * \brief Gets the Delaunay implementation that best fits
+     *  user desire.
+     * \param[in] user_delaunay the desired implementation.
+     * \return the available implementation nearest to user desire.
+     */
+    std::string default_delaunay(const std::string& user_delaunay)  {
+        std::string result = "PDEL";
+        if(user_delaunay != "default") {
+            result = user_delaunay;
+        }
 #ifndef GEOGRAM_WITH_PDEL
-      if(result == "PDEL") {
-     result = "BPOW";
-      }
+        if(result == "PDEL") {
+            result = "BPOW";
+        }
 #endif
-      return result;
-   }
+        return result;
+    }
 
 
 }
@@ -709,17 +709,17 @@ namespace GEO {
     OptimalTransportMap3d::OptimalTransportMap3d(
         Mesh* mesh, const std::string& delaunay, bool BRIO
     ) : OptimalTransportMap(
-    3,
-    mesh,
+        3,
+        mesh,
         default_delaunay(delaunay),
-    BRIO
+        BRIO
     ) {
-    callback_ = new OTMPolyhedronCallback(this);
-    total_mass_ = total_mesh_mass();
+        callback_ = new OTMPolyhedronCallback(this);
+        total_mass_ = total_mesh_mass();
     }
 
     double OptimalTransportMap3d::total_mesh_mass() const {
-    double result = 0.0;
+        double result = 0.0;
         //   This is terribly confusing, the parameters for
         // a power diagram are called "weights", and the
         // standard attribute name for vertices density is
@@ -750,7 +750,7 @@ namespace GEO {
             }
             result += tet_mass;
         }
-    return result;
+        return result;
     }
 
     OptimalTransportMap3d::~OptimalTransportMap3d() {
@@ -774,23 +774,23 @@ namespace GEO {
         vector<double> g(nb_points(), 0.0);
         Memory::clear(centroids, nb_points()*sizeof(double)*3);
 
-    callback_->set_Laguerre_centroids(centroids);
-    callback_->set_g(g.data());
-    {
-        Stopwatch* W = nullptr;
-        if(newton_) {
-        W = new Stopwatch("RVD");
-        Logger::out("OTM") << "In RVD (centroids)..." << std::endl;
+        callback_->set_Laguerre_centroids(centroids);
+        callback_->set_g(g.data());
+        {
+            Stopwatch* W = nullptr;
+            if(newton_) {
+                W = new Stopwatch("RVD");
+                Logger::out("OTM") << "In RVD (centroids)..." << std::endl;
+            }
+            RVD_->for_each_polyhedron(
+                *dynamic_cast<RVDPolyhedronCallback*>(callback_),
+                false,false,true
+            );
+            if(newton_) {
+                delete W;
+            }
         }
-        RVD_->for_each_polyhedron(
-        *dynamic_cast<RVDPolyhedronCallback*>(callback_),
-        false,false,true
-        );
-        if(newton_) {
-        delete W;
-        }
-    }
-    callback_->set_Laguerre_centroids(nullptr);
+        callback_->set_Laguerre_centroids(nullptr);
 
         for(index_t v=0; v<nb_points(); ++v) {
             centroids[3*v  ] /= g[v];
@@ -800,15 +800,15 @@ namespace GEO {
     }
 
     void OptimalTransportMap3d::call_callback_on_RVD() {
-    RVD_->for_each_polyhedron(
-        *dynamic_cast<RVDPolyhedronCallback*>(callback_),
-        false, // symbolic
-        false, // connected components priority
-        !clip_by_balls_ // parallel
-    );
-    // clip_by_balls deactivates parallel mode, because it needs to access
-    // the PointAllocator of the current thread, and we do not have any
-    // access (for now).
+        RVD_->for_each_polyhedron(
+            *dynamic_cast<RVDPolyhedronCallback*>(callback_),
+            false, // symbolic
+            false, // connected components priority
+            !clip_by_balls_ // parallel
+        );
+        // clip_by_balls deactivates parallel mode, because it needs to access
+        // the PointAllocator of the current thread, and we do not have any
+        // access (for now).
     }
 
     /**********************************************************************/
@@ -818,9 +818,9 @@ namespace GEO {
         index_t nb_points,
         const double* points,
         double* centroids,
-    RVDPolyhedronCallback* cb,
-    bool verbose,
-    index_t nb_iter
+        RVDPolyhedronCallback* cb,
+        bool verbose,
+        index_t nb_iter
     ) {
         omega->vertices.set_dimension(4);
 
@@ -828,22 +828,22 @@ namespace GEO {
         // (OTM does not use multilevel and lets Delaunay
         //  reorder the vertices)
         OptimalTransportMap3d OTM(
-        omega,
-        "PDEL",
-        false
-    );
+            omega,
+            "PDEL",
+            false
+        );
 
         OTM.set_regularization(1e-3);
         OTM.set_Newton(true);
         OTM.set_points(nb_points, points);
         OTM.set_epsilon(0.01);
-    OTM.set_Laguerre_centroids(centroids);
-    OTM.set_verbose(verbose);
+        OTM.set_Laguerre_centroids(centroids);
+        OTM.set_verbose(verbose);
         OTM.optimize(nb_iter);
 
-    if(cb != nullptr) {
-        OTM.RVD()->for_each_polyhedron(*cb,false,false,false);
-    }
+        if(cb != nullptr) {
+            OTM.RVD()->for_each_polyhedron(*cb,false,false,false);
+        }
 
         omega->vertices.set_dimension(3);
     }
@@ -946,14 +946,14 @@ namespace {
             RVD.vertices.set_dimension(3);
             RVD.cells.connect();
 
-        /*
-            if(CmdLine::get_arg_bool("RVD")) {
-                MeshIOFlags flags;
-                flags.set_element(MESH_CELLS);
-                flags.set_attribute(MESH_CELL_REGION);
-                mesh_save(RVD, "RVD.meshb", flags);
-            }
-        */
+            /*
+              if(CmdLine::get_arg_bool("RVD")) {
+              MeshIOFlags flags;
+              flags.set_element(MESH_CELLS);
+              flags.set_attribute(MESH_CELL_REGION);
+              mesh_save(RVD, "RVD.meshb", flags);
+              }
+            */
 
             for(index_t t = 0; t < RVD.cells.nb(); ++t) {
                 index_t v =  tet_region[t];

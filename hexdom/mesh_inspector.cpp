@@ -100,87 +100,87 @@ namespace GEO {
     bool surface_is_manifold(Mesh* m, std::string& msg) {
         if (m->facets.nb() == 0) return true;
         {
-        // check for duplicated corners around a face
-        FOR(f, m->facets.nb()) FOR(fc, m->facets.nb_corners(f))
-            if (m->facets.vertex(f, fc) == m->facets.vertex(f, next_mod(fc, m->facets.nb_corners(f)))) {
-                msg = "duplicated corner detected on  (face = " + String::to_string(f) + " , local corner = " + String::to_string(fc) + " , vertex = " +
-            String::to_string(m->facets.vertex(f, fc));
+            // check for duplicated corners around a face
+            FOR(f, m->facets.nb()) FOR(fc, m->facets.nb_corners(f))
+                if (m->facets.vertex(f, fc) == m->facets.vertex(f, next_mod(fc, m->facets.nb_corners(f)))) {
+                    msg = "duplicated corner detected on  (face = " + String::to_string(f) + " , local corner = " + String::to_string(fc) + " , vertex = " +
+                        String::to_string(m->facets.vertex(f, fc));
+                    return false;
+                }
+            // output the type of surface
+            index_t nb_edges_par_facets = m->facets.nb_corners(0);
+            FOR(f, m->facets.nb()) if (m->facets.nb_corners(f) != nb_edges_par_facets) nb_edges_par_facets = index_t(-1);
+            if (nb_edges_par_facets != index_t(-1)) plop(nb_edges_par_facets);
+
+            // check if the mesh is manifold
+
+            Attribute<int> nb_opp(m->facet_corners.attributes(), "nb_opp");
+            Attribute<int> nb_occ(m->facet_corners.attributes(), "nb_occ");
+            FOR(h, m->facet_corners.nb()) { nb_opp[h] = 0; nb_occ[h] = 0; }
+
+            // edge connectivity
+            FacetsExtraConnectivity fec(m);
+            int nb_0_opp = 0;
+            //int nb_1_opp = 0;
+            int nb_multiple_opp = 0;
+            int nb_duplicated_edge = 0;
+            FOR(h, m->facet_corners.nb()) {
+                index_t cir = h;
+                index_t result = NOT_AN_ID; // not found
+                do {
+                    index_t candidate = fec.prev(cir);
+                    if ((fec.org(candidate) == fec.dest(h)) && (fec.dest(candidate) == fec.org(h))) {
+                        nb_opp[h]++;
+                        if (result == NOT_AN_ID) result = candidate;
+                        else nb_multiple_opp++;
+                    }
+                    if (cir != h && fec.dest(h) == fec.dest(cir)) {
+                        nb_duplicated_edge++;
+                        nb_occ[h]++;
+                    }
+                    cir = fec.c2c[cir];
+                } while (cir != h);
+                if (result == NOT_AN_ID)nb_0_opp++;
+                //else nb_1_opp++;
+            }
+
+
+            if (nb_0_opp > 0) {
+                msg = "surface have halfedges without opposite, nb= " + String::to_string(nb_0_opp);
                 return false;
             }
-        // output the type of surface
-        index_t nb_edges_par_facets = m->facets.nb_corners(0);
-        FOR(f, m->facets.nb()) if (m->facets.nb_corners(f) != nb_edges_par_facets) nb_edges_par_facets = index_t(-1);
-        if (nb_edges_par_facets != index_t(-1)) plop(nb_edges_par_facets);
-
-        // check if the mesh is manifold
-
-        Attribute<int> nb_opp(m->facet_corners.attributes(), "nb_opp");
-        Attribute<int> nb_occ(m->facet_corners.attributes(), "nb_occ");
-        FOR(h, m->facet_corners.nb()) { nb_opp[h] = 0; nb_occ[h] = 0; }
-
-        // edge connectivity
-        FacetsExtraConnectivity fec(m);
-        int nb_0_opp = 0;
-        //int nb_1_opp = 0;
-        int nb_multiple_opp = 0;
-        int nb_duplicated_edge = 0;
-        FOR(h, m->facet_corners.nb()) {
-            index_t cir = h;
-            index_t result = NOT_AN_ID; // not found
-            do {
-                index_t candidate = fec.prev(cir);
-                if ((fec.org(candidate) == fec.dest(h)) && (fec.dest(candidate) == fec.org(h))) {
-                    nb_opp[h]++;
-                    if (result == NOT_AN_ID) result = candidate;
-                    else nb_multiple_opp++;
-                }
-                if (cir != h && fec.dest(h) == fec.dest(cir)) {
-                    nb_duplicated_edge++;
-                    nb_occ[h]++;
-                }
-                cir = fec.c2c[cir];
-            } while (cir != h);
-            if (result == NOT_AN_ID)nb_0_opp++;
-            //else nb_1_opp++;
-        }
-
-
-        if (nb_0_opp > 0) {
-            msg = "surface have halfedges without opposite, nb= " + String::to_string(nb_0_opp);
-            return false;
-        }
-        if (nb_multiple_opp > 0) {
-            msg = "surface have halfedge with more than 2 opposites, nb= " + String::to_string(nb_multiple_opp);
-            return false;
-        }
-        if (nb_duplicated_edge > 0) {
-            msg = "halfedge appears in more than one facet, nb= " + String::to_string(nb_duplicated_edge);
-            return false;
-        }
-
-        // check for non manifold vertices
-        Attribute<bool> nonmanifold(m->vertices.attributes(), "nonmanifold");
-        FOR(v, m->vertices.nb()) nonmanifold[v] = false;
-
-        FOR(h, m->facet_corners.nb()) {
-            if (nb_opp[h] != 1 || nb_occ[h] != 0)
-                nonmanifold[fec.org(h)] = true;
-        }
-        vector<int> val(m->vertices.nb(), 0);
-        FOR(f, m->facets.nb()) FOR(lc, m->facets.nb_vertices(f)) val[m->facets.vertex(f, lc)]++;
-        FOR(h, m->facet_corners.nb()) {
-            int nb = 0;
-            index_t cir = h;
-            do {
-                nb++;
-                cir = fec.next_around_vertex(cir);// fec.c2c[cir];
-            } while (cir != h);
-            if (nb != val[fec.org(h)]) {
-                msg = "Vertex " + String::to_string(fec.org(h)) + " is non manifold ";
+            if (nb_multiple_opp > 0) {
+                msg = "surface have halfedge with more than 2 opposites, nb= " + String::to_string(nb_multiple_opp);
                 return false;
             }
+            if (nb_duplicated_edge > 0) {
+                msg = "halfedge appears in more than one facet, nb= " + String::to_string(nb_duplicated_edge);
+                return false;
+            }
+
+            // check for non manifold vertices
+            Attribute<bool> nonmanifold(m->vertices.attributes(), "nonmanifold");
+            FOR(v, m->vertices.nb()) nonmanifold[v] = false;
+
+            FOR(h, m->facet_corners.nb()) {
+                if (nb_opp[h] != 1 || nb_occ[h] != 0)
+                    nonmanifold[fec.org(h)] = true;
+            }
+            vector<int> val(m->vertices.nb(), 0);
+            FOR(f, m->facets.nb()) FOR(lc, m->facets.nb_vertices(f)) val[m->facets.vertex(f, lc)]++;
+            FOR(h, m->facet_corners.nb()) {
+                int nb = 0;
+                index_t cir = h;
+                do {
+                    nb++;
+                    cir = fec.next_around_vertex(cir);// fec.c2c[cir];
+                } while (cir != h);
+                if (nb != val[fec.org(h)]) {
+                    msg = "Vertex " + String::to_string(fec.org(h)) + " is non manifold ";
+                    return false;
+                }
+            }
         }
-    }
         m->vertices.attributes().delete_attribute_store("nonmanifold");
         m->facet_corners.attributes().delete_attribute_store("nb_opp");
         m->facet_corners.attributes().delete_attribute_store("nb_occ");
@@ -189,8 +189,8 @@ namespace GEO {
     void get_facet_stats(Mesh* m, const char * msg, bool export_attribs) {
         geo_argused(export_attribs);
         GEO::Logger::out("HexDom")  << "-----------------------------------------" <<  std::endl;
-    GEO::Logger::out("HexDom")  << "get_facet_stats  " << msg <<  std::endl;
-    GEO::Logger::out("HexDom")  << "-----------------------------------------" <<  std::endl;
+        GEO::Logger::out("HexDom")  << "get_facet_stats  " << msg <<  std::endl;
+        GEO::Logger::out("HexDom")  << "-----------------------------------------" <<  std::endl;
 
         {
             Attribute<int> nb_opp(m->facet_corners.attributes(), "nb_opp");

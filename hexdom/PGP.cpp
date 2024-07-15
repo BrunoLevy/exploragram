@@ -247,25 +247,25 @@ namespace GEO {
                         FOR(i, 4) can_be_ref[i] = can_be_ref[i] && local_can_be_ref[i];
                     }
                 }
-                org = NOT_AN_ID;
+                    org = NOT_AN_ID;
                 FOR(i, 4) if (can_be_ref[i]) org = i;
             }
 
 
             if (org != NOT_AN_ID) FOR(i, 4) {
-                index_t corner = m->cells.corner(c, i);
-                UC[corner] = U[m->cells.vertex(c, i)];
-                if (i != org) {
-                    AxisPermutation change = Rij(m, B, m->cells.vertex(c, org), m->cells.vertex(c, i));
-                    UC[corner] = change.inverse()  * U[m->cells.vertex(c, i)];
-                    bool inv;
-                    index_t e = edge_from_vertices(m->cells.vertex(c, org), m->cells.vertex(c, i), inv);
-                    geo_assert(e != NOT_AN_ID);
-                    vec3 t2 = !inv ? tij[e] : -(change.inverse()*tij[e]);
-                    UC[corner] += vec3(t2[0], t2[1], t2[2]);
+                    index_t corner = m->cells.corner(c, i);
+                    UC[corner] = U[m->cells.vertex(c, i)];
+                    if (i != org) {
+                        AxisPermutation change = Rij(m, B, m->cells.vertex(c, org), m->cells.vertex(c, i));
+                        UC[corner] = change.inverse()  * U[m->cells.vertex(c, i)];
+                        bool inv;
+                        index_t e = edge_from_vertices(m->cells.vertex(c, org), m->cells.vertex(c, i), inv);
+                        geo_assert(e != NOT_AN_ID);
+                        vec3 t2 = !inv ? tij[e] : -(change.inverse()*tij[e]);
+                        UC[corner] += vec3(t2[0], t2[1], t2[2]);
 
+                    }
                 }
-            }
             else geo_assert(!has_param[m->cells.facet(c, 0)] && !has_param[m->cells.facet(c, 1)] && !has_param[m->cells.facet(c, 2)] && !has_param[m->cells.facet(c, 3)]);
         }
 
@@ -290,9 +290,9 @@ namespace GEO {
 
         nlBegin(NL_SYSTEM);
         FOR(v, m->vertices.nb())FOR(d, 3) if (std::fabs(lockU[v][d]) > 0)FOR(c, 2) {
-            nlSetVariable(6 * v + 2 * d + c, 1 - c);
-            nlLockVariable(6 * v + 2 * d + c);
-        }
+                nlSetVariable(6 * v + 2 * d + c, 1 - c);
+                nlLockVariable(6 * v + 2 * d + c);
+            }
 
         nlBegin(NL_MATRIX);
         FOR(e, m->edges.nb()) {
@@ -523,7 +523,7 @@ namespace GEO {
         FOR(c, m->cells.nb()) if (tet_in_ball[c]) {
             bool inv;
             FOR(lv, 3)for (index_t lv2 = lv + 1; lv2 < 4; lv2++) FOR(d, 3)
-                null_edge[edge_from_vertices(m->cells.vertex(c, lv), m->cells.vertex(c, lv2), inv)] = true;
+                                                                     null_edge[edge_from_vertices(m->cells.vertex(c, lv), m->cells.vertex(c, lv2), inv)] = true;
         }
     }
 
@@ -531,7 +531,7 @@ namespace GEO {
     void PGPopt::cubcover(bool compute_only_corr) {
         geo_argused(compute_only_corr);
         Logger::warn("PGP") << "Cubecover not implemented in the public version"
-            << std::endl;
+                            << std::endl;
     }
 
 }

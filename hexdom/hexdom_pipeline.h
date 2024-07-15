@@ -49,7 +49,7 @@ namespace GEO {
     namespace HexdomPipeline {
 
         bool EXPLORAGRAM_API SetConstraints(Mesh*m, std::string& msg, bool hilbert_sort = true,
-                bool relaxed = false);
+                                            bool relaxed = false);
 
         void EXPLORAGRAM_API FrameField(Mesh*m, bool smooth);
 

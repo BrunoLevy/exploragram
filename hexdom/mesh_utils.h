@@ -48,7 +48,7 @@
 namespace GEO {
 
     inline index_t cell_facet_corner_id(Mesh* m, index_t c, index_t cf, index_t cfc) {
-    return m->cells.corner(c, m->cells.descriptor(c).facet_vertex[cf][cfc]);
+        return m->cells.corner(c, m->cells.descriptor(c).facet_vertex[cf][cfc]);
     }
 
     void EXPLORAGRAM_API compute_3D_edge_cot_w(Mesh* m, Attribute<index_t>& v2e, double anisoZ_cotW);
@@ -78,21 +78,21 @@ namespace GEO {
 
     inline vec3* X(Mesh* m) { return (vec3*)m->vertices.point_ptr(0); }
     inline vec3 cell_bary(Mesh* m, index_t c){
-    vec3 ave(0, 0, 0);
-    FOR(lv, m->cells.nb_vertices(c)) ave += m->vertices.point(m->cells.vertex(c, lv));
-    return ave / double(m->cells.nb_vertices(c));
+        vec3 ave(0, 0, 0);
+        FOR(lv, m->cells.nb_vertices(c)) ave += m->vertices.point(m->cells.vertex(c, lv));
+        return ave / double(m->cells.nb_vertices(c));
     }
 
     inline vec3 cell_facet_bary(Mesh* m, index_t c, index_t lf){
-    vec3 ave(0, 0, 0);
-    FOR(lv, m->cells.facet_nb_vertices(c, lf))  ave += m->vertices.point(m->cells.facet_vertex(c, lf, lv));
-    return ave / double(m->cells.facet_nb_vertices(c, lf));
+        vec3 ave(0, 0, 0);
+        FOR(lv, m->cells.facet_nb_vertices(c, lf))  ave += m->vertices.point(m->cells.facet_vertex(c, lf, lv));
+        return ave / double(m->cells.facet_nb_vertices(c, lf));
     }
 
     inline vec3 facet_bary(Mesh* m, index_t f){
-    vec3 ave(0, 0, 0);
-    FOR(lv, m->facets.nb_vertices(f))  ave += m->vertices.point(m->facets.vertex(f, lv));
-    return ave / double(m->facets.nb_vertices(f));
+        vec3 ave(0, 0, 0);
+        FOR(lv, m->facets.nb_vertices(f))  ave += m->vertices.point(m->facets.vertex(f, lv));
+        return ave / double(m->facets.nb_vertices(f));
     }
 
     EXPLORAGRAM_API double get_cell_average_edge_size( Mesh* mesh);
@@ -118,12 +118,12 @@ namespace GEO {
 
 
     inline const index_t* MTcase(double iso, double v0, double v1, double v2, double v3){
-    index_t triindex = 0;
-    if (v0 < iso) triindex |= 1;
-    if (v1 < iso) triindex |= 2;
-    if (v2 < iso) triindex |= 4;
-    if (v3 < iso) triindex |= 8;
-    return &(MT[triindex][0]);
+        index_t triindex = 0;
+        if (v0 < iso) triindex |= 1;
+        if (v1 < iso) triindex |= 2;
+        if (v2 < iso) triindex |= 4;
+        if (v3 < iso) triindex |= 8;
+        return &(MT[triindex][0]);
     }
 
 
@@ -131,25 +131,25 @@ namespace GEO {
      * uv is a pointer because it is an optional parameter (can be nullptr)
      */
     inline index_t add_facet_to_mesh(Mesh* m, vector<vec3>& pts, Attribute<vec2>* uv = nullptr, vector<vec2>* lU = nullptr){
-    index_t off = m->vertices.create_vertices(pts.size());
-    vector<index_t> nv(pts.size());
-    FOR(lv ,pts.size()) {
-        nv[lv] = off + lv;
-        m->vertices.point(nv[lv]) = pts[lv];
-    }
-    index_t f = m->facets.create_polygon(nv);
-    if (uv != nullptr) FOR(lc,m->facets.nb_corners(f))//FOR_EACH_HALFEDGE_OF_FACET(m,h,f)
-                (*uv)[m->facets.corner(f,lc)] = (*lU)[lc];
-    return f;
+        index_t off = m->vertices.create_vertices(pts.size());
+        vector<index_t> nv(pts.size());
+        FOR(lv ,pts.size()) {
+            nv[lv] = off + lv;
+            m->vertices.point(nv[lv]) = pts[lv];
+        }
+        index_t f = m->facets.create_polygon(nv);
+        if (uv != nullptr) FOR(lc,m->facets.nb_corners(f))//FOR_EACH_HALFEDGE_OF_FACET(m,h,f)
+                               (*uv)[m->facets.corner(f,lc)] = (*lU)[lc];
+        return f;
     }
 
     template <class T> inline void get_range(Attribute<T> &attr, double& v_min, double &v_max) {
-    v_min = 1e20;
-    v_max = -1e20;
-    FOR(i, attr.nb_elements()) {
-       v_min = std::min(v_min, attr[i]);
-       v_max = std::max(v_max, attr[i]);
-    }
+        v_min = 1e20;
+        v_max = -1e20;
+        FOR(i, attr.nb_elements()) {
+            v_min = std::min(v_min, attr[i]);
+            v_max = std::max(v_max, attr[i]);
+        }
     }
 
 }

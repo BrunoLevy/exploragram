@@ -62,7 +62,7 @@ namespace GEO {
         if (id==6) return (3./8.)*std::sqrt(5./M_PI) * (x2-y2)*(7.*z*z-1);
         if (id==7) return (3./4.)*std::sqrt(35./(2.*M_PI)) * z*x*(x2-3.*y2);
         if (id==8) return (3./16.)*std::sqrt(35./M_PI) * (x2*(x2-3.*y2)-y2*(3.*x2-y2));
-    geo_assert_not_reached;
+        geo_assert_not_reached;
 
     }
 
@@ -182,4 +182,3 @@ namespace GEO {
     }
 
 }
-

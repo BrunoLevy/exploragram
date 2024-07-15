@@ -58,11 +58,11 @@ namespace GEO {
         num_l_v = m->vertices.nb();
         num_ln_v = m->vertices.nb();
         FOR(inv_v, m->vertices.nb()) {
-        index_t v = m->vertices.nb()-1 - inv_v;
-        if (lockB[v][0] <.5) num_l_v = v;
-        if (lockB[v][2] <.5) num_ln_v = v;
+            index_t v = m->vertices.nb()-1 - inv_v;
+            if (lockB[v][0] <.5) num_l_v = v;
+            if (lockB[v][2] <.5) num_ln_v = v;
         }
-    if (num_ln_v == 0) num_ln_v = m->vertices.nb();
+        if (num_ln_v == 0) num_ln_v = m->vertices.nb();
     }
 
     FFopt::~FFopt() {
@@ -239,7 +239,7 @@ namespace {
 #ifdef GEO_OPENMP
             int thread_id = omp_get_thread_num();
 #else
-        int thread_id = 0;
+            int thread_id = 0;
 #endif
             get_thread_range(nverts, istart, iend);
 
@@ -283,7 +283,7 @@ namespace {
                         if (border_vertex[v2])scale += 100.;
                     }
                     if (v1 > v2) FOR(i, 3)
-                        f_chunks[thread_id] += scale *(10. / 3.*(pow(mPst(0,i) * mPst(1,i), 2) + pow(mPst(0,i) * mPst(2,i), 2) + pow(mPst(1,i )* mPst(2,i), 2)));
+                                     f_chunks[thread_id] += scale *(10. / 3.*(pow(mPst(0,i) * mPst(1,i), 2) + pow(mPst(0,i) * mPst(2,i), 2) + pow(mPst(1,i )* mPst(2,i), 2)));
 
                     if (v1 >= FF_LBFGS::Num_ln_v) {
                         index_t idx = FF_LBFGS::Num_ln_v + (v1 - FF_LBFGS::Num_ln_v) * 3;
@@ -370,7 +370,7 @@ namespace GEO {
             sh[i][4] = std::sqrt(7. / 12.);
             sh[i][8] = std::sqrt(5. / 12.);
             sh[i].euler_rot(mat3_to_euler(normalize_columns(B[i])));
-    }
+        }
         delete[] x;
     }
 

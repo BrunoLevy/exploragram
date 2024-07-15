@@ -96,10 +96,10 @@ namespace GEO {
                         if (trQ > 0 && Q.size() == 3) continue;
                         vector<TriangleIsect> trash;
                         conflict = conflict || triangles_intersections(
-                                P[quad_split[trP][0]], P[quad_split[trP][1]], P[quad_split[trP][2]],
-                                Q[quad_split[trQ][0]], Q[quad_split[trQ][1]], Q[quad_split[trQ][2]],
-                                trash
-                                );
+                            P[quad_split[trP][0]], P[quad_split[trP][1]], P[quad_split[trP][2]],
+                            Q[quad_split[trQ][0]], Q[quad_split[trQ][1]], Q[quad_split[trQ][2]],
+                            trash
+                        );
                     }
                 }
 
@@ -118,45 +118,45 @@ namespace GEO {
 
 
 /*
-    // test for self-intersection
-    // input : a surface with only triangles and quads allowed
-    // output : push_back into regions_to_lock BBoxes of self-intersections
-    bool lock_self_intersecting_regions(Mesh* mesh, Attribute<bool> &verts_to_remove, Attribute<index_t> &undo) {
-        vector<index_t> intersections;
-        bool conflict = find_self_intersections(mesh, intersections);
-        FOR(f, intersections.size()) {
-            if (undo[intersections[f]]!=NOT_AN_ID) verts_to_remove[undo[intersections[f]]] = false;
-        }
-        geo_assert(!conflict || intersections.size()>0);
-        return intersections.size()>0;
-    }
+// test for self-intersection
+// input : a surface with only triangles and quads allowed
+// output : push_back into regions_to_lock BBoxes of self-intersections
+bool lock_self_intersecting_regions(Mesh* mesh, Attribute<bool> &verts_to_remove, Attribute<index_t> &undo) {
+vector<index_t> intersections;
+bool conflict = find_self_intersections(mesh, intersections);
+FOR(f, intersections.size()) {
+if (undo[intersections[f]]!=NOT_AN_ID) verts_to_remove[undo[intersections[f]]] = false;
+}
+geo_assert(!conflict || intersections.size()>0);
+return intersections.size()>0;
+}
 
-    bool lock_self_intersecting_regions(Mesh* mesh, vector<BBox>& regions_to_lock) {
-        Attribute<bool> conflict(mesh->facets.attributes(), "conflict");
-        vector<index_t> intersections;
-        find_self_intersections(mesh, intersections);
+bool lock_self_intersecting_regions(Mesh* mesh, vector<BBox>& regions_to_lock) {
+Attribute<bool> conflict(mesh->facets.attributes(), "conflict");
+vector<index_t> intersections;
+find_self_intersections(mesh, intersections);
 //      sort( intersections.begin(), intersections.end() );
 //      intersections.erase( unique( intersections.begin(), intersections.end() ), intersections.end() );
 
-        FOR(f, intersections.size()) {
-            BBox inbox;
-            index_t nbv = mesh->facets.nb_vertices(intersections[f]);
-            geo_assert(4 == nbv || 3 == nbv);
-            FOR(fv, nbv) {
-                inbox.add(X(mesh)[mesh->facets.vertex(intersections[f], fv)]);
-            }
-            regions_to_lock.push_back(inbox);
-            conflict[intersections[f]] = true;
-        }
-        std::cerr << "[CONFLICTING FACETS] " << intersections.size() << "\n";
-        return intersections.size()>0;
-    }
+FOR(f, intersections.size()) {
+BBox inbox;
+index_t nbv = mesh->facets.nb_vertices(intersections[f]);
+geo_assert(4 == nbv || 3 == nbv);
+FOR(fv, nbv) {
+inbox.add(X(mesh)[mesh->facets.vertex(intersections[f], fv)]);
+}
+regions_to_lock.push_back(inbox);
+conflict[intersections[f]] = true;
+}
+std::cerr << "[CONFLICTING FACETS] " << intersections.size() << "\n";
+return intersections.size()>0;
+}
 */
     // compute light connectivity (vertex to facets)
     vector<vector<index_t> > generate_v2f(Mesh *m) {
         vector<vector<index_t> > v2f(m->vertices.nb());
         FOR(f, m->facets.nb()) {
-        geo_assert(m->facets.nb_vertices(f) == 3);
+            geo_assert(m->facets.nb_vertices(f) == 3);
             FOR(lc, m->facets.nb_corners(f)) {
                 v2f[m->facets.vertex(f, lc)].push_back(f);
             }

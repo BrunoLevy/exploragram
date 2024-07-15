@@ -50,36 +50,36 @@
 
 
 
- //***************************************************
- // HOW TO USE:
- //***************************************************
- // MatrixMixedConstrainedSolver intsolver(nb_vars);
- // // tell that variable var_id is a multiple of m
- // intsolver.set_multiplicity(var_id, m);
- // // tell 4 times the linear constraints
- // FOR(pass, 4) {
- //  // construct each constraint
- //    intsolver.begin_constraint();
- //    intsolver.add_constraint_coeff(var_id, coeff);
- //    ....
- //    intsolver.end_constraint();
- //  // tell the solver to start the next pass
- //  intsolver.end_pass(pass);
- //}
- // // solve in two pass
- // FOR(iter, 2) {
- //    if (iter == 0)    intsolver.start_full_real_iter();
- //    else            intsolver.start_mixed_iter();
- //     intsolver.begin_energy();
- //     intsolver.add_energy_coeff(var_id, coeff);
- //     ....
- //     intsolver.add_energy_rhs(rhs);
- //     intsolver.end_energy();
- //    }
- //    intsolver.end_iter();
- //}
- // // get the result
- //double var_value = intsolver.value(var_id);
+//***************************************************
+// HOW TO USE:
+//***************************************************
+// MatrixMixedConstrainedSolver intsolver(nb_vars);
+// // tell that variable var_id is a multiple of m
+// intsolver.set_multiplicity(var_id, m);
+// // tell 4 times the linear constraints
+// FOR(pass, 4) {
+//  // construct each constraint
+//    intsolver.begin_constraint();
+//    intsolver.add_constraint_coeff(var_id, coeff);
+//    ....
+//    intsolver.end_constraint();
+//  // tell the solver to start the next pass
+//  intsolver.end_pass(pass);
+//}
+// // solve in two pass
+// FOR(iter, 2) {
+//    if (iter == 0)    intsolver.start_full_real_iter();
+//    else            intsolver.start_mixed_iter();
+//     intsolver.begin_energy();
+//     intsolver.add_energy_coeff(var_id, coeff);
+//     ....
+//     intsolver.add_energy_rhs(rhs);
+//     intsolver.end_energy();
+//    }
+//    intsolver.end_iter();
+//}
+// // get the result
+//double var_value = intsolver.value(var_id);
 
 
 namespace GEO {
@@ -151,12 +151,12 @@ namespace GEO {
         //   L.push_back(Coeff(index,val));
         //   order_AND_make_unique(L);
         for (index_t jj = 0; jj < L.size(); ++jj) {
-                if (L[jj].index == index) {
+            if (L[jj].index == index) {
                 L[jj].a += val;
                 return;
             }
             if (L[jj].index > index) {
-                    L.insert(L.begin() + long(jj), Coeff(index, val));
+                L.insert(L.begin() + long(jj), Coeff(index, val));
                 return;
             }
         }
@@ -256,7 +256,7 @@ namespace GEO {
                 result.push_back(Coeff(B.get(lB, co_b).index, B.get(lB, co_b).a * c[co_c].a));
             }
         }
-        order_AND_make_unique(result);
+            order_AND_make_unique(result);
     }
 
     // MatrixM is filled in 3 passes
@@ -506,13 +506,13 @@ namespace GEO {
     struct EXPLORAGRAM_API MatrixMixedConstrainedSolver {
 
         MatrixMixedConstrainedSolver(index_t p_nb_vars) :
-            M(p_nb_vars),
-            size_(p_nb_vars) {
+        M(p_nb_vars),
+        size_(p_nb_vars) {
             snap_size = 0;
         }
 
         /**
-             * \brief Gets the number of variables.
+         * \brief Gets the number of variables.
          * \return the number of variables.
          */
         index_t size() const {
@@ -692,5 +692,3 @@ namespace GEO {
 
 
 #endif
-
-

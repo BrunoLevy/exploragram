@@ -62,87 +62,87 @@ namespace GEO {
      */
     class EXPLORAGRAM_API LinearLeastSquares {
     public:
-        /**
-         * \brief Constructs a new LinearLeastSquares
-         * \param[in] degree one of 1 (linear), 2 (quadratic)
-         */
-        LinearLeastSquares(index_t degree);
+    /**
+     * \brief Constructs a new LinearLeastSquares
+     * \param[in] degree one of 1 (linear), 2 (quadratic)
+     */
+    LinearLeastSquares(index_t degree);
 
-        /**
-         * \brief Starts a new computation.
-         */
-        void begin();
+    /**
+     * \brief Starts a new computation.
+     */
+    void begin();
 
-        /**
-         * \brief Ends the current computation.
-         * \details Computes the current equation
-         *  from the set of samples declared with
-         *  add_point().
-         */
-        void end();
+    /**
+     * \brief Ends the current computation.
+     * \details Computes the current equation
+     *  from the set of samples declared with
+     *  add_point().
+     */
+    void end();
 
-        /**
-         * \brief Adds a sample to the current computation.
-         * \details This function needs to be called between
-         *  a begin() / end() pair.
-         * \param[in] p 3d coordinates of the point
-         * \param[in] v function value associated with \p p_in
-         */
-        void add_point(const double* p, double v);
+    /**
+     * \brief Adds a sample to the current computation.
+     * \details This function needs to be called between
+     *  a begin() / end() pair.
+     * \param[in] p 3d coordinates of the point
+     * \param[in] v function value associated with \p p_in
+     */
+    void add_point(const double* p, double v);
 
-        /**
-         * \brief Evaluates the least-squares linear estimate
-         *  at a given point.
-         * \details This function beeds to be called after end().
-         * \param[in] p 3d coordinates of the point
-         * \return the linear estimate at \p p
-         */
-        double eval(const double* p) const;
+    /**
+     * \brief Evaluates the least-squares linear estimate
+     *  at a given point.
+     * \details This function beeds to be called after end().
+     * \param[in] p 3d coordinates of the point
+     * \return the linear estimate at \p p
+     */
+    double eval(const double* p) const;
 
     protected:
 
-        /**
-         * \brief Implementation of add_point() for degree 1.
-         * \param[in] p 3d coordinates of the point
-         * \param[in] v function value associated with \p p_in
-         */
+    /**
+     * \brief Implementation of add_point() for degree 1.
+     * \param[in] p 3d coordinates of the point
+     * \param[in] v function value associated with \p p_in
+     */
     void add_point_degree_1(const double* p, double v);
 
-        /**
-         * \brief Implementation of add_point() for degree 2.
-         * \param[in] p 3d coordinates of the point
-         * \param[in] v function value associated with \p p_in
-         */
+    /**
+     * \brief Implementation of add_point() for degree 2.
+     * \param[in] p 3d coordinates of the point
+     * \param[in] v function value associated with \p p_in
+     */
     void add_point_degree_2(const double* p, double v);
 
-        /**
-         * \brief Gets the dimension of the function basis.
-         */
-        index_t dim() const {
-            return dim_;
-        }
+    /**
+     * \brief Gets the dimension of the function basis.
+     */
+    index_t dim() const {
+        return dim_;
+    }
 
-        /**
-         * \brief Evaluates the function basis at a given
-         *  point.
-         * \param[in] p 3d coordinates of the point
-         * \param[out] b array of size dim(), value of the
-         *  function basis at \p p
-         */
-        void eval_basis(const double* p, double* b) const;
+    /**
+     * \brief Evaluates the function basis at a given
+     *  point.
+     * \param[in] p 3d coordinates of the point
+     * \param[out] b array of size dim(), value of the
+     *  function basis at \p p
+     */
+    void eval_basis(const double* p, double* b) const;
 
-        /**
-         * \brief Maximum dimension of the function basis
-         */
-        static const int MAX_DIM = 10;
+    /**
+     * \brief Maximum dimension of the function basis
+     */
+    static const int MAX_DIM = 10;
 
     private:
-        index_t degree_;
-        index_t dim_;
-        Matrix<4,double> AtA_4_;
-        Matrix<10,double> AtA_10_;
-        double Atb_[MAX_DIM];
-        double eqn_[MAX_DIM];
+    index_t degree_;
+    index_t dim_;
+    Matrix<4,double> AtA_4_;
+    Matrix<10,double> AtA_10_;
+    double Atb_[MAX_DIM];
+    double eqn_[MAX_DIM];
     };
 }
 

@@ -79,7 +79,7 @@ namespace GEO {
         val[m->facets.create_triangle(off_v, off_v + 1, off_v + 2)] = value;
     }
 
-        static mat2 angle_to_mat(double p_alpha, double p_beta) {
+    static mat2 angle_to_mat(double p_alpha, double p_beta) {
         double rot_angle = (p_beta + p_alpha )/ 2.;
         double rot_values[4] = { cos(rot_angle), sin(rot_angle), -sin(rot_angle) ,cos(rot_angle)};
         mat2 rot(rot_values);
@@ -176,7 +176,7 @@ namespace GEO {
 
 
         void naive_LS_blur_delta(Mesh* debug_mesh) {
-                geo_argused(debug_mesh);
+            geo_argused(debug_mesh);
             nlNewContext();
             nlSolverParameteri(NL_LEAST_SQUARES, NL_TRUE);
             nlSolverParameteri(NL_NB_VARIABLES, NLint(3*m->facets.nb()));
@@ -342,14 +342,14 @@ namespace GEO {
                 if (nb_angu % 2 == 0)
                     FOR(i, edges.size() - 1) alpha[fec.facet(edges[i + 1])] += (sum - wanted_sum)*double(i + 1) / double(edges.size() - 1);
                 else FOR(i, edges.size())
-                    beta[fec.facet(edges[i])] = alpha[fec.facet(edges[i])] + M_PI / 2. +(sum - wanted_sum);
+                         beta[fec.facet(edges[i])] = alpha[fec.facet(edges[i])] + M_PI / 2. +(sum - wanted_sum);
 
                 //plop(edges.size());
                 //plop(wanted_sum);
             }
             naive_LS_blur_delta(debug_mesh);
 
-        //naive_LS_smooth();
+            //naive_LS_smooth();
 
             //FOR(f, m->facets.nb()) alpha[f] = delta[f] = 1000;
             //FOR(f, m->facets.nb()) FOR(lv, 3) {

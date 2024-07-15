@@ -71,9 +71,9 @@ namespace GEO {
         index_t nb_points,
         const double* points,
         double* centroids,
-    RVDPolyhedronCallback* cb=nullptr,
-    bool verbose=false,
-    index_t nb_iter=2000
+        RVDPolyhedronCallback* cb=nullptr,
+        bool verbose=false,
+        index_t nb_iter=2000
     );
 
     /**
@@ -97,7 +97,7 @@ namespace GEO {
          * \brief OptimalTransportMap3d constructor.
          * \param[in] mesh the source distribution, represented as a 3d mesh
          * \param[in] delaunay factory name of the Delaunay triangulation, one
-     *  of "PDEL" (parallel), "BPOW" (sequential)
+         *  of "PDEL" (parallel), "BPOW" (sequential)
          * \param[in] BRIO true if vertices are already ordered using BRIO
          */
         OptimalTransportMap3d(
@@ -106,33 +106,33 @@ namespace GEO {
             bool BRIO = false
         );
 
-    /**
-     * \brief OptimalTransportMap destructor.
-     */
-    ~OptimalTransportMap3d() override;
+        /**
+         * \brief OptimalTransportMap destructor.
+         */
+        ~OptimalTransportMap3d() override;
 
-    /**
-     * \copydoc OptimalTransportMap::get_RVD()
-     */
-    void get_RVD(Mesh& M) override;
+        /**
+         * \copydoc OptimalTransportMap::get_RVD()
+         */
+        void get_RVD(Mesh& M) override;
 
-    /**
-     * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
-     */
-    void compute_Laguerre_centroids(double* centroids) override;
+        /**
+         * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
+         */
+        void compute_Laguerre_centroids(double* centroids) override;
 
-    /**
-     * \brief Gets the total mass of the mesh.
-     * \details Take the weights into account if they are present.
-     * \return the total mass of the mesh.
-     */
-    double total_mesh_mass() const;
+        /**
+         * \brief Gets the total mass of the mesh.
+         * \details Take the weights into account if they are present.
+         * \return the total mass of the mesh.
+         */
+        double total_mesh_mass() const;
 
-      protected:
-    /**
-     * \copydoc OptimalTransportMap::call_callback_on_RVD()
-     */
-    void call_callback_on_RVD() override;
+    protected:
+        /**
+         * \copydoc OptimalTransportMap::call_callback_on_RVD()
+         */
+        void call_callback_on_RVD() override;
     };
 
     /**********************************************************************/

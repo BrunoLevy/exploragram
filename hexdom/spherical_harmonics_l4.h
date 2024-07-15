@@ -51,60 +51,60 @@ namespace GEO {
         vecng<9, Numeric::float64> coeff;
 
         SphericalHarmonicL4() {
-        FOR(i, 9)  coeff[i] = 0.;
-    }
+            FOR(i, 9)  coeff[i] = 0.;
+        }
 
         SphericalHarmonicL4(const vecng<9, Numeric::float64>& rhs) : coeff(rhs){
-    }
+        }
 
-    SphericalHarmonicL4(double *fv) {
-        FOR(i, 9)  coeff[i] = fv[i];
-    }
+        SphericalHarmonicL4(double *fv) {
+            FOR(i, 9)  coeff[i] = fv[i];
+        }
 
         SphericalHarmonicL4(
-        double x0, double x1, double x2,
-        double x3, double x4, double x5,
-        double x6, double x7, double x8
-    ) {
-        coeff[0] = x0; coeff[1] = x1; coeff[2] = x2;
-        coeff[3] = x3; coeff[4] = x4; coeff[5] = x5;
-        coeff[6] = x6; coeff[7] = x7; coeff[8] = x8;
-    }
+            double x0, double x1, double x2,
+            double x3, double x4, double x5,
+            double x6, double x7, double x8
+        ) {
+            coeff[0] = x0; coeff[1] = x1; coeff[2] = x2;
+            coeff[3] = x3; coeff[4] = x4; coeff[5] = x5;
+            coeff[6] = x6; coeff[7] = x7; coeff[8] = x8;
+        }
 
         double& operator[](index_t i) {
-        geo_debug_assert(i<9);
-        return coeff[i];
-    }
+            geo_debug_assert(i<9);
+            return coeff[i];
+        }
 
-    double norm() const {
-        return coeff.length();
-    }
+        double norm() const {
+            return coeff.length();
+        }
 
-    double operator *(const SphericalHarmonicL4 &other) const {
-        return dot(coeff, other.coeff);
-    }
+        double operator *(const SphericalHarmonicL4 &other) const {
+            return dot(coeff, other.coeff);
+        }
 
-    SphericalHarmonicL4 operator -(const SphericalHarmonicL4 &other) const {
-        return SphericalHarmonicL4(coeff - other.coeff);
-    }
+        SphericalHarmonicL4 operator -(const SphericalHarmonicL4 &other) const {
+            return SphericalHarmonicL4(coeff - other.coeff);
+        }
 
-    SphericalHarmonicL4 operator *(double s) const {
-        return SphericalHarmonicL4(s*coeff);
-    }
+        SphericalHarmonicL4 operator *(double s) const {
+            return SphericalHarmonicL4(s*coeff);
+        }
 
-    SphericalHarmonicL4 operator /(double s) const {
-        return SphericalHarmonicL4(coeff / s);
-    }
+        SphericalHarmonicL4 operator /(double s) const {
+            return SphericalHarmonicL4(coeff / s);
+        }
 
-    SphericalHarmonicL4 operator +(const SphericalHarmonicL4 &v) const {
-        return SphericalHarmonicL4(coeff + v.coeff);
-    }
+        SphericalHarmonicL4 operator +(const SphericalHarmonicL4 &v) const {
+            return SphericalHarmonicL4(coeff + v.coeff);
+        }
 
-    double value(const vec3& v) const {
-        double res = 0;
-        FOR(i, 9)res += coeff[i]*basis(i,v);
-        return res;
-    }
+        double value(const vec3& v) const {
+            double res = 0;
+            FOR(i, 9)res += coeff[i]*basis(i,v);
+            return res;
+        }
 
         static double basis(index_t id, const vec3& v);
 
@@ -112,11 +112,11 @@ namespace GEO {
         void Ry(double alpha);
         void Rx(double alpha);
 
-    void euler_rot(const vec3& rot_vec) {
-        Rx(rot_vec[0]);
-        Ry(rot_vec[1]);
-        Rz(rot_vec[2]);
-    }
+        void euler_rot(const vec3& rot_vec) {
+            Rx(rot_vec[0]);
+            Ry(rot_vec[1]);
+            Rz(rot_vec[2]);
+        }
 
         SphericalHarmonicL4 Ex() const;
         SphericalHarmonicL4 Ey() const;
@@ -131,21 +131,19 @@ namespace GEO {
     };
 
     inline std::istream& operator>> (std::istream& input, SphericalHarmonicL4 &gna) {
-    return input >> gna.coeff;
+        return input >> gna.coeff;
     }
 
     inline std::ostream& operator<< (std::ostream& output, const SphericalHarmonicL4 &gna) {
-    return output << gna.coeff;
+        return output << gna.coeff;
     }
 
     /*
-    template <> struct can_be_used_as_attribute<SphericalHarmonicL4> {
-    static constexpr auto value = std::integral_constant<bool,true>();
-    };
+      template <> struct can_be_used_as_attribute<SphericalHarmonicL4> {
+      static constexpr auto value = std::integral_constant<bool,true>();
+      };
     */
 }
 
 
 #endif //__SPHERICALHARMONICSL4_H__
-
-

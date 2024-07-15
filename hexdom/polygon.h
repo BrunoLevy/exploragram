@@ -90,8 +90,8 @@ namespace GEO {
         bool try_triangulate_minweight(vector<index_t>& triangles);
 
         /**
-        * WARNING: it may introduce new vertices in pts
-        */
+         * WARNING: it may introduce new vertices in pts
+         */
         bool try_quadrangulate(vector<index_t>& quads);
 
         vector<vec3> &pts;

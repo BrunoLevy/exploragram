@@ -81,7 +81,7 @@ namespace GEO {
                 FOR(opp_lc_it, m->facets.nb_vertices(opp_f))
                     if (f == m->facets.adjacent(opp_f, opp_lc_it)
                         && m->facets.vertex(f, (lc + 1) % m->facets.nb_vertices(f)) == m->facets.vertex(opp_f, opp_lc_it)
-                        ) opp_lc = opp_lc_it;
+                       ) opp_lc = opp_lc_it;
                 if (opp_lc == NOT_AN_ID) plop("not a symetric opposite !");
                 set_opp(4 * f + lc, 4 * opp_f + opp_lc);
                 if (vertex(4 * f + lc) != vertex(next(opp(4 * f + lc)))) plop("wrong opposites");
@@ -215,7 +215,7 @@ namespace GEO {
 
                     if (fabs(dot(in_cir_dir, N)) < sin(M_PI / 8.)        // stay in the cut plane (orthogonal to N)
                         && in_cir != qem.opp(cir)                        // do not go back
-                        ) {
+                       ) {
                         double newangle = atan2(dot(N, cross(cir_dir, in_cir_dir)), dot(in_cir_dir, cir_dir));
                         if (best_angle < newangle) {
                             best_angle = newangle;
@@ -260,8 +260,8 @@ namespace GEO {
             if (test_border.size() == 4
                 && (qem.face(qem.opp(test_border[0])) == qem.face(qem.opp(test_border[2]))
                     || qem.face(test_border[0]) == qem.face(test_border[2])
-                    )
-                ) return true;
+                   )
+               ) return true;
             if (test_border.size() % 2 != 0) return true;
             return false;
         }
@@ -390,7 +390,7 @@ namespace GEO {
             }
             FOR(e, border.size())
                 FOR(v, opp_fan[e].size())
-                    qem.set_vertex(opp_fan[e][v], lower_v[next_mod(e, border.size())]);
+                qem.set_vertex(opp_fan[e][v], lower_v[next_mod(e, border.size())]);
 
             if (pts.size() > border.size()) {
                 index_t off_v = m->vertices.create_vertices(2 * (pts.size() - border.size()));
@@ -702,10 +702,10 @@ namespace GEO {
                     nv_punch_v = punch_v;
 
                     if (tet_vol(X(m)[punch_v],
-                        X(m)[qem.vertex(H[0][1])],
-                        X(m)[qem.vertex(H[1][1])],
-                        X(m)[qem.vertex(H[2][1])]
-                        ) > 0) continue;
+                                X(m)[qem.vertex(H[0][1])],
+                                X(m)[qem.vertex(H[1][1])],
+                                X(m)[qem.vertex(H[2][1])]
+                               ) > 0) continue;
 
                     // do we already have 4+ faces of the hex ?
                     bool bad_config = false;
@@ -741,10 +741,10 @@ namespace GEO {
                         bool have_bad_angle = false;
                         FOR(ring, 3) FOR(lv, 4)
                             have_bad_angle = have_bad_angle || std::abs(cos_corner(
-                                X(m)[qem.vertex(H[ring][lv])],
-                                X(m)[qem.vertex(H[ring][(lv + 1) % 4])],
-                                X(m)[qem.vertex(H[ring][(lv + 2) % 4])]
-                            )) > .8;
+                                                                            X(m)[qem.vertex(H[ring][lv])],
+                                                                            X(m)[qem.vertex(H[ring][(lv + 1) % 4])],
+                                                                            X(m)[qem.vertex(H[ring][(lv + 2) % 4])]
+                                                                        )) > .8;
                         if (have_bad_angle) { failt[punch_v] = std::max(failt[punch_v], 30.); continue; }
 
                         //-------------------------
@@ -793,7 +793,7 @@ namespace GEO {
                     if (new_hex_geometry_is_crappy()) {
                         X(m)[punch_v] = old_vertex_position;
                         failt[punch_v] = std::max(failt[punch_v], 60.);
-                         continue;
+                        continue;
                     }
 
 
@@ -888,15 +888,15 @@ namespace GEO {
             vector<index_t> contour;
             bool fail = false;
             {index_t cir = h;
-            do {
-                contour.push_back(cir);
-                if (qem.opp(cir) == NOT_AN_ID) { fail = true; break; }
-                if (qem.opp(qem.next(cir, 3)) == NOT_AN_ID) { fail = true; break; }
-                if (qem.fsize(cir) != 4) { fail = true; break; }
-                if (qem.fsize(qem.opp(qem.next(cir, 1))) != 4) { fail = true; break; }
-                if (qem.fsize(qem.opp(qem.next(cir, 3))) == 4) { fail = true; break; }
-                cir = qem.next(qem.opp(cir), 2);
-            } while (cir != h);
+                do {
+                    contour.push_back(cir);
+                    if (qem.opp(cir) == NOT_AN_ID) { fail = true; break; }
+                    if (qem.opp(qem.next(cir, 3)) == NOT_AN_ID) { fail = true; break; }
+                    if (qem.fsize(cir) != 4) { fail = true; break; }
+                    if (qem.fsize(qem.opp(qem.next(cir, 1))) != 4) { fail = true; break; }
+                    if (qem.fsize(qem.opp(qem.next(cir, 3))) == 4) { fail = true; break; }
+                    cir = qem.next(qem.opp(cir), 2);
+                } while (cir != h);
             }
             if (fail) continue;
 
@@ -1073,11 +1073,11 @@ namespace GEO {
 
 
     /* [BL unused]
-    static void evaluate_edges_valence(Mesh* m) {
-        Attribute<int> edge_angle(m->facet_corners.attributes(), "edgeangle");
-        FOR(f, m->facets.nb()) FOR(h, 4) edge_angle[m->facets.corner(f, h)] = rand() % 3;
+       static void evaluate_edges_valence(Mesh* m) {
+       Attribute<int> edge_angle(m->facet_corners.attributes(), "edgeangle");
+       FOR(f, m->facets.nb()) FOR(h, 4) edge_angle[m->facets.corner(f, h)] = rand() % 3;
 
-    }
+       }
     */
 
     static bool next_crunch(Mesh* m, Mesh* newhex, int nb_max_punch) {
@@ -1243,34 +1243,34 @@ namespace GEO {
 
     struct Polyline {
         void compute_param() {
-                    dist_to_org.resize(P.size());
-                    FOR(i, P.size()) {
-                        if (i == 0) {
-                            dist_to_org[0] = 0;
-                        } else {
-                            dist_to_org[i] = dist_to_org[i - 1] + (P[i - 1] - P[i]).length();
-                        }
-                    }
+            dist_to_org.resize(P.size());
+            FOR(i, P.size()) {
+                if (i == 0) {
+                    dist_to_org[0] = 0;
+                } else {
+                    dist_to_org[i] = dist_to_org[i - 1] + (P[i - 1] - P[i]).length();
+                }
+            }
         }
         double length() {
-                    geo_assert(!P.empty());
-                    if (dist_to_org.size() != P.size()) {
-                        compute_param();
-                    }
-                    return dist_to_org.back();
+            geo_assert(!P.empty());
+            if (dist_to_org.size() != P.size()) {
+                compute_param();
+            }
+            return dist_to_org.back();
         }
         vec3 interpolate(double prop) {
-                    double d = prop*length();
-                    FOR(i, P.size()-1) {
-                        if (dist_to_org[i + 1] - dist_to_org[i] < 1e-8) {
-                            return P[i];
-                        }
-                        double c = (d - dist_to_org[i]) / (dist_to_org[i + 1] - dist_to_org[i]);
-                        if(c >= 0 && c <= 1.0) {
-                            return c*P[i] + (1. - c)*P[i + 1];
-                        }
-                    }
-                    return P.back();
+            double d = prop*length();
+            FOR(i, P.size()-1) {
+                if (dist_to_org[i + 1] - dist_to_org[i] < 1e-8) {
+                    return P[i];
+                }
+                double c = (d - dist_to_org[i]) / (dist_to_org[i + 1] - dist_to_org[i]);
+                if(c >= 0 && c <= 1.0) {
+                    return c*P[i] + (1. - c)*P[i + 1];
+                }
+            }
+            return P.back();
         }
         vector<vec3> P;
         vector<double> dist_to_org;
@@ -1360,8 +1360,8 @@ namespace GEO {
             {
                 FOR(h, 4 * m->facets.nb()) if (qem.valid(h))
                     if (subchart[qem.face(h)] == int(sub)
-                    && subchart[qem.face(qem.opp(h))] != int(sub))
-                    border.push_back(h);
+                        && subchart[qem.face(qem.opp(h))] != int(sub))
+                        border.push_back(h);
                 if (border.size() < 4) continue;
             }
             // order border halfedges
@@ -1399,7 +1399,7 @@ namespace GEO {
                     continue;
                 }
                 hardedge.push_back(qem.fsize(qem.opp(border[cur])) != 4
-                    && subchart[qem.face(qem.opp(border[cur]))] == subchart[qem.face(qem.opp(border[cur - 1]))]);
+                                   && subchart[qem.face(qem.opp(border[cur]))] == subchart[qem.face(qem.opp(border[cur - 1]))]);
                 if (!hardedge.back()) offset = cur;
             }
             {vector<vec3> tmp(N); FOR(cur, N) tmp[cur] = edge_org[(cur + offset) % N]; edge_org = tmp; }
@@ -1435,7 +1435,7 @@ namespace GEO {
                 int loc_sub = -1;
                 FOR(l, chart_to_subcharts[chartid].size())
                     if (chart_to_subcharts[chartid][l] == int(sub))
-                    loc_sub = int(l);
+                        loc_sub = int(l);
 
                 FOR(p, l_pts.size()) plop(l_pts[p]);
                 FOR(p, l_quads.size()) plop(l_quads[p]);
@@ -1501,14 +1501,14 @@ namespace GEO {
     void prepare_crunch(Mesh* m, bool subdivide, bool revert) {
         if (subdivide) bourrin_quadrangulate_facets(m);
         if (revert) FOR(f, m->facets.nb()) {
-            index_t save_v = m->facets.vertex(f, 0);
-            m->facets.set_vertex(f, 0, m->facets.vertex(f, 2));
-            m->facets.set_vertex(f, 2, save_v);
-        }
+                index_t save_v = m->facets.vertex(f, 0);
+                m->facets.set_vertex(f, 0, m->facets.vertex(f, 2));
+                m->facets.set_vertex(f, 2, save_v);
+            }
         quadrangulate_easy_boundary(m);
     }
     void hex_crunch(Mesh* m, Mesh* hex) {
-            geo_argused(hex);
+        geo_argused(hex);
         check_no_intersecting_faces(m, false);
         prepare_crunch(m, false, true);
         plop("prepare_crunch done");

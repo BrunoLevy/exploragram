@@ -80,15 +80,15 @@ namespace GEO {
         index_t nb_points,
         const double* points,
         double* centroids,
-    Mesh* RVD=nullptr,
-    bool verbose=false,
-    index_t nb_air_particles = 0,
-    const double* air_particles = nullptr,
-    index_t air_particles_stride = 0,
-    double air_fraction = 0.0,
-    const double* weights_in = nullptr,
-    double* weights_out = nullptr,
-    index_t nb_iter = 1000
+        Mesh* RVD=nullptr,
+        bool verbose=false,
+        index_t nb_air_particles = 0,
+        const double* air_particles = nullptr,
+        index_t air_particles_stride = 0,
+        double air_fraction = 0.0,
+        const double* weights_in = nullptr,
+        double* weights_out = nullptr,
+        index_t nb_iter = 1000
     );
 
 
@@ -112,53 +112,53 @@ namespace GEO {
         /**
          * \brief OptimalTransportMap2d constructor.
          * \param[in] mesh the source distribution, represented as a 2d mesh.
-     *  It can be also a 3D mesh with the Z coordinate set to 0.
+         *  It can be also a 3D mesh with the Z coordinate set to 0.
          * \param[in] delaunay factory name of the Delaunay triangulation.
          * \param[in] BRIO true if vertices are already ordered using BRIO
          */
         OptimalTransportMap2d(
             Mesh* mesh,
             const std::string& delaunay = "BPOW2d",
-        bool BRIO=false
+            bool BRIO=false
         );
 
-    /**
-     * \brief OptimalTransportMap destructor.
-     */
-    ~OptimalTransportMap2d() override;
+        /**
+         * \brief OptimalTransportMap destructor.
+         */
+        ~OptimalTransportMap2d() override;
 
-    /**
-     * \copydoc OptimalTransportMap::get_RVD()
-     */
-    void get_RVD(Mesh& M) override;
+        /**
+         * \copydoc OptimalTransportMap::get_RVD()
+         */
+        void get_RVD(Mesh& M) override;
 
-    /**
-     * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
-     */
-    void compute_Laguerre_centroids(double* centroids) override;
+        /**
+         * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
+         */
+        void compute_Laguerre_centroids(double* centroids) override;
 
-    /**
-     * \brief Gets the total mass of the mesh.
-     * \details Take the weights into account if they are present.
-     * \return the total mass of the mesh.
-     */
-    double total_mesh_mass() const;
+        /**
+         * \brief Gets the total mass of the mesh.
+         * \details Take the weights into account if they are present.
+         * \return the total mass of the mesh.
+         */
+        double total_mesh_mass() const;
 
-      protected:
-    /**
-     * \copydoc OptimalTransportMap::call_callback_on_RVD()
-     */
-    void call_callback_on_RVD() override;
+    protected:
+        /**
+         * \copydoc OptimalTransportMap::call_callback_on_RVD()
+         */
+        void call_callback_on_RVD() override;
 
-      public:
-    /**
-     * \brief Used by clipping operations.
-     */
-    GEOGen::Polygon work_;
-    /**
-     * \brief Used by clipping operations.
-     */
-    GEOGen::Polygon clipped_;
+    public:
+        /**
+         * \brief Used by clipping operations.
+         */
+        GEOGen::Polygon work_;
+        /**
+         * \brief Used by clipping operations.
+         */
+        GEOGen::Polygon clipped_;
     };
 
     /*********************************************************************/

@@ -68,8 +68,8 @@ namespace GEO {
         index_t nb_points,
         const double* points,
         double* centroids,
-    Mesh* RVD=nullptr,
-    bool verbose=false
+        Mesh* RVD=nullptr,
+        bool verbose=false
     );
 
     /*********************************************************************/
@@ -90,7 +90,7 @@ namespace GEO {
      *    and least-squares clustering. Algorithmica, 20:61-76, 1998.
      */
     class EXPLORAGRAM_API OptimalTransportMapOnSurface :
-    public OptimalTransportMap {
+        public OptimalTransportMap {
     public:
         /**
          * \brief OptimalTransportOnSurface constructor.
@@ -101,36 +101,36 @@ namespace GEO {
         OptimalTransportMapOnSurface(
             Mesh* mesh,
             const std::string& delaunay = "BPOW",
-        bool BRIO=false
+            bool BRIO=false
         );
 
-    /**
-     * \brief OptimalTransportMap destructor.
-     */
-    ~OptimalTransportMapOnSurface() override;
+        /**
+         * \brief OptimalTransportMap destructor.
+         */
+        ~OptimalTransportMapOnSurface() override;
 
-    /**
-     * \copydoc OptimalTransportMap::get_RVD()
-     */
-    void get_RVD(Mesh& M) override;
+        /**
+         * \copydoc OptimalTransportMap::get_RVD()
+         */
+        void get_RVD(Mesh& M) override;
 
-    /**
-     * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
-     */
-    void compute_Laguerre_centroids(double* centroids) override;
+        /**
+         * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
+         */
+        void compute_Laguerre_centroids(double* centroids) override;
 
-    /**
-     * \brief Gets the total mass of the mesh.
-     * \details Take the weights into account if they are present.
-     * \return the total mass of the mesh.
-     */
-    double total_mesh_mass() const;
+        /**
+         * \brief Gets the total mass of the mesh.
+         * \details Take the weights into account if they are present.
+         * \return the total mass of the mesh.
+         */
+        double total_mesh_mass() const;
 
-      protected:
-    /**
-     * \copydoc OptimalTransportMap::call_callback_on_RVD()
-     */
-    void call_callback_on_RVD() override;
+    protected:
+        /**
+         * \copydoc OptimalTransportMap::call_callback_on_RVD()
+         */
+        void call_callback_on_RVD() override;
     };
 
     /*********************************************************************/

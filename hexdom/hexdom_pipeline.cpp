@@ -62,13 +62,13 @@ namespace GEO {
 
     namespace HexdomPipeline {
 
-#define STEP(funcname,args) { \
-        logt.add_step(#funcname); \
-        funcname args; \
-}
+#define STEP(funcname,args) {                   \
+            logt.add_step(#funcname);           \
+            funcname args;                      \
+        }
 
         bool SetConstraints(Mesh*m, std::string& msg,bool hilbert_sort,
-                bool relaxed) {
+                            bool relaxed) {
             try {
                 STEP(produce_hexdom_input,(m, msg, hilbert_sort, relaxed));
             }
@@ -107,11 +107,11 @@ namespace GEO {
                 geo_argused(PGP_max_scale_corr);
                 if(algo != 2) {
                     Logger::warn("PGP")
-                    << "cubecover/scale correction not available in the public version"
-                    << std::endl;
+                        << "cubecover/scale correction not available in the public version"
+                        << std::endl;
                     Logger::warn("PGP")
-                    << "falling back with PGP without scale correction"
-                    << std::endl;
+                        << "falling back with PGP without scale correction"
+                        << std::endl;
                 }
                 algo = 2;
                 STEP(pgp.optimize_corr,(0.0));
@@ -155,17 +155,17 @@ namespace GEO {
 ///         plop(fails.size());
 
 /*
-            vector<index_t> intersections;
-            chartmesh->facets.triangulate();
-            find_self_intersections(chartmesh, intersections);
-            plop(intersections.size());
-          std::string msg;
-            plop (surface_is_manifold(chartmesh, msg));
-            plop(msg);
-            FOR(f, chartmesh->facets.nb()) {
-                double area = Geom::mesh_facet_area(*chartmesh, f, 3);
-                    GEO::Logger::out("HexDom")  << area <<  std::endl;
-            }
+  vector<index_t> intersections;
+  chartmesh->facets.triangulate();
+  find_self_intersections(chartmesh, intersections);
+  plop(intersections.size());
+  std::string msg;
+  plop (surface_is_manifold(chartmesh, msg));
+  plop(msg);
+  FOR(f, chartmesh->facets.nb()) {
+  double area = Geom::mesh_facet_area(*chartmesh, f, 3);
+  GEO::Logger::out("HexDom")  << area <<  std::endl;
+  }
 
 */
 
@@ -207,13 +207,13 @@ namespace GEO {
             geo_argused(vertex_puncher);
 
             {
-                #ifndef HAS_TET2HEX
+#ifndef HAS_TET2HEX
                 if(baudoin_carrier) {
-                Logger::warn("hexdom") << "This version does not have Vorpaline" << std::endl;
-                Logger::warn("hexdom") << "Ignored flag: Carrier-Baudouin algo." << std::endl;
-                Logger::warn("hexdom") << "(filling cavity with tets, no recombination)" << std::endl;
+                    Logger::warn("hexdom") << "This version does not have Vorpaline" << std::endl;
+                    Logger::warn("hexdom") << "Ignored flag: Carrier-Baudouin algo." << std::endl;
+                    Logger::warn("hexdom") << "(filling cavity with tets, no recombination)" << std::endl;
                 }
-                #endif
+#endif
                 Mesh tets;
                 tets.copy(*cavity);
                 STEP(fill_cavity_with_tetgen,(cavity, &tets, with_pyramid));
@@ -227,4 +227,3 @@ namespace GEO {
     }
 
 }
-

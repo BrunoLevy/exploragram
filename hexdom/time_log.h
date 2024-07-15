@@ -102,36 +102,36 @@ struct EXPLORAGRAM_API LogTime {
     //                      | .__/_| |_|\_/\__,_|\__\___|
     //                      |_|
 
- private:
-    /**
-     * CheckPoint is the list item of LogTime
-     * "up" is it's father
-     * "right" is the next item at the same level
-     */
-    struct CheckPoint{
+private:
+/**
+ * CheckPoint is the list item of LogTime
+ * "up" is it's father
+ * "right" is the next item at the same level
+ */
+struct CheckPoint{
     CheckPoint(const std::string& p_n, unsigned int p_up){ n = p_n; up = p_up; t = clock(); right = (unsigned int)(-1); }
     std::string n;
     clock_t t;
     unsigned int right;
     unsigned int up;
-    };
+};
 
-    bool is_start_section(unsigned int i);
-    bool is_end_section(unsigned int i);
-    bool is_final(unsigned int i);
-    double time(unsigned int i);
-    unsigned int dec(unsigned int i = (unsigned int)(-1));
-    unsigned int lastdec();
-    void debug();
-    std::string cur_stack();
-    void report(std::ostream &out, unsigned int timing_depth = 10000);
-    void report_py(std::ostream &out, unsigned int timing_depth = 10000);
+bool is_start_section(unsigned int i);
+bool is_end_section(unsigned int i);
+bool is_final(unsigned int i);
+double time(unsigned int i);
+unsigned int dec(unsigned int i = (unsigned int)(-1));
+unsigned int lastdec();
+void debug();
+std::string cur_stack();
+void report(std::ostream &out, unsigned int timing_depth = 10000);
+void report_py(std::ostream &out, unsigned int timing_depth = 10000);
 
 private:
-    std::string post_fix;
-    std::vector<CheckPoint> check;
-    std::vector<std::pair<std::string, double> > out_values;
-    std::vector<std::pair<std::string, std::string> > out_strings;
+std::string post_fix;
+std::vector<CheckPoint> check;
+std::vector<std::pair<std::string, double> > out_values;
+std::vector<std::pair<std::string, std::string> > out_strings;
 };
 
 extern EXPLORAGRAM_API LogTime logt;

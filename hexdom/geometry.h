@@ -47,16 +47,16 @@
 namespace GEO {
 
     struct EXPLORAGRAM_API CoTan3D{
-    double w[6];
-    double tetvol;
+        double w[6];
+        double tetvol;
 
-    CoTan3D(vec3 P[4], double* anisotropy_as_xx_yy_zz_xy_yz_xz = nullptr);
+        CoTan3D(vec3 P[4], double* anisotropy_as_xx_yy_zz_xy_yz_xz = nullptr);
 
-    index_t org(index_t e);
-    index_t dest(index_t e);
-    double coeff(index_t e);
+        index_t org(index_t e);
+        index_t dest(index_t e);
+        double coeff(index_t e);
 
-    void check_for_grad(vec3 P[4], vec3 grad);
+        void check_for_grad(vec3 P[4], vec3 grad);
     };
 
     /*******************************************************************************/
@@ -111,22 +111,22 @@ namespace GEO {
     /*******************************************************************************/
 
     struct Basis3d {
-    Basis3d(vec3 z) { // TODO DOCUMENT THIS!
-        v[2] = normalize(z);
-        if (std::fabs(v[2].z) < .8)
-        v[0] = cross(v[2], vec3(0, 0, 1));
-        else v[0] = cross(v[2], vec3(1, 0, 0));
-        v[0] = normalize(v[0]);
-        v[1] = cross(v[2], v[0]);
-        geo_assert(std::abs(v[1].length2() - 1) < .001);
-    }
-    vec2 project_xy(vec3 in){
-        return vec2(dot(in, v[0]), dot(in, v[1]));
-    }
-    vec3 un_project_xy(vec2 in){
-        return in[0] * v[0] + in[1] * v[1];
-    }
-    vec3 v[3];
+        Basis3d(vec3 z) { // TODO DOCUMENT THIS!
+            v[2] = normalize(z);
+            if (std::fabs(v[2].z) < .8)
+                v[0] = cross(v[2], vec3(0, 0, 1));
+            else v[0] = cross(v[2], vec3(1, 0, 0));
+            v[0] = normalize(v[0]);
+            v[1] = cross(v[2], v[0]);
+            geo_assert(std::abs(v[1].length2() - 1) < .001);
+        }
+        vec2 project_xy(vec3 in){
+            return vec2(dot(in, v[0]), dot(in, v[1]));
+        }
+        vec3 un_project_xy(vec2 in){
+            return in[0] * v[0] + in[1] * v[1];
+        }
+        vec3 v[3];
     };
 
     /*******************************************************************************/
@@ -175,7 +175,7 @@ namespace GEO {
      */
     int EXPLORAGRAM_API NoDivTriTriIsect(
         double V0[3], double V1[3], double V2[3],
-    double U0[3], double U1[3], double U2[3]
+        double U0[3], double U1[3], double U2[3]
     );
 
     /********************************************************/
@@ -192,7 +192,7 @@ namespace GEO {
     /* Thanks to David Hunt for finding a ">="-bug!         */
     /********************************************************/
     int EXPLORAGRAM_API triBoxOverlap(
-    float boxcenter[3], float boxhalfsize[3], float triverts[3][3]
+        float boxcenter[3], float boxhalfsize[3], float triverts[3][3]
     );
 
     /*******************************************************************************/

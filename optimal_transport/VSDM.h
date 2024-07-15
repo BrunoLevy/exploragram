@@ -64,7 +64,7 @@ namespace GEO {
      *    2012
      */
     class EXPLORAGRAM_API VSDM {
-      public:
+    public:
     /**
      * \brief VSDM constructor.
      * \param[in] S the surface mesh to be fitted.
@@ -83,7 +83,7 @@ namespace GEO {
      *  Default value is 1.0.
      */
     void set_affinity(double x) {
-       affinity_ = x;
+        affinity_ = x;
     }
 
     /**
@@ -110,7 +110,7 @@ namespace GEO {
      *  subdivision surface.
      * \param[in] nb_subdiv the number of Catmull-Clark subdivisions.
      */
-        void set_subdivision_surface(Mesh* mesh, index_t nb_subdiv);
+    void set_subdivision_surface(Mesh* mesh, index_t nb_subdiv);
 
     /**
      * \brief The callback to evaluate the objective function, used by
@@ -123,7 +123,7 @@ namespace GEO {
      * \param[out] g a pointer to a vector of dimension n with the
      *  gradient of the objective function.
      */
-        static void funcgrad_CB(index_t n, double* x, double& f, double* g);
+    static void funcgrad_CB(index_t n, double* x, double& f, double* g);
 
     /**
      * \brief The callback for each iteration of the optimizer.
@@ -140,7 +140,7 @@ namespace GEO {
         index_t n, const double* x, double f, const double* g, double gnorm
     );
 
-      protected:
+    protected:
     /**
      * \brief Gets the instance.
      * \return a pointer to the current VSDM instance.
@@ -159,7 +159,7 @@ namespace GEO {
      * \param[out] g a pointer to a vector of dimension n with the
      *  gradient of the objective function.
      */
-        virtual void funcgrad(index_t n, double* x, double& f, double* g);
+    virtual void funcgrad(index_t n, double* x, double& f, double* g);
 
     /**
      * \brief Updates the progress bar (if specified) and graphics.
@@ -188,7 +188,7 @@ namespace GEO {
      */
     static void compute_graph_Laplacian(Mesh* S, NLSparseMatrix* L);
 
-      protected:
+    protected:
     Delaunay_var delaunay_;
     RestrictedVoronoiDiagram_var RVD_;
     Mesh* S_;

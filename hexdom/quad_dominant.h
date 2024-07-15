@@ -43,15 +43,15 @@
 #include <exploragram/basic/common.h>
 #include <geogram/mesh/mesh.h>
 
-    /**
-     * \file exploragram/hexdom/quad_dominant.h
-     * \brief Functions to extract a quad-dominant mesh from the
-     *  boundary of a parameterized volumetric mesh.
-     * \details All informations required to produce a hex-dom mesh
-     *  are exported into a 2D non-manifold mesh with uv coordinates
-     *  This new mesh is the only input of the subsequent steps in the
-     *  hex dom generation pipeline
-     */
+/**
+ * \file exploragram/hexdom/quad_dominant.h
+ * \brief Functions to extract a quad-dominant mesh from the
+ *  boundary of a parameterized volumetric mesh.
+ * \details All informations required to produce a hex-dom mesh
+ *  are exported into a 2D non-manifold mesh with uv coordinates
+ *  This new mesh is the only input of the subsequent steps in the
+ *  hex dom generation pipeline
+ */
 
 
 namespace GEO {

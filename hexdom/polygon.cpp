@@ -178,8 +178,8 @@ namespace GEO {
         FOR(q, nbv / 2) {
             FOR(d, 2)
                 dec_score[d] = std::max(dec_score[d], std::abs(
-                    det(pts[(q * 2 + 0 + d) % nbv] - pts[(q * 2 + 1 + d) % nbv],
-                        pts[(q * 2 + 2 + d) % nbv] - pts[(q * 2 + 1 + d) % nbv])));
+                                            det(pts[(q * 2 + 0 + d) % nbv] - pts[(q * 2 + 1 + d) % nbv],
+                                                pts[(q * 2 + 2 + d) % nbv] - pts[(q * 2 + 1 + d) % nbv])));
         }
         if (dec_score[1] < dec_score[0])dec = 1;
         return dec;
@@ -250,7 +250,7 @@ namespace GEO {
         }
 
         void remove(int i) {
-                i = i%int(pos_.size());
+            i = i%int(pos_.size());
             pos_.erase(pos_.begin() + i);
             angu_.erase(angu_.begin() + i);
             vid_.erase(vid_.begin() + i);
@@ -272,7 +272,7 @@ namespace GEO {
 
         // returns the index of the singularity
         int init_contour(vector<int>& angu,int sing_valence) {
-                index_t offset = 0;
+            index_t offset = 0;
             // find the best offset
             double best_dist2 = 1e20;
             contour.resize(pts.size()+1);
@@ -314,16 +314,16 @@ namespace GEO {
             vec2 A = contour.pos(0);
             vec2 B = contour.pos(-1);
             if (sing_valence == 3) for (int i = int(B.x + 1.0); i < int(A.x); i++) {
-                contour.pos_.push_back(vec2(i, B.y));
-                contour.vid_.push_back(int(pts.size()));
-                pts.push_back(contour.pos_.back());
-            }
+                    contour.pos_.push_back(vec2(i, B.y));
+                    contour.vid_.push_back(int(pts.size()));
+                    pts.push_back(contour.pos_.back());
+                }
 
             if (sing_valence == 5) for (int i = int(B.x - 1); i > int(A.x); i--) {
-                contour.pos_.push_back(vec2(double(i), B.y));
-                contour.vid_.push_back(int(pts.size()));
-                pts.push_back(contour.pos_.back());
-            }
+                    contour.pos_.push_back(vec2(double(i), B.y));
+                    contour.vid_.push_back(int(pts.size()));
+                    pts.push_back(contour.pos_.back());
+                }
 
             index_t singularity_index = contour.pos_.size();
             contour.pos_.push_back(vec2(A.x, B.y));
@@ -537,12 +537,12 @@ namespace GEO {
         vector<double> length(nbv);
         double ave_length = 0;
         FOR(i, nbv) {
-            vec2 P[3];
-            FOR(p, 3) P[p] = aupp(i + p - 1, pts);
-            angle[i] = (180. / M_PI)*atan2(det(P[1] - P[0], P[2] - P[1]), dot(P[1] - P[0], P[2] - P[1]));
-            if (verbose)GEO::Logger::out("HexDom")  << "i= " << i << "angle = " << angle[i] <<  std::endl;
-            length[i] = (P[1] - P[0]).length() / double(nbv);
-            ave_length += length[i];
+        vec2 P[3];
+        FOR(p, 3) P[p] = aupp(i + p - 1, pts);
+        angle[i] = (180. / M_PI)*atan2(det(P[1] - P[0], P[2] - P[1]), dot(P[1] - P[0], P[2] - P[1]));
+        if (verbose)GEO::Logger::out("HexDom")  << "i= " << i << "angle = " << angle[i] <<  std::endl;
+        length[i] = (P[1] - P[0]).length() / double(nbv);
+        ave_length += length[i];
         }
         plop("gna");
 
@@ -559,74 +559,74 @@ namespace GEO {
         plop("gna");
 
         FOR(test_start, nbv) {
-            plop(test_start);
-            index_t test_end;
-            index_t test_nb_nv_pts;
-            double test_score;
+        plop(test_start);
+        index_t test_end;
+        index_t test_nb_nv_pts;
+        double test_score;
 
-            plop("gna");
+        plop("gna");
 
-            FOR(d, nbv - 5) {
-                plop(d);
+        FOR(d, nbv - 5) {
+        plop(d);
 
-                test_end = test_start + d + 3;
+        test_end = test_start + d + 3;
 
-                vec2 A[3];
-                FOR(i, 3) A[i] = aupp(int(test_start + i) - 1, pts);
-                vec2 B[3];
-                FOR(i, 3) B[i] = aupp(int(test_end + i) - 1, pts);
-                vec2 nA1A2 = normalize(A[2] - A[1]);
-                vec2 nA1A0 = normalize(A[0] - A[1]);
-                vec2 nB1B2 = normalize(B[2] - B[1]);
-                vec2 nB1B0 = normalize(B[0] - B[1]);
-                vec2 nAB = normalize(B[1] - A[1]);
-                vec2 nBA = -nAB;
+        vec2 A[3];
+        FOR(i, 3) A[i] = aupp(int(test_start + i) - 1, pts);
+        vec2 B[3];
+        FOR(i, 3) B[i] = aupp(int(test_end + i) - 1, pts);
+        vec2 nA1A2 = normalize(A[2] - A[1]);
+        vec2 nA1A0 = normalize(A[0] - A[1]);
+        vec2 nB1B2 = normalize(B[2] - B[1]);
+        vec2 nB1B0 = normalize(B[0] - B[1]);
+        vec2 nAB = normalize(B[1] - A[1]);
+        vec2 nBA = -nAB;
 
-                double worst_det = 1;
-                worst_det = std::min(worst_det, det(nA1A2, nAB));
-                worst_det = std::min(worst_det, det(nAB, nA1A0));
-                worst_det = std::min(worst_det, det(nB1B2, nBA));
-                worst_det = std::min(worst_det, det(nBA, nB1B0));
+        double worst_det = 1;
+        worst_det = std::min(worst_det, det(nA1A2, nAB));
+        worst_det = std::min(worst_det, det(nAB, nA1A0));
+        worst_det = std::min(worst_det, det(nB1B2, nBA));
+        worst_det = std::min(worst_det, det(nBA, nB1B0));
 
-                test_score = worst_det;
+        test_score = worst_det;
 
 
-                double AB_relative_length = floor((B[1] - A[1]).length() / ave_length);
-                test_nb_nv_pts = index_t(std::max(0, int(AB_relative_length) - 1));
+        double AB_relative_length = floor((B[1] - A[1]).length() / ave_length);
+        test_nb_nv_pts = index_t(std::max(0, int(AB_relative_length) - 1));
 
-                if (test_nb_nv_pts % 2 != int(d % 2)) {
-                    if (test_nb_nv_pts == 0) test_nb_nv_pts = 1; else test_nb_nv_pts--;
-                }
+        if (test_nb_nv_pts % 2 != int(d % 2)) {
+        if (test_nb_nv_pts == 0) test_nb_nv_pts = 1; else test_nb_nv_pts--;
+        }
 
-                if (angle[test_start] < 1) test_score += 1;
-                if (angle[test_end] < 1) test_score += 1;
-                if (angle[test_start] < -45) test_score += 2;
-                if (angle[test_end] < -45) test_score += 2;
-                if ((test_start % 2) == 1 - dec) test_score -= 10;
-                if ((test_end % 2) == 1 - dec) test_score -= 10;
-                test_nb_nv_pts = 1;
+        if (angle[test_start] < 1) test_score += 1;
+        if (angle[test_end] < 1) test_score += 1;
+        if (angle[test_start] < -45) test_score += 2;
+        if (angle[test_end] < -45) test_score += 2;
+        if ((test_start % 2) == 1 - dec) test_score -= 10;
+        if ((test_end % 2) == 1 - dec) test_score -= 10;
+        test_nb_nv_pts = 1;
 
-                if (best_score < test_score) {
-                    bool can_cut = true;
-                    FOR(dd, nbv) {
-                        index_t ind = test_start + dd;
-                        if (ind > test_start && ind < test_end)
-                            can_cut = can_cut && det(nAB, aupp(ind, pts) - A[1]) < 0;
-                        if (ind > test_end)
-                            can_cut = can_cut && det(nAB, aupp(ind, pts) - A[1]) > 0;
-                    }
-                    if (verbose)
-                        std::cerr << "can_cut = " << can_cut << "  test_score = " << test_score
-                        << "   test_start = " << test_start << "   test_end = " << test_end
-                        << "   test_nb_nv_pts = " << test_nb_nv_pts << std::endl;
-                    if (can_cut) {
-                        start = test_start;
-                        end = test_end;
-                        nb_nv_pts = test_nb_nv_pts;
-                        best_score = test_score;
-                    }
-                }
-            }
+        if (best_score < test_score) {
+        bool can_cut = true;
+        FOR(dd, nbv) {
+        index_t ind = test_start + dd;
+        if (ind > test_start && ind < test_end)
+        can_cut = can_cut && det(nAB, aupp(ind, pts) - A[1]) < 0;
+        if (ind > test_end)
+        can_cut = can_cut && det(nAB, aupp(ind, pts) - A[1]) > 0;
+        }
+        if (verbose)
+        std::cerr << "can_cut = " << can_cut << "  test_score = " << test_score
+        << "   test_start = " << test_start << "   test_end = " << test_end
+        << "   test_nb_nv_pts = " << test_nb_nv_pts << std::endl;
+        if (can_cut) {
+        start = test_start;
+        end = test_end;
+        nb_nv_pts = test_nb_nv_pts;
+        best_score = test_score;
+        }
+        }
+        }
 
 
         }
@@ -634,41 +634,41 @@ namespace GEO {
         plop("gna");
 
         if (nbv > 8)
-            if (nb_nv_pts != index_t(-1)) {
-                if (verbose)GEO::Logger::out("HexDom")  << "remove quad strip from " << start << " with score = " << best_score << " with nbpts" << nb_nv_pts <<  std::endl;
+        if (nb_nv_pts != index_t(-1)) {
+        if (verbose)GEO::Logger::out("HexDom")  << "remove quad strip from " << start << " with score = " << best_score << " with nbpts" << nb_nv_pts <<  std::endl;
 
-                vector<index_t> global_vid[2]; // gives indices in "pts" from indices in "poly[i]"
+        vector<index_t> global_vid[2]; // gives indices in "pts" from indices in "poly[i]"
 
-                // fill both half with existing points
-                //int end = start + nb_nv_pts + 3;
-                FOR(d, end - start + 1)                                 global_vid[0].push_back((start + d) % nbv);
-                FOR(d, nbv - (end - start) + 1)         global_vid[1].push_back((end + d) % nbv);
+        // fill both half with existing points
+        //int end = start + nb_nv_pts + 3;
+        FOR(d, end - start + 1)                                 global_vid[0].push_back((start + d) % nbv);
+        FOR(d, nbv - (end - start) + 1)         global_vid[1].push_back((end + d) % nbv);
 
 
-                // add new vertices along the cut
-                FOR(i, nb_nv_pts)                                       global_vid[0].push_back(nbv + i);
-                FOR(i, nb_nv_pts)                                       global_vid[1].push_back(nbv + (nb_nv_pts - 1 - i));
-                FOR(i, nb_nv_pts) {
-                    double c = 1.0 - double(i + 1) / double(nb_nv_pts + 1);
-                    pts.push_back((1. - c)*pts[start] + c*pts[end% nbv]);
-                }
+        // add new vertices along the cut
+        FOR(i, nb_nv_pts)                                       global_vid[0].push_back(nbv + i);
+        FOR(i, nb_nv_pts)                                       global_vid[1].push_back(nbv + (nb_nv_pts - 1 - i));
+        FOR(i, nb_nv_pts) {
+        double c = 1.0 - double(i + 1) / double(nb_nv_pts + 1);
+        pts.push_back((1. - c)*pts[start] + c*pts[end% nbv]);
+        }
 
-                // solve on two halves
-                vector<vec2> poly[2];
-                FOR(i, 2) FOR(fv, global_vid[i].size()) poly[i].push_back(pts[global_vid[i][fv]]);
+        // solve on two halves
+        vector<vec2> poly[2];
+        FOR(i, 2) FOR(fv, global_vid[i].size()) poly[i].push_back(pts[global_vid[i][fv]]);
 
-                vector<index_t> poly_quad[2];
-                FOR(i, 2) if (!Poly2d(poly[i]).try_quadrangulate(poly_quad[i])) return false;
-                // add new pts to global
-                FOR(i, 2) for (index_t d = global_vid[i].size(); d < poly[i].size(); d++) {
-                    global_vid[i].push_back(pts.size());
-                    pts.push_back(poly[i][d]);
-                }
-                FOR(i, 2) FOR(qu, poly_quad[i].size()) quads.push_back(global_vid[i][poly_quad[i][qu]]);
+        vector<index_t> poly_quad[2];
+        FOR(i, 2) if (!Poly2d(poly[i]).try_quadrangulate(poly_quad[i])) return false;
+        // add new pts to global
+        FOR(i, 2) for (index_t d = global_vid[i].size(); d < poly[i].size(); d++) {
+        global_vid[i].push_back(pts.size());
+        pts.push_back(poly[i][d]);
+        }
+        FOR(i, 2) FOR(qu, poly_quad[i].size()) quads.push_back(global_vid[i][poly_quad[i][qu]]);
 
-                if (!quads_are_valid(quads)) { GEO::Logger::out("HexDom")  << "FAIL remove quad strip" <<  std::endl; return false; }
-                return true;
-            }
+        if (!quads_are_valid(quads)) { GEO::Logger::out("HexDom")  << "FAIL remove quad strip" <<  std::endl; return false; }
+        return true;
+        }
 
 
         plop("gna");
@@ -680,7 +680,7 @@ namespace GEO {
 
         return true;
         */
-    }
+            }
 
     /*****************************************************************************************************/
 
@@ -697,7 +697,7 @@ namespace GEO {
         vec3 bary = barycenter();
         FOR(fv, pts.size()) {
             n = n + cross(pts[fv] - bary, pts[next_mod(fv, pts.size())] - bary);
-        //    plop(n);
+            //    plop(n);
         }
         n = normalize(n);
         return n;

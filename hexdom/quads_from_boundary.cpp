@@ -60,9 +60,9 @@ namespace GEO {
             return (180. / M_PI)*atan2(det(P[2] - P[1], P[0] - P[1]), dot(P[2] - P[1], P[0] - P[1]));
         }
 
-    double angle(index_t i) {
-        return angle(int(i));
-    }
+        double angle(index_t i) {
+            return angle(int(i));
+        }
 
         vec2 point(int i) {
             return aupp(i , pts);
@@ -72,38 +72,38 @@ namespace GEO {
             return aupp(i , pts);
         }
 
-            void init() {
-                n = pts.size();
-                ave = 0;
-                FOR(p, pts.size()) ave += (pts[p] - aupp(p + 1, pts)).length();
-                ave  /= double(pts.size());
+        void init() {
+            n = pts.size();
+            ave = 0;
+            FOR(p, pts.size()) ave += (pts[p] - aupp(p + 1, pts)).length();
+            ave  /= double(pts.size());
+        }
+
+
+        bool solve_and_merge_subproblems() {
+            plop("recurs");
+            // solve on two halves
+            vector<vec2> poly[2];
+            FOR(i, 2) FOR(fv, global_vid[i].size()) poly[i].push_back(pts[global_vid[i][fv]]);
+
+            vector<index_t> poly_quad[2];
+
+            FOR(i, 2) {
+                QuadsFromBoundry sub(poly[i], poly_quad[i]);
+                if (!sub.apply()) return false;
+                plop(pts.size());
+                plop(global_vid[i].size());
             }
-
-
-            bool solve_and_merge_subproblems() {
-                plop("recurs");
-                // solve on two halves
-                vector<vec2> poly[2];
-                FOR(i, 2) FOR(fv, global_vid[i].size()) poly[i].push_back(pts[global_vid[i][fv]]);
-
-                vector<index_t> poly_quad[2];
-
-                FOR(i, 2) {
-                    QuadsFromBoundry sub(poly[i], poly_quad[i]);
-                    if (!sub.apply()) return false;
-                    plop(pts.size());
-                    plop(global_vid[i].size());
-                }
-                // add new pts to global
-                FOR(i, 2) for (index_t d = global_vid[i].size(); d < poly[i].size(); d++) {
-                    global_vid[i].push_back(pts.size());
-                    pts.push_back(poly[i][d]);
-                }
-                FOR(i, 2) FOR(qu, poly_quad[i].size()) quads.push_back(global_vid[i][poly_quad[i][qu]]);
-
-                return true;
-
+            // add new pts to global
+            FOR(i, 2) for (index_t d = global_vid[i].size(); d < poly[i].size(); d++) {
+                global_vid[i].push_back(pts.size());
+                pts.push_back(poly[i][d]);
             }
+            FOR(i, 2) FOR(qu, poly_quad[i].size()) quads.push_back(global_vid[i][poly_quad[i][qu]]);
+
+            return true;
+
+        }
 
 
         bool apply() {
@@ -135,9 +135,9 @@ namespace GEO {
                 bool can_punch;
                 if (it == 0)
                     can_punch = alpha[0] > 90 - tolerance  && alpha[0] < 90 + tolerance
-                    && alpha[1] > 0 - tolerance  && alpha[1] < 0 + tolerance
-                    && alpha[2] > 90 - tolerance  && alpha[2] < 90 + tolerance
-                    ;
+                                                                         && alpha[1] > 0 - tolerance  && alpha[1] < 0 + tolerance
+                                                                                                                    && alpha[2] > 90 - tolerance  && alpha[2] < 90 + tolerance
+                        ;
                 else //(it == 1)
                     can_punch = alpha[0] > 90 - tolerance  && alpha[0] < 90 + tolerance;
                 if (can_punch) {// more or less 90 degree ;)
@@ -163,7 +163,7 @@ namespace GEO {
                                     + (1. - du)*dv*new_quad[3]
                                     + (1. - du)*(1. - dv)*new_quad[2];
                                 for (double c = 0; c < 1.; c += .2) FOR(vv, n)
-                                    if (((c*aupp(vv + 1, pts) + (1. - c)*point(vv)) - pixel).length() < .5*ave) geometric_issue = true;
+                                                                        if (((c*aupp(vv + 1, pts) + (1. - c)*point(vv)) - pixel).length() < .5*ave) geometric_issue = true;
                             }
                     }
                     if (geometric_issue) continue;
@@ -179,7 +179,7 @@ namespace GEO {
             }
 
             return true;
-      //  split_done:
+            //  split_done:
         }
     };
 

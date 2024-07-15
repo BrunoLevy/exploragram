@@ -75,7 +75,7 @@ namespace GEO {
 
     struct EXPLORAGRAM_API HBoxes {
         HBoxes() {
-    }
+        }
 
         HBoxes(vector<BBox>& inboxes) {
             init(inboxes);
@@ -114,12 +114,12 @@ namespace GEO {
 
 
     // double tetra_volume(vec3 A, vec3 B, vec3 C, vec3 D);
-     double tetra_volume_sign(vec3 A, vec3 B, vec3 C, vec3 D);
-     bool same_sign(double a, double b);
+    double tetra_volume_sign(vec3 A, vec3 B, vec3 C, vec3 D);
+    bool same_sign(double a, double b);
 
     //bool naive_tri_tri_intersect(vec3 v0, vec3 v1, vec3 v2, vec3 u0, vec3 u1, vec3 u2);
 
-     vector<BBox> facets_bbox(Mesh* m);
+    vector<BBox> facets_bbox(Mesh* m);
     struct FacetIntersect {
         FacetIntersect(Mesh* p_m);
         vector<index_t> get_intersections(vector<vec3>& P);

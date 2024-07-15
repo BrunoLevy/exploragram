@@ -112,10 +112,10 @@ namespace GEO {
 
             // STEP 2.2: non singular boundary triangles are easy to extract
             index_t fid = hex->facets.create_triangle(
-                    tetV_to_facetV[tet_verts[0]],
-                    tetV_to_facetV[tet_verts[1]],
-                    tetV_to_facetV[tet_verts[2]]
-                    );
+                tetV_to_facetV[tet_verts[0]],
+                tetV_to_facetV[tet_verts[1]],
+                tetV_to_facetV[tet_verts[2]]
+            );
 
             bool has_valid_2d_param = false;
             if (has_param[m->cells.facet(c, cf)]) {
@@ -129,7 +129,7 @@ namespace GEO {
 #if 0
                 // mirror the copy when necessary
                 if (det(uv[hex->facets.corner(fid, 1)] - uv[hex->facets.corner(fid, 0)],
-                            uv[hex->facets.corner(fid, 2)] - uv[hex->facets.corner(fid, 0)]) < 0)
+                        uv[hex->facets.corner(fid, 2)] - uv[hex->facets.corner(fid, 0)]) < 0)
                     FOR(lv, 3) uv[hex->facets.corner(fid, lv)][0] *= -1.;
 #endif
             }
@@ -138,11 +138,11 @@ namespace GEO {
                 TrglGradient grd(lX[0], lX[1], lX[2]);
                 vec3 grduv[2];
                 FOR(d, 2) grduv[d] = grd.gradient_3d(uv[hex->facets.corner(fid, 0)][d], uv[hex->facets.corner(fid, 1)][d], uv[hex->facets.corner(fid, 2)][d]);
-            FOR(d, 2) FOR(dd, 3) if (Numeric::is_nan(grduv[d][dd])) has_valid_2d_param = false;
+                FOR(d, 2) FOR(dd, 3) if (Numeric::is_nan(grduv[d][dd])) has_valid_2d_param = false;
 #if 0
-              if (grduv[0].length() > 10. * grduv[1].length()) has_valid_2d_param = false;
-              if (grduv[1].length() > 10. * grduv[0].length()) has_valid_2d_param = false;
-              if (std::abs(dot(normalize(grduv[0]), normalize(grduv[1]))) > cos(M_PI / 4.)) has_valid_2d_param = false;
+                if (grduv[0].length() > 10. * grduv[1].length()) has_valid_2d_param = false;
+                if (grduv[1].length() > 10. * grduv[0].length()) has_valid_2d_param = false;
+                if (std::abs(dot(normalize(grduv[0]), normalize(grduv[1]))) > cos(M_PI / 4.)) has_valid_2d_param = false;
 #endif
             }
 
@@ -171,9 +171,9 @@ namespace GEO {
 
             FOR(new_face, triangles.size() / 3) {
                 index_t new_f = m->facets.create_triangle(
-                        m->facets.vertex(f, triangles[3 * new_face + 0]),
-                        m->facets.vertex(f, triangles[3 * new_face + 1]),
-                        m->facets.vertex(f, triangles[3 * new_face + 2]));
+                    m->facets.vertex(f, triangles[3 * new_face + 0]),
+                    m->facets.vertex(f, triangles[3 * new_face + 1]),
+                    m->facets.vertex(f, triangles[3 * new_face + 2]));
 
                 to_kill.push_back(false);
                 m->facets.attributes().copy_item(new_f, f);
@@ -498,7 +498,7 @@ namespace GEO {
 
                 for (double cur_iso = ceil(std::min(v[0], v[1])); cur_iso < std::max(v[0], v[1]); cur_iso += 1.0) {
                     double c = (cur_iso - v[0]) / (v[1] - v[0]);
-            if (!Numeric::is_nan(c) && c > 0 && c < 1)
+                    if (!Numeric::is_nan(c) && c > 0 && c < 1)
                         coeff.push_back(c);
                 }
 
@@ -555,7 +555,7 @@ namespace GEO {
             }
         }
         m->facets.delete_elements(to_kill);
-   }
+    }
 
     /**
      * INPUT:        facets with uv coordinates
@@ -815,7 +815,7 @@ namespace GEO {
 
 
 
-      static void sample_triangle(vec3 *ABC, double eps, vector<vec3>& samples) {
+    static void sample_triangle(vec3 *ABC, double eps, vector<vec3>& samples) {
         double max_edge_length = 0;
         FOR(p, 3) max_equal(max_edge_length, (ABC[(p + 1) % 3] - ABC[p]).length());
         index_t nb_steps = 10;
@@ -871,17 +871,17 @@ namespace GEO {
                     vec3 closest_point;
                     double l0, l1, l2;
                     min_equal(min_dist2, Geom::point_triangle_squared_distance<vec3>(P,
-                        X(ref)[ref->facets.vertex(other_f, 0)],
-                        X(ref)[ref->facets.vertex(other_f, 1)],
-                        X(ref)[ref->facets.vertex(other_f, 2)],
-                        closest_point, l0, l1, l2));
+                                                                                     X(ref)[ref->facets.vertex(other_f, 0)],
+                                                                                     X(ref)[ref->facets.vertex(other_f, 1)],
+                                                                                     X(ref)[ref->facets.vertex(other_f, 2)],
+                                                                                     closest_point, l0, l1, l2));
 
                     if (ref->facets.nb_vertices(other_f) == 4) {
                         min_equal(min_dist2, Geom::point_triangle_squared_distance<vec3>(P,
-                            X(ref)[ref->facets.vertex(other_f, 0)],
-                            X(ref)[ref->facets.vertex(other_f, 2)],
-                            X(ref)[ref->facets.vertex(other_f, 3)],
-                            closest_point, l0, l1, l2));
+                                                                                         X(ref)[ref->facets.vertex(other_f, 0)],
+                                                                                         X(ref)[ref->facets.vertex(other_f, 2)],
+                                                                                         X(ref)[ref->facets.vertex(other_f, 3)],
+                                                                                         closest_point, l0, l1, l2));
                     }
                 }
 
@@ -995,4 +995,3 @@ namespace GEO {
 
 
 }
-

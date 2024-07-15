@@ -51,5 +51,3 @@ std::string plop_file(const char* file_in, int line) {
     GEO::FileSystem::flip_slashes(file);
     return GEO::FileSystem::base_name(file) + "." + GEO::FileSystem::extension(file) + ":" + GEO::String::to_string(line);
 }
-
-

@@ -62,8 +62,8 @@ namespace GEO {
     bool EXPLORAGRAM_API have_negative_tet_volume(Mesh*m);
 
     /**
-    * unit vector: weighted sum of normal of a triangle fan around the barycenter
-    */
+     * unit vector: weighted sum of normal of a triangle fan around the barycenter
+     */
     inline vec3 facet_normal(Mesh* m, index_t f) {
         index_t nbv = m->facets.nb_vertices(f);
         vec3 bary = facet_bary(m, f);

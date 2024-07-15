@@ -51,12 +51,12 @@ namespace GEO {
     }
 
     static bool get_a_triangle_patch(
-            const Mesh& M,
-            index_t facet,
-            std::vector<bool>& tri_patch_flag,
-            index_t& patch_size,
-            double cos_angle,
-            index_t nb_tri_min_in_patch) {
+        const Mesh& M,
+        index_t facet,
+        std::vector<bool>& tri_patch_flag,
+        index_t& patch_size,
+        double cos_angle,
+        index_t nb_tri_min_in_patch) {
 
         /* Add facet in the patch */
         tri_patch_flag[facet] = true;
@@ -261,4 +261,3 @@ namespace GEO {
 
 
 }
-

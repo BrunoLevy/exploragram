@@ -169,7 +169,7 @@ namespace GEO {
         }
     }
 
-        static bool cell_has_param(Mesh* m, Attribute<bool>& has_param, index_t c) {
+    static bool cell_has_param(Mesh* m, Attribute<bool>& has_param, index_t c) {
         FOR(f, 4) if (!has_param[m->cells.facet(c, f)]) return false;
         return true;
     }

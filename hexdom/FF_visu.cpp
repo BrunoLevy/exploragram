@@ -141,16 +141,15 @@ namespace GEO {
                 if (lockU[v][dim] == 0 && !extractall) continue;
                 extracteddim++;
                 vec3 x = scale * dir[dim];
-                    index_t off_v = render->vertices.create_vertices(2);
-                    X(render)[off_v] = X(m)[v] + x ;
-                    X(render)[off_v + 1] = X(m)[v] - x ;
-                    index_t f = render->edges.create_edge(off_v + 0, off_v + 1);
-                    //orient[f] = dim;
-                    orient[f] = extracteddim;
-                }
+                index_t off_v = render->vertices.create_vertices(2);
+                X(render)[off_v] = X(m)[v] + x ;
+                X(render)[off_v + 1] = X(m)[v] - x ;
+                index_t f = render->edges.create_edge(off_v + 0, off_v + 1);
+                //orient[f] = dim;
+                orient[f] = extracteddim;
             }
         }
-
-
     }
 
+
+}
