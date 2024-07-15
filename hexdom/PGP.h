@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,12 +42,12 @@
 #define H_HEXDOM_ALGO_PGP_OPT_H
 
 #include <exploragram/basic/common.h>
-#include <exploragram/hexdom/basic.h> 
+#include <exploragram/hexdom/basic.h>
 #include <geogram/mesh/mesh.h>
 
 
 namespace GEO {
-    
+
     class EXPLORAGRAM_API PGPopt {
     public:
 
@@ -70,15 +70,15 @@ namespace GEO {
 
 
         //// cubecover
-		//index_t get_the_only_non_zero_lc(index_t c, index_t cf, Attribute<index_t>& CCedgeid);
-		//index_t number_edges_on_cut_graph(Attribute<index_t>& CCedgeid);
-		index_t get_non_nulledge(index_t c, index_t cf, Attribute<bool>& nulledge);
-		void mark_null_edges(Attribute<bool>& nulledge);
+        //index_t get_the_only_non_zero_lc(index_t c, index_t cf, Attribute<index_t>& CCedgeid);
+        //index_t number_edges_on_cut_graph(Attribute<index_t>& CCedgeid);
+        index_t get_non_nulledge(index_t c, index_t cf, Attribute<bool>& nulledge);
+        void mark_null_edges(Attribute<bool>& nulledge);
 
         //bool constraint_boundary is set to false only to compute the correction one form
         void cubcover(bool compute_only_corr =false);
-		void grow_ball(Attribute<bool>& tet_in_ball);
-		void grow_triangle_ball(vector<bool>& tetface_in_ball);
+        void grow_ball(Attribute<bool>& tet_in_ball);
+        void grow_triangle_ball(vector<bool>& tetface_in_ball);
 
 
 
@@ -92,14 +92,14 @@ namespace GEO {
                 if (m->edges.vertex(e, 1) == v1) return e;
             }
             geo_assert_not_reached;
-         
+
         }
-			
-		void move_U_to_corner();
+
+        void move_U_to_corner();
 
 /*
         void snap_U_to_round(double eps = 0.05) {
-			return;
+            return;
             FOR(v, m->vertices.nb()) FOR(d, 3) {
                 if (std::abs(U[v][d] - round(U[v][d])) < eps) {
                     U[v][d] = round(U[v][d]);
@@ -115,10 +115,10 @@ namespace GEO {
         Attribute<mat3> B;
 
         // A PGP solution is not only a mesh + attrib: it also requires these datas
-       
+
         Attribute<vec3> corr;
-		//Attribute<vec3i> tij;
-		Attribute<vec3> tij;
+        //Attribute<vec3i> tij;
+        Attribute<vec3> tij;
 
         vector<index_t> v2e;
         vector<vector<index_t> > v2eopp;

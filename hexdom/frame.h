@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -47,16 +47,16 @@
 
 
 namespace GEO {
-    
+
     /***
      *               ___     __        __     __
      *     |\/|  /\   |     |__)  /\  /__` | /  `
      *     |  | /~~\  |     |__) /~~\ .__/ | \__,
      *
      */
-    
+
     inline bool is_identity_auvp(const mat3& m, double eps = 1e-15) {
-	// [BL] TODO: test extra-diagonal elements ? (can be a big cow without that !!!)
+    // [BL] TODO: test extra-diagonal elements ? (can be a big cow without that !!!)
         return std::abs(m(0, 0) - 1.) < eps && std::abs(m(1, 1) - 1.) < eps && std::abs(m(2, 2) - 1.) < eps;
     }
 
@@ -73,12 +73,12 @@ namespace GEO {
     mat3 EXPLORAGRAM_API rotx(double angle);
     mat3 EXPLORAGRAM_API roty(double angle);
     mat3 EXPLORAGRAM_API rotz(double angle);
-    
+
     // non optimized version is  "return rotz(xyz[2]) *roty(xyz[1]) *rotx(xyz[0]);"
     mat3 euler_to_mat3(vec3 xyz);
 
-    //http://www.staff.city.ac.uk/~sbbh653/publications/euler.pdf    
-    vec3 mat3_to_euler(const mat3& r); 
+    //http://www.staff.city.ac.uk/~sbbh653/publications/euler.pdf
+    vec3 mat3_to_euler(const mat3& r);
 
     /***
      *                __      __   ___  __             ___      ___    __
@@ -86,17 +86,17 @@ namespace GEO {
      *    /~~\ / \ | .__/    |    |___ |  \  |  | \__/  |  /~~\  |  | \__/ | \|
      *
      */
-    
-    
+
+
     struct EXPLORAGRAM_API AxisPermutation {
         AxisPermutation(index_t id=0) {  mid = id; }
         void aligns_B_wrt_ref(mat3 ref, mat3 B);
-	void make_col2_equal_to_z(mat3 B, vec3 z);
+    void make_col2_equal_to_z(mat3 B, vec3 z);
         const mat3& get_mat() const;
         bool is_identity() { return mid == 0; }
         double operator()(index_t i, index_t j) {return get_mat()(i, j); }
         AxisPermutation inverse();
-        
+
         index_t mid;
     };
 
@@ -116,11 +116,11 @@ namespace GEO {
 
         inline mat3 apply_permutation(AxisPermutation& ap) {return r*ap.get_mat();}
 
-	void make_z_equal_to(vec3 z);
+    void make_z_equal_to(vec3 z);
 
-	static mat3 average_frame(vector<mat3>& data);
-	static mat3 representative_frame(vector<vec3>& bunch_of_vectors, vector<double>& w);
-	static mat3 representative_frame(vector<vec3>& bunch_of_vectors);
+    static mat3 average_frame(vector<mat3>& data);
+    static mat3 representative_frame(vector<vec3>& bunch_of_vectors, vector<double>& w);
+    static mat3 representative_frame(vector<vec3>& bunch_of_vectors);
     };
 
     /***
@@ -134,8 +134,8 @@ namespace GEO {
 
     bool EXPLORAGRAM_API triangle_is_frame_singular(Mesh* m, Attribute<mat3>& B, index_t c, index_t cf);
 
-	bool triangle_is_frame_singular___give_stable_direction(Mesh* m, int& stable_dir_index, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv=0);
-	bool triangle_is_frame_singular___give_stable_direction(Mesh* m, vec3& stable_dir_geom, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv=0);
+    bool triangle_is_frame_singular___give_stable_direction(Mesh* m, int& stable_dir_index, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv=0);
+    bool triangle_is_frame_singular___give_stable_direction(Mesh* m, vec3& stable_dir_geom, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv=0);
 }
 
 #endif

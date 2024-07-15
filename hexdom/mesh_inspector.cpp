@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -104,7 +104,7 @@ namespace GEO {
         FOR(f, m->facets.nb()) FOR(fc, m->facets.nb_corners(f))
             if (m->facets.vertex(f, fc) == m->facets.vertex(f, next_mod(fc, m->facets.nb_corners(f)))) {
                 msg = "duplicated corner detected on  (face = " + String::to_string(f) + " , local corner = " + String::to_string(fc) + " , vertex = " +
-		    String::to_string(m->facets.vertex(f, fc));
+            String::to_string(m->facets.vertex(f, fc));
                 return false;
             }
         // output the type of surface
@@ -113,7 +113,7 @@ namespace GEO {
         if (nb_edges_par_facets != index_t(-1)) plop(nb_edges_par_facets);
 
         // check if the mesh is manifold
-        
+
         Attribute<int> nb_opp(m->facet_corners.attributes(), "nb_opp");
         Attribute<int> nb_occ(m->facet_corners.attributes(), "nb_occ");
         FOR(h, m->facet_corners.nb()) { nb_opp[h] = 0; nb_occ[h] = 0; }
@@ -189,8 +189,8 @@ namespace GEO {
     void get_facet_stats(Mesh* m, const char * msg, bool export_attribs) {
         geo_argused(export_attribs);
         GEO::Logger::out("HexDom")  << "-----------------------------------------" <<  std::endl;
-	GEO::Logger::out("HexDom")  << "get_facet_stats  " << msg <<  std::endl;
-	GEO::Logger::out("HexDom")  << "-----------------------------------------" <<  std::endl;
+    GEO::Logger::out("HexDom")  << "get_facet_stats  " << msg <<  std::endl;
+    GEO::Logger::out("HexDom")  << "-----------------------------------------" <<  std::endl;
 
         {
             Attribute<int> nb_opp(m->facet_corners.attributes(), "nb_opp");

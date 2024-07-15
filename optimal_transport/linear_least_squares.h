@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -51,7 +51,7 @@
  */
 
 namespace GEO {
-    
+
     /**
      * \brief Computes the linear least squares
      *  regression of a function evaluated
@@ -106,15 +106,15 @@ namespace GEO {
          * \param[in] p 3d coordinates of the point
          * \param[in] v function value associated with \p p_in
          */
-	void add_point_degree_1(const double* p, double v);
+    void add_point_degree_1(const double* p, double v);
 
         /**
          * \brief Implementation of add_point() for degree 2.
          * \param[in] p 3d coordinates of the point
          * \param[in] v function value associated with \p p_in
          */
-	void add_point_degree_2(const double* p, double v);	
-	
+    void add_point_degree_2(const double* p, double v);
+
         /**
          * \brief Gets the dimension of the function basis.
          */
@@ -130,7 +130,7 @@ namespace GEO {
          *  function basis at \p p
          */
         void eval_basis(const double* p, double* b) const;
-        
+
         /**
          * \brief Maximum dimension of the function basis
          */

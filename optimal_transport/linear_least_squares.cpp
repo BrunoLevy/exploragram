@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,7 +40,7 @@
 #include <exploragram/optimal_transport/linear_least_squares.h>
 
 namespace GEO {
-    
+
     LinearLeastSquares::LinearLeastSquares(
         index_t degree
     ) :
@@ -57,7 +57,7 @@ namespace GEO {
             geo_assert_not_reached;
         }
     }
-    
+
     void LinearLeastSquares::begin() {
         AtA_4_.load_zero();
         AtA_10_.load_zero();
@@ -84,43 +84,43 @@ namespace GEO {
 
 
     void LinearLeastSquares::add_point(const double* p, double v) {
-	switch(degree_) {
-	    case 1:
-		add_point_degree_1(p,v);
-		break;
-	    case 2:
-		add_point_degree_2(p,v);
-		break;
-	    default:
-		geo_assert_not_reached;
-	}
+    switch(degree_) {
+        case 1:
+        add_point_degree_1(p,v);
+        break;
+        case 2:
+        add_point_degree_2(p,v);
+        break;
+        default:
+        geo_assert_not_reached;
+    }
     }
 
-    
+
     void LinearLeastSquares::add_point_degree_1(const double* p, double v) {
-	geo_debug_assert(degree_ == 1);
+    geo_debug_assert(degree_ == 1);
         double b[MAX_DIM];
         eval_basis(p, b);
         for(index_t i = 0; i < dim(); ++i) {
             for(index_t j = 0; j < dim(); ++j) {
-		AtA_4_(i, j) += b[i] * b[j];
-	    }
+        AtA_4_(i, j) += b[i] * b[j];
+        }
             Atb_[i] += b[i] * v;
         }
     }
 
     void LinearLeastSquares::add_point_degree_2(const double* p, double v) {
-	geo_debug_assert(degree_ == 2);	
+    geo_debug_assert(degree_ == 2);
         double b[MAX_DIM];
         eval_basis(p, b);
         for(index_t i = 0; i < dim(); ++i) {
             for(index_t j = 0; j < dim(); ++j) {
-		AtA_10_(i, j) += b[i] * b[j];
+        AtA_10_(i, j) += b[i] * b[j];
             }
             Atb_[i] += b[i] * v;
         }
     }
-    
+
     double LinearLeastSquares::eval(const double* p) const {
         double b[MAX_DIM];
         for(index_t i = 0; i < MAX_DIM; ++i) {
@@ -151,6 +151,6 @@ namespace GEO {
             b[9] = z * x;
         }
     }
-    
-    
+
+
 }

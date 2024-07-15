@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,10 +43,10 @@
 #include <exploragram/basic/common.h>
 #include <geogram/mesh/mesh.h>
 namespace GEO {
-	// export hex candidates from a mesh m with param at corners
-	void export_hexes(Mesh* m, Mesh* hex);
+    // export hex candidates from a mesh m with param at corners
+    void export_hexes(Mesh* m, Mesh* hex);
 
-	// not really supposed to be there for pipeline purpose...
-	void export_points(Mesh* m, Mesh* pts);
+    // not really supposed to be there for pipeline purpose...
+    void export_points(Mesh* m, Mesh* pts);
 }
 #endif

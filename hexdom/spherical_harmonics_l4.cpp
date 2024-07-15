@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -48,7 +48,7 @@ namespace GEO {
     //    ___) | | |_) | | | | | |  __/ | |    | | | (__  | (_| | | | |  _  | | (_| | | |    | | | | | | | (_) | | | | | | | | (__  | |___  |__   _|
     //   |____/  | .__/  |_| |_|  \___| |_|    |_|  \___|  \__,_| |_| |_| |_|  \__,_| |_|    |_| |_| |_|  \___/  |_| |_| |_|  \___| |_____|    |_|
     //           |_|
-        
+
     double SphericalHarmonicL4::basis(index_t id, const vec3& v) {
         double x=v.x, x2=x*x;
         double y=v.y, y2=y*y;
@@ -62,7 +62,7 @@ namespace GEO {
         if (id==6) return (3./8.)*std::sqrt(5./M_PI) * (x2-y2)*(7.*z*z-1);
         if (id==7) return (3./4.)*std::sqrt(35./(2.*M_PI)) * z*x*(x2-3.*y2);
         if (id==8) return (3./16.)*std::sqrt(35./M_PI) * (x2*(x2-3.*y2)-y2*(3.*x2-y2));
-	geo_assert_not_reached;
+    geo_assert_not_reached;
 
     }
 
@@ -128,7 +128,7 @@ namespace GEO {
         SphericalHarmonicL4 init_harmonics[5] = { rest_frame(),rest_frame(),rest_frame(),rest_frame(),rest_frame() };
         vec3 init_rot[5] = { vec3(0, 0, 0),vec3(M_PI / 4., 0, 0),vec3(0, M_PI / 4., 0),vec3(0, 0, M_PI / 4.),vec3(M_PI / 4., 0, M_PI / 4.)};
         FOR(i,5) init_harmonics[i].euler_rot(init_rot[i]);
-        
+
         mat3 W;
         SphericalHarmonicL4 v;
         double dot = -1.;
@@ -155,7 +155,7 @@ namespace GEO {
             double tdot = init_harmonics[i] * query;
             if (tdot>dot) {
                 dot = tdot;
- 
+
                 W = euler_to_mat3(init_rot[i]);
                 v = init_harmonics[i];
             }
@@ -172,12 +172,12 @@ namespace GEO {
             W = rotz(grad[2])*roty(grad[1])*rotx(grad[0])*W;
             cnt++;
             dot = v*query;
-        
+
             if (dot - olddot < dot_threshold) break;
             olddot = dot;
         }
         if (cnt == 10000) GEO::Logger::out("HexDom")  << "[error] SH projection infinite loop protection" <<  std::endl;
-  
+
         return W;
     }
 

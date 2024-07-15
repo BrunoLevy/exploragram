@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -71,7 +71,7 @@ namespace GEO {
         );
         return res;
     }
-    
+
     mat3 roty(double angle) {
         double c = cos(angle);
         double s = sin(angle);
@@ -82,7 +82,7 @@ namespace GEO {
         );
         return res;
     }
-    
+
     mat3 rotz(double angle) {
         double c = cos(angle);
         double s = sin(angle);
@@ -93,7 +93,7 @@ namespace GEO {
         );
         return res;
     }
-    
+
     // non optimized version is  "return rotz(xyz[2]) *roty(xyz[1]) *rotx(xyz[0]);"
     mat3 euler_to_mat3(vec3 xyz) {
         double ca = cos(xyz[0]), sa = sin(xyz[0]);
@@ -165,9 +165,9 @@ namespace GEO {
     //        else std::cerr << AxisPermutations_inv[i] << "};\n";
     //    }
     //};
-    
+
     static mat3 AxisPermutations[24] = {
-	mat3_from_coeffs(1,0,0,0,1,0,0,0,1),
+    mat3_from_coeffs(1,0,0,0,1,0,0,0,1),
         mat3_from_coeffs(0,-1,0,1,0,0,0,0,1),mat3_from_coeffs(-1,0,0,0,-1,0,0,0,1),mat3_from_coeffs(0,1,0,-1,0,0,0,0,1),mat3_from_coeffs(0,0,1,1,0,0,0,1,0),
         mat3_from_coeffs(-1,0,0,0,0,1,0,1,0),mat3_from_coeffs(0,0,-1,-1,0,0,0,1,0),mat3_from_coeffs(1,0,0,0,0,-1,0,1,0),mat3_from_coeffs(0,1,0,0,0,1,1,0,0),
         mat3_from_coeffs(0,0,-1,0,1,0,1,0,0),mat3_from_coeffs(0,-1,0,0,0,-1,1,0,0),mat3_from_coeffs(0,0,1,0,-1,0,1,0,0),mat3_from_coeffs(0,0,-1,0,-1,0,-1,0,0),
@@ -208,66 +208,66 @@ namespace GEO {
         }
 
     const mat3& AxisPermutation::get_mat() const {
-	return AxisPermutations[mid];
+    return AxisPermutations[mid];
     }
 
     AxisPermutation AxisPermutation::inverse() {
-	return AxisPermutation(AxisPermutations_inv[mid]);
+    return AxisPermutation(AxisPermutations_inv[mid]);
     }
 
     /***********************************************************************************************************************************/
-    
+
     void Frame::make_z_equal_to(vec3 z) {
-	z = normalize(z);
-	vec3 x(1, 0, 0);
-	vec3 y = cross(z, x);
-	if (y.length2() < .1) {
-	    x = vec3(0, 1, 0);
-	    y = cross(z, x);
-	}   
-	y = normalize(y);
-	x = cross(y, z);
-	FOR(d, 3) r(d, 0) = x[d];
-	FOR(d, 3) r(d, 1) = y[d];
-	FOR(d, 3) r(d, 2) = z[d];
+    z = normalize(z);
+    vec3 x(1, 0, 0);
+    vec3 y = cross(z, x);
+    if (y.length2() < .1) {
+        x = vec3(0, 1, 0);
+        y = cross(z, x);
+    }
+    y = normalize(y);
+    x = cross(y, z);
+    FOR(d, 3) r(d, 0) = x[d];
+    FOR(d, 3) r(d, 1) = y[d];
+    FOR(d, 3) r(d, 2) = z[d];
     }
 
     mat3 Frame::average_frame(vector<mat3>& data) {
-	SphericalHarmonicL4 sum;
-	FOR(i, data.size()) {
-	    SphericalHarmonicL4 nv;
-	    nv[4] = std::sqrt(7. / 12.);
-	    nv[8] = std::sqrt(5. / 12.);
-	    nv.euler_rot(mat3_to_euler(data[i]));
-	    sum = sum + nv;
-	}
-	sum = sum*(1. / sum.norm());
-	return sum.project_mat3();
+    SphericalHarmonicL4 sum;
+    FOR(i, data.size()) {
+        SphericalHarmonicL4 nv;
+        nv[4] = std::sqrt(7. / 12.);
+        nv[8] = std::sqrt(5. / 12.);
+        nv.euler_rot(mat3_to_euler(data[i]));
+        sum = sum + nv;
+    }
+    sum = sum*(1. / sum.norm());
+    return sum.project_mat3();
     }
 
     mat3 Frame::representative_frame(vector<vec3>& bunch_of_vectors, vector<double>& w) {
-	SphericalHarmonicL4 sum;
-	FOR(i,bunch_of_vectors.size()) {
-	    vec3 n = normalize(bunch_of_vectors[i]);
-	    mat3 r;
-	    Frame(r).make_z_equal_to(n);
-	    SphericalHarmonicL4 nv;
-	    nv[4] = std::sqrt(7. / 12.);
-	    nv.euler_rot(mat3_to_euler(r));
-	    nv = nv * w[i];
-	    sum = sum + nv;
-	}
-	sum = sum*(1. / sum.norm());
-	return sum.project_mat3();
+    SphericalHarmonicL4 sum;
+    FOR(i,bunch_of_vectors.size()) {
+        vec3 n = normalize(bunch_of_vectors[i]);
+        mat3 r;
+        Frame(r).make_z_equal_to(n);
+        SphericalHarmonicL4 nv;
+        nv[4] = std::sqrt(7. / 12.);
+        nv.euler_rot(mat3_to_euler(r));
+        nv = nv * w[i];
+        sum = sum + nv;
     }
-    
+    sum = sum*(1. / sum.norm());
+    return sum.project_mat3();
+    }
+
     mat3 Frame::representative_frame(vector<vec3>& bunch_of_vectors) {
-	vector<double> w(bunch_of_vectors.size(), 1);
-	return  representative_frame(bunch_of_vectors, w);
+    vector<double> w(bunch_of_vectors.size(), 1);
+    return  representative_frame(bunch_of_vectors, w);
     }
 
     /***********************************************************************************************************************************/
-    
+
     AxisPermutation Rij(Mesh* m, Attribute<mat3>& B, index_t i, index_t j) {
         if (i > j)  return Rij(m, B, j, i).inverse(); // façon obscure de rendre le bazar symmetrique ?
         AxisPermutation permut;
@@ -275,35 +275,35 @@ namespace GEO {
         return permut;
     }
 
-	bool triangle_is_frame_singular(Mesh* m, Attribute<mat3>& B, index_t c, index_t cf) {
-		mat3 ac_rot;
-		ac_rot.load_identity();
-		FOR(e, 3) ac_rot = Rij(m, B, m->cells.facet_vertex(c, cf, e), m->cells.facet_vertex(c, cf, next_mod(e, 3))).get_mat()*ac_rot;
-		return !is_identity_auvp(ac_rot);
-	}
+    bool triangle_is_frame_singular(Mesh* m, Attribute<mat3>& B, index_t c, index_t cf) {
+        mat3 ac_rot;
+        ac_rot.load_identity();
+        FOR(e, 3) ac_rot = Rij(m, B, m->cells.facet_vertex(c, cf, e), m->cells.facet_vertex(c, cf, next_mod(e, 3))).get_mat()*ac_rot;
+        return !is_identity_auvp(ac_rot);
+    }
 
-	bool triangle_is_frame_singular___give_stable_direction(Mesh* m, int& stable_dir_index, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
-		mat3 ac_rot,id3D;
-		stable_dir_index = -1;
-		ac_rot.load_identity();
-		FOR(e, 3) ac_rot = Rij(m, B, m->cells.facet_vertex(c, cf, (e+ cfv)%3), m->cells.facet_vertex(c, cf, (e + cfv+1) % 3)).get_mat()*ac_rot;
-		if (is_identity_auvp(ac_rot)) return false;
-		FOR(ax, 3){
-			double sum = 0;
-			FOR(d, 3) sum += std::abs(ac_rot(d, ax) - id3D(d, ax));
-			if (sum<1e-10) stable_dir_index = int(ax);
-		}
-		return true;
-	}
-	bool triangle_is_frame_singular___give_stable_direction(Mesh* m, vec3& stable_dir_geom, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
-		int stable_dir_index;
-		if (!triangle_is_frame_singular___give_stable_direction(m, stable_dir_index, B, c, cf,cfv)) return false; 
-		stable_dir_geom = vec3(0, 0, 0);
-		if (stable_dir_index == -1) return true;
-		FOR(d, 3) stable_dir_geom[d] = B[m->cells.facet_vertex(c, cf, cfv)](d, index_t(stable_dir_index));
-		stable_dir_geom = normalize(stable_dir_geom);
-		return true;
-	}
-    
+    bool triangle_is_frame_singular___give_stable_direction(Mesh* m, int& stable_dir_index, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
+        mat3 ac_rot,id3D;
+        stable_dir_index = -1;
+        ac_rot.load_identity();
+        FOR(e, 3) ac_rot = Rij(m, B, m->cells.facet_vertex(c, cf, (e+ cfv)%3), m->cells.facet_vertex(c, cf, (e + cfv+1) % 3)).get_mat()*ac_rot;
+        if (is_identity_auvp(ac_rot)) return false;
+        FOR(ax, 3){
+            double sum = 0;
+            FOR(d, 3) sum += std::abs(ac_rot(d, ax) - id3D(d, ax));
+            if (sum<1e-10) stable_dir_index = int(ax);
+        }
+        return true;
+    }
+    bool triangle_is_frame_singular___give_stable_direction(Mesh* m, vec3& stable_dir_geom, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
+        int stable_dir_index;
+        if (!triangle_is_frame_singular___give_stable_direction(m, stable_dir_index, B, c, cf,cfv)) return false;
+        stable_dir_geom = vec3(0, 0, 0);
+        if (stable_dir_index == -1) return true;
+        FOR(d, 3) stable_dir_geom[d] = B[m->cells.facet_vertex(c, cf, cfv)](d, index_t(stable_dir_index));
+        stable_dir_geom = normalize(stable_dir_geom);
+        return true;
+    }
+
 }
 

@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,14 +49,14 @@ namespace GEO {
 
     public:
         // input object must have B, lockB, U and lockU defined                                     (mandatory)
-        // constructor computes the bidirectional edge graph 
+        // constructor computes the bidirectional edge graph
         // and init limits of variables pack (num_l_v and num_ln_v)
         FFopt(Mesh* p_m);
         ~FFopt();
 
         /**
-	 * methods in the order yuo have to call them
-	 */
+     * methods in the order yuo have to call them
+     */
 
 
         // FF_init() is use to initialize the FF with  http://arxiv.org/abs/1507.03351              (mandatory)
@@ -66,10 +66,10 @@ namespace GEO {
         void FF_smooth();
 
         // size of cols(B,d)
-	void compute_Bid_norm();
+    void compute_Bid_norm();
 
         // brush FF (before solving PGP) and U (after solving PGP)                                  (optional)
-        void brush_frame();                         
+        void brush_frame();
 
         // access to the graph to be optimized (either edge or dual edge graph)
         index_t nb_neigs(index_t s) {

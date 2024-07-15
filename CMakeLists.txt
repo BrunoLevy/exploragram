@@ -11,7 +11,7 @@ add_library(exploragram ${SOURCES})
 set_target_properties(exploragram PROPERTIES
                       VERSION ${VORPALINE_VERSION}
                       SOVERSION ${VORPALINE_VERSION_MAJOR}
-		      FOLDER "GEOGRAM")
+              FOLDER "GEOGRAM")
 
 #if(UNIX AND VORPALINE_BUILD_DYNAMIC)
 #    target_link_libraries(exploragram pthread dl)

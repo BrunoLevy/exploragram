@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,11 +42,11 @@
 #include <exploragram/hexdom/preprocessing.h>
 #include <exploragram/hexdom/FF.h>
 #include <exploragram/hexdom/PGP.h>
-#include <exploragram/hexdom/hex_candidates.h> 
-#include <exploragram/hexdom/meshcomesh.h> 
-#include <exploragram/hexdom/quad_dominant.h> 
-#include <exploragram/hexdom/hex.h> 
-#include <exploragram/hexdom/cavity.h> 
+#include <exploragram/hexdom/hex_candidates.h>
+#include <exploragram/hexdom/meshcomesh.h>
+#include <exploragram/hexdom/quad_dominant.h>
+#include <exploragram/hexdom/hex.h>
+#include <exploragram/hexdom/cavity.h>
 #include <exploragram/hexdom/hex_dominant.h>
 
 #include <exploragram/hexdom/time_log.h>
@@ -60,91 +60,91 @@
 
 namespace GEO {
 
-	namespace HexdomPipeline {
+    namespace HexdomPipeline {
 
 #define STEP(funcname,args) { \
-		logt.add_step(#funcname); \
-		funcname args; \
+        logt.add_step(#funcname); \
+        funcname args; \
 }
 
-		bool SetConstraints(Mesh*m, std::string& msg,bool hilbert_sort,
-		        bool relaxed) {
-			try {
-				STEP(produce_hexdom_input,(m, msg, hilbert_sort, relaxed));
-			}
-			catch (const char* s) {
-				plop(s);
-				msg = std::string(s);
-				logt.add_string("fail", msg);
-				return false;
-			}
-			return true;
-		}
+        bool SetConstraints(Mesh*m, std::string& msg,bool hilbert_sort,
+                bool relaxed) {
+            try {
+                STEP(produce_hexdom_input,(m, msg, hilbert_sort, relaxed));
+            }
+            catch (const char* s) {
+                plop(s);
+                msg = std::string(s);
+                logt.add_string("fail", msg);
+                return false;
+            }
+            return true;
+        }
 
-		void FrameField(Mesh*m, bool smooth) {
-			GEO::FFopt ffopt(m);
-			STEP(ffopt.FF_init,(true));
-			if (smooth) 
-				STEP(ffopt.FF_smooth,());
-			STEP(ffopt.compute_Bid_norm,());
-			//uncomment may ease debugging...  STEP(ffopt.brush_frame,());
-		}
+        void FrameField(Mesh*m, bool smooth) {
+            GEO::FFopt ffopt(m);
+            STEP(ffopt.FF_init,(true));
+            if (smooth)
+                STEP(ffopt.FF_smooth,());
+            STEP(ffopt.compute_Bid_norm,());
+            //uncomment may ease debugging...  STEP(ffopt.brush_frame,());
+        }
 
-		//{algo} = {0: CubeCover, 1 : PGP with correction, 2 PGP}
-		void Parameterization(Mesh*m, int algo, double PGP_max_scale_corr) {
-			{// scope to allows destruction of attributes that are members of pgp
-				PGPopt pgp(m);
-#ifdef WITH_CUBECOVER				
-				if (algo > 0) {
-					STEP(pgp.optimize_corr,(PGP_max_scale_corr));
-					STEP(pgp.optimize_PGP,());
-				}
-				else if (algo == 0) {
-					STEP(pgp.cubcover,());
-				}
-				else geo_assert_not_reached;
+        //{algo} = {0: CubeCover, 1 : PGP with correction, 2 PGP}
+        void Parameterization(Mesh*m, int algo, double PGP_max_scale_corr) {
+            {// scope to allows destruction of attributes that are members of pgp
+                PGPopt pgp(m);
+#ifdef WITH_CUBECOVER
+                if (algo > 0) {
+                    STEP(pgp.optimize_corr,(PGP_max_scale_corr));
+                    STEP(pgp.optimize_PGP,());
+                }
+                else if (algo == 0) {
+                    STEP(pgp.cubcover,());
+                }
+                else geo_assert_not_reached;
 #else
-				geo_argused(PGP_max_scale_corr);
-				if(algo != 2) {
-				    Logger::warn("PGP")
-					<< "cubecover/scale correction not available in the public version"
-					<< std::endl;
-				    Logger::warn("PGP")
-					<< "falling back with PGP without scale correction"
-					<< std::endl;
-				}
-				algo = 2;
-				STEP(pgp.optimize_corr,(0.0));
-				STEP(pgp.optimize_PGP,());				
-#endif				
-			}
+                geo_argused(PGP_max_scale_corr);
+                if(algo != 2) {
+                    Logger::warn("PGP")
+                    << "cubecover/scale correction not available in the public version"
+                    << std::endl;
+                    Logger::warn("PGP")
+                    << "falling back with PGP without scale correction"
+                    << std::endl;
+                }
+                algo = 2;
+                STEP(pgp.optimize_corr,(0.0));
+                STEP(pgp.optimize_PGP,());
+#endif
+            }
 
-			m->edges.attributes().delete_attribute_store("corr"); // ? can we really do that ?
-			//m->vertices.attributes().delete_attribute_store("U");
-			//m->edges.clear();
-		}
+            m->edges.attributes().delete_attribute_store("corr"); // ? can we really do that ?
+            //m->vertices.attributes().delete_attribute_store("U");
+            //m->edges.clear();
+        }
 
-		void HexCandidates(Mesh*m, Mesh* result) {
-			STEP(export_hexes, (m, result));
-		}
+        void HexCandidates(Mesh*m, Mesh* result) {
+            STEP(export_hexes, (m, result));
+        }
 
-		bool QuadDominant(Mesh*m, Mesh* chartmesh) {
+        bool QuadDominant(Mesh*m, Mesh* chartmesh) {
 
-			STEP(export_boundary_with_uv,(m, chartmesh, "uv", "singular"));
-			//get_facet_stats(chartmesh, "export with uv");
+            STEP(export_boundary_with_uv,(m, chartmesh, "uv", "singular"));
+            //get_facet_stats(chartmesh, "export with uv");
 
-            
-			STEP(imprint, (chartmesh, "uv", "singular"));
 
-//		STEP(split_edges_by_iso_uvs, (chartmesh, "uv", "singular"));
-//		STEP(facets_split,(chartmesh, "uv", "singular"));
+            STEP(imprint, (chartmesh, "uv", "singular"));
 
-			STEP(mark_charts,(chartmesh, "uv", "chart", "singular"));
+//        STEP(split_edges_by_iso_uvs, (chartmesh, "uv", "singular"));
+//        STEP(facets_split,(chartmesh, "uv", "singular"));
 
-			STEP(simplify_quad_charts,(chartmesh));
+            STEP(mark_charts,(chartmesh, "uv", "chart", "singular"));
+
+            STEP(simplify_quad_charts,(chartmesh));
 
 //            bool res = true;
-//			STEP(res = export_quadtri_from_charts,(chartmesh));
+//            STEP(res = export_quadtri_from_charts,(chartmesh));
 //          if (res) {
 //              plop("self-intersections!");
 //              return true;
@@ -171,60 +171,60 @@ namespace GEO {
 
 
 
-			if (!surface_is_tetgenifiable(chartmesh)) {
-				logt.add_string("fail", " tetgen is not able to remesh the quadtri");
-				return false;
-			}
+            if (!surface_is_tetgenifiable(chartmesh)) {
+                logt.add_string("fail", " tetgen is not able to remesh the quadtri");
+                return false;
+            }
 
-			chartmesh->facet_corners.attributes().delete_attribute_store("uv");
-//			chartmesh->facets.attributes().delete_attribute_store("chart");
-			chartmesh->facets.attributes().delete_attribute_store("quadelement");
-			chartmesh->facets.attributes().delete_attribute_store("singular");
-			chartmesh->vertices.attributes().delete_attribute_store("quadcorners");
-			chartmesh->facets.attributes().delete_attribute_store("orig_tri_fid");
-			chartmesh->facet_corners.attributes().delete_attribute_store("isovalue");
-			return true;
-		}
+            chartmesh->facet_corners.attributes().delete_attribute_store("uv");
+//            chartmesh->facets.attributes().delete_attribute_store("chart");
+            chartmesh->facets.attributes().delete_attribute_store("quadelement");
+            chartmesh->facets.attributes().delete_attribute_store("singular");
+            chartmesh->vertices.attributes().delete_attribute_store("quadcorners");
+            chartmesh->facets.attributes().delete_attribute_store("orig_tri_fid");
+            chartmesh->facet_corners.attributes().delete_attribute_store("isovalue");
+            return true;
+        }
 
-		void Hexahedrons(Mesh* quaddominant, Mesh* hexcandidates, Mesh* result) {
-			result->copy(*hexcandidates);
-			STEP(hex_set_2_hex_mesh,(result, quaddominant));
-		}
+        void Hexahedrons(Mesh* quaddominant, Mesh* hexcandidates, Mesh* result) {
+            result->copy(*hexcandidates);
+            STEP(hex_set_2_hex_mesh,(result, quaddominant));
+        }
 
-		bool Cavity(Mesh* quaddominant, Mesh* hexahedrons, Mesh* result) {
-			result->copy(*quaddominant);
-			STEP(merge_hex_boundary_and_quadtri,(hexahedrons, result));
+        bool Cavity(Mesh* quaddominant, Mesh* hexahedrons, Mesh* result) {
+            result->copy(*quaddominant);
+            STEP(merge_hex_boundary_and_quadtri,(hexahedrons, result));
 
-			if (result->facets.nb() > 0 && !surface_is_tetgenifiable(result)) {
-				logt.add_string("fail", "empty cavity, is it normal?");
-				return false;
-			}
+            if (result->facets.nb() > 0 && !surface_is_tetgenifiable(result)) {
+                logt.add_string("fail", "empty cavity, is it normal?");
+                return false;
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		void HexDominant(Mesh* cavity, Mesh* hexahedrons, Mesh* result, bool with_pyramid,bool baudoin_carrier, bool vertex_puncher) {
-		    geo_argused(vertex_puncher);
+        void HexDominant(Mesh* cavity, Mesh* hexahedrons, Mesh* result, bool with_pyramid,bool baudoin_carrier, bool vertex_puncher) {
+            geo_argused(vertex_puncher);
 
-			{
-			    #ifndef HAS_TET2HEX
-			    if(baudoin_carrier) {
-				Logger::warn("hexdom") << "This version does not have Vorpaline" << std::endl;
-				Logger::warn("hexdom") << "Ignored flag: Carrier-Baudouin algo." << std::endl;				
-				Logger::warn("hexdom") << "(filling cavity with tets, no recombination)" << std::endl;				
-			    }
-			    #endif
-				Mesh tets;
-				tets.copy(*cavity);
-				STEP(fill_cavity_with_tetgen,(cavity, &tets, with_pyramid));
-				result->copy(tets);
-				result->facets.clear();
-				STEP(add_hexes_to_tetmesh,(hexahedrons, result));
-				result->cells.connect();
-				result->cells.compute_borders();
-			}
-		}
-	}
+            {
+                #ifndef HAS_TET2HEX
+                if(baudoin_carrier) {
+                Logger::warn("hexdom") << "This version does not have Vorpaline" << std::endl;
+                Logger::warn("hexdom") << "Ignored flag: Carrier-Baudouin algo." << std::endl;
+                Logger::warn("hexdom") << "(filling cavity with tets, no recombination)" << std::endl;
+                }
+                #endif
+                Mesh tets;
+                tets.copy(*cavity);
+                STEP(fill_cavity_with_tetgen,(cavity, &tets, with_pyramid));
+                result->copy(tets);
+                result->facets.clear();
+                STEP(add_hexes_to_tetmesh,(hexahedrons, result));
+                result->cells.connect();
+                result->cells.compute_borders();
+            }
+        }
+    }
 
 }
 

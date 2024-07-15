@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -56,7 +56,7 @@
 namespace {
     using namespace GEO;
 
-    
+
     /**
      * \brief Reorders the points in a Centroidal Voronoi Tesselation
      *  in such a way that continguous index ranges correspond to
@@ -80,7 +80,7 @@ namespace {
             CVT.dimension(), CVT.dimension(), threshold, ratio, &levels
         );
         Permutation::apply(
-            CVT.embedding(0), sorted_indices, 
+            CVT.embedding(0), sorted_indices,
             index_t(CVT.dimension() * sizeof(double))
         );
     }
@@ -287,7 +287,7 @@ namespace {
         catch(const TaskCanceled&) {
         }
     }
-    
+
 }
 
 namespace GEO {
@@ -310,7 +310,7 @@ namespace GEO {
             }
         }
     }
-    
+
     double mesh_tets_volume(const Mesh& M) {
         double result = 0.0;
         for(index_t t = 0; t < M.cells.nb(); ++t) {
@@ -346,7 +346,7 @@ namespace GEO {
         DENSITY_SIN,
         DENSITY_DIST
     };
-    
+
     void set_density(
         Mesh& M, double mass1, double mass2, const std::string& function_str_in,
         Mesh* density_distance_reference
@@ -382,16 +382,16 @@ namespace GEO {
             << mass1 << "," << mass2
             << ")"
             << std::endl;
-        
+
         DensityFunction function;
         if(function_str == "X") {
             function = DENSITY_X;
         } else if(function_str == "Y") {
-            function = DENSITY_Y;            
+            function = DENSITY_Y;
         } else if(function_str == "Z") {
-            function = DENSITY_Z;            
+            function = DENSITY_Z;
         } else if(function_str == "R") {
-            function = DENSITY_R;            
+            function = DENSITY_R;
         } else if(function_str == "sin") {
             function = DENSITY_SIN;
         } else if(function_str == "dist") {
@@ -401,7 +401,7 @@ namespace GEO {
                                << std::endl;
             return;
         }
-        
+
         Attribute<double> mass(M.vertices.attributes(),"weight");
 
         switch(function) {
@@ -438,7 +438,7 @@ namespace GEO {
                         (p[c] - xyz_min[c]) / (xyz_max[c] - xyz_min[c]);
                     f *= sin(coord *  M_PI * 2.0 * 2.0);
                 }
-                mass[v] = f;                
+                mass[v] = f;
             }
         } break;
         case DENSITY_DIST: {
@@ -512,6 +512,6 @@ namespace GEO {
             project_sampling_on_border(CVT);
         }
     }
-    
-    
+
+
 }

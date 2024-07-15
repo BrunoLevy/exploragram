@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,7 +43,7 @@
 #include <geogram/mesh/mesh.h>
 namespace GEO {
 
-	void  hex_set_2_hex_mesh(Mesh* hex, Mesh* quadtri = nullptr);
-	void  kill_intersecting_hexes(Mesh* hex);
+    void  hex_set_2_hex_mesh(Mesh* hex, Mesh* quadtri = nullptr);
+    void  kill_intersecting_hexes(Mesh* hex);
 }
 #endif

@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -44,23 +44,23 @@
 #include <exploragram/hexdom/mesh_utils.h>
 
 namespace GEO {
-    
+
     void EXPLORAGRAM_API get_facet_stats(Mesh* m, const char * msg = "get_facet_stats", bool export_attribs = false);
-    
+
     bool EXPLORAGRAM_API surface_is_tetgenifiable(Mesh* m);
-    
+
     bool EXPLORAGRAM_API volume_is_tetgenifiable(Mesh* m);
-    
+
     bool EXPLORAGRAM_API surface_is_manifold(Mesh* m, std::string& msg);
-    
+
     bool EXPLORAGRAM_API volume_boundary_is_manifold(Mesh* m, std::string& msg);
-    
+
     double EXPLORAGRAM_API tet_vol(vec3 A, vec3 B, vec3 C, vec3 D);
-    
+
     void EXPLORAGRAM_API get_hex_proportion(Mesh*m, double &nb_hex_prop, double &vol_hex_prop);
 
     bool EXPLORAGRAM_API have_negative_tet_volume(Mesh*m);
-  
+
     /**
     * unit vector: weighted sum of normal of a triangle fan around the barycenter
     */

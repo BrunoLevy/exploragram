@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -59,7 +59,7 @@ namespace GEO {
      *  domain
      * \param[in] nb_points number of points
      * \param[in] points a pointer to the coordinates of the points
-     * \param[out] centroids a pointer to the computed centroids of 
+     * \param[out] centroids a pointer to the computed centroids of
      *  the Laguerre cells that correspond to the optimal transport of
      *  the uniform measure to the points
      */
@@ -68,8 +68,8 @@ namespace GEO {
         index_t nb_points,
         const double* points,
         double* centroids,
-	Mesh* RVD=nullptr,
-	bool verbose=false
+    Mesh* RVD=nullptr,
+    bool verbose=false
     );
 
     /*********************************************************************/
@@ -82,15 +82,15 @@ namespace GEO {
      *  of Diracs with 3D coordinates.
      *  The algorithm is described in the following references:
      *   - 3D algorithm: http://arxiv.org/abs/1409.1279
-     *   - Earlier 2D version by Quentin M\'erigot: 
+     *   - Earlier 2D version by Quentin M\'erigot:
      *    Q. Merigot. A multiscale approach to optimal transport.
      *    Computer Graphics Forum 30 (5) 1583--1592, 2011 (Proc SGP 2011).
-     *   - Earlier article on OT and power diagrams: 
-     *    F. Aurenhammer, F. Hoffmann, and B. Aronov. Minkowski-type theorems 
+     *   - Earlier article on OT and power diagrams:
+     *    F. Aurenhammer, F. Hoffmann, and B. Aronov. Minkowski-type theorems
      *    and least-squares clustering. Algorithmica, 20:61-76, 1998.
      */
     class EXPLORAGRAM_API OptimalTransportMapOnSurface :
-	public OptimalTransportMap {
+    public OptimalTransportMap {
     public:
         /**
          * \brief OptimalTransportOnSurface constructor.
@@ -101,39 +101,39 @@ namespace GEO {
         OptimalTransportMapOnSurface(
             Mesh* mesh,
             const std::string& delaunay = "BPOW",
-	    bool BRIO=false
+        bool BRIO=false
         );
 
-	/**
-	 * \brief OptimalTransportMap destructor.
-	 */
-	~OptimalTransportMapOnSurface() override;
+    /**
+     * \brief OptimalTransportMap destructor.
+     */
+    ~OptimalTransportMapOnSurface() override;
 
-	/**
-	 * \copydoc OptimalTransportMap::get_RVD()
-	 */
-	void get_RVD(Mesh& M) override;
+    /**
+     * \copydoc OptimalTransportMap::get_RVD()
+     */
+    void get_RVD(Mesh& M) override;
 
-	/**
-	 * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
-	 */
-	void compute_Laguerre_centroids(double* centroids) override;
+    /**
+     * \copydoc OptimalTransportMap::compute_Laguerre_centroids()
+     */
+    void compute_Laguerre_centroids(double* centroids) override;
 
-	/**
-	 * \brief Gets the total mass of the mesh.
-	 * \details Take the weights into account if they are present.
-	 * \return the total mass of the mesh.
-	 */
-	double total_mesh_mass() const;
-	
+    /**
+     * \brief Gets the total mass of the mesh.
+     * \details Take the weights into account if they are present.
+     * \return the total mass of the mesh.
+     */
+    double total_mesh_mass() const;
+
       protected:
-	/**
-	 * \copydoc OptimalTransportMap::call_callback_on_RVD()
-	 */
-	void call_callback_on_RVD() override;
+    /**
+     * \copydoc OptimalTransportMap::call_callback_on_RVD()
+     */
+    void call_callback_on_RVD() override;
     };
 
-    /*********************************************************************/    
+    /*********************************************************************/
 }
 
 #endif

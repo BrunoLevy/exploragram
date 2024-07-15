@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -39,7 +39,7 @@
 
 #include <exploragram/hexdom/time_log.h>
 
-LogTime logt ; 
+LogTime logt ;
 
 bool LogTime::is_start_section(unsigned int i)   { return check[i].right != i + 1; }
 bool LogTime::is_end_section(unsigned int i)             { return check[i].n == "end section"; }
@@ -49,19 +49,19 @@ double LogTime::time(unsigned int i)                             { return double
 
 unsigned int LogTime::dec(unsigned int i){
     if (i == (unsigned int)(-1))
-	i = (unsigned int)(check.size() - 1);
+    i = (unsigned int)(check.size() - 1);
     unsigned int res = 0;
     i = check[i].up;
     while (i != (unsigned int)(-1)) {
-	res++;
-	i = check[i].up;
+    res++;
+    i = check[i].up;
     }
     return res;
 }
 
 unsigned int LogTime::lastdec(){
         if (!check.empty())
-	    return dec((unsigned int)(check.size() - 1));
+        return dec((unsigned int)(check.size() - 1));
         return 0;
 }
 
@@ -69,8 +69,8 @@ void LogTime::debug(){
     GEO::Logger::out("HexDom")  <<  std::endl;
     GEO::Logger::out("HexDom")  << "--------------BEGIN DEBUG-------------------" <<  std::endl;
     for (size_t i = 0; i < check.size(); i++) {
-	std::cerr << std::string((unsigned int)(4 * dec((unsigned int)(i))), ' ') << i << "  r = " << check[i].right << " u = " << check[i].up
-		  << "\tstart" << check[i].t << "\tname" << check[i].n << std::endl;
+    std::cerr << std::string((unsigned int)(4 * dec((unsigned int)(i))), ' ') << i << "  r = " << check[i].right << " u = " << check[i].up
+          << "\tstart" << check[i].t << "\tname" << check[i].n << std::endl;
     }
     GEO::Logger::out("HexDom")  <<  std::endl;
     GEO::Logger::out("HexDom")  <<"-------------- END  DEBUG-------------------" <<  std::endl;
@@ -79,13 +79,13 @@ void LogTime::debug(){
 std::string LogTime::cur_stack(){
         std::string res;
         std::vector<unsigned int> stack;
-	{
-	    unsigned int i = (unsigned int)(check.size() - 1);
-	    while (i != (unsigned int)(-1)) { stack.push_back(i); i = check[i].up; }
-	}
+    {
+        unsigned int i = (unsigned int)(check.size() - 1);
+        while (i != (unsigned int)(-1)) { stack.push_back(i); i = check[i].up; }
+    }
         for (int i = int(stack.size()) - 1; i >= 0; i--) {
-	    res.append(check[stack[size_t(i)]].n);
-	    if (i > 0) res.append(" ==> ");
+        res.append(check[stack[size_t(i)]].n);
+        if (i > 0) res.append(" ==> ");
         }
         return res;
 }
@@ -107,7 +107,7 @@ void LogTime::report(std::ostream &out, unsigned int timing_depth){
                                 }
                         }
                 }
-        
+
                 out << double(check[check.size() - 1].t - check[0].t) / double(CLOCKS_PER_SEC) << "\tTOTAL" << std::endl;
         }
         out << "\n***********************************************************" << std::endl;
@@ -126,7 +126,7 @@ void LogTime::report_py(std::ostream &out, unsigned int timing_depth){
         out << "{ \"charlie\": 2";
         // bool first = true;
         if (timing_depth != (unsigned int)(-1)) {
-	     for (unsigned int i = 0; i < check.size() - 1; i++){
+         for (unsigned int i = 0; i < check.size() - 1; i++){
                         if (dec(i)>timing_depth) continue;
                         if (is_start_section(i)) out <<",\"TIME_" << check[i].n  <<"\" :  "<< time(i);
                         else if (!is_end_section(i)){
@@ -164,7 +164,7 @@ void LogTime::add_string(std::string str , std::string val) {
 
 void LogTime::add_step(const std::string& name){
         if (check.empty()){
-	        CheckPoint c(name + post_fix, (unsigned int)(-1));
+            CheckPoint c(name + post_fix, (unsigned int)(-1));
                 check.push_back(c);
         }
         else {

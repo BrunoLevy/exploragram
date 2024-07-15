@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,10 +42,10 @@
 
 #include <geogram/mesh/mesh.h>
 namespace GEO {
-	void  fill_cavity_with_tetgen(Mesh* input, Mesh* tri, bool with_pyramid);
-	void  add_hexes_to_tetmesh(Mesh* hex, Mesh* tet_mesh);
-	void Baudoin_mesher(Mesh* m);
+    void  fill_cavity_with_tetgen(Mesh* input, Mesh* tri, bool with_pyramid);
+    void  add_hexes_to_tetmesh(Mesh* hex, Mesh* tet_mesh);
+    void Baudoin_mesher(Mesh* m);
 
-	void hex_dominant(Mesh* cavity, Mesh* hexahedrons, Mesh* result);
+    void hex_dominant(Mesh* cavity, Mesh* hexahedrons, Mesh* result);
 }
 #endif

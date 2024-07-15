@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -45,23 +45,23 @@
 namespace GEO {
 
     class Mesh;
-    
+
     namespace HexdomPipeline {
-	
+
         bool EXPLORAGRAM_API SetConstraints(Mesh*m, std::string& msg, bool hilbert_sort = true,
                 bool relaxed = false);
-	
+
         void EXPLORAGRAM_API FrameField(Mesh*m, bool smooth);
 
         //{algo} = {0: CubeCover, 1 : PGP with correction, 2 PGP}
         void EXPLORAGRAM_API Parameterization(Mesh*m, int algo=0, double PGP_max_scale_corr =0.3);
-	
+
         void EXPLORAGRAM_API HexCandidates(Mesh*m, Mesh* result);
 
         bool EXPLORAGRAM_API QuadDominant(Mesh*m, Mesh* chartmesh);
 
         void EXPLORAGRAM_API Hexahedrons(Mesh* quaddominant, Mesh* hexcandidates, Mesh* result);
-	
+
         bool EXPLORAGRAM_API Cavity(Mesh* quaddominant, Mesh* hexahedrons, Mesh* result);
 
         void EXPLORAGRAM_API HexDominant(Mesh* cavity, Mesh* hexahedrons, Mesh* result, bool with_pyramid=false, bool baudoin_carrier=false,bool vertex_puncher =false);

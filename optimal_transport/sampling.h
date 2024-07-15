@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -77,12 +77,12 @@ namespace GEO {
 
     /**
      * \brief Creates a "weight" attribute with varying values.
-     * \param[in,out] M a reference to the volumetric mesh that should be 
+     * \param[in,out] M a reference to the volumetric mesh that should be
      *  decorated with densities
      * \param[in] mass1 minimum value of the density
      * \param[out] mass2 maximum value of the density
      * \param[in] func_str specification of the function to be used,
-     *  in the form "(+|-)?func(^pow)?", where func is one of 
+     *  in the form "(+|-)?func(^pow)?", where func is one of
      *  X,Y,Z,R,sin,dist
      * \param[in] distance_reference if func is "dist" and if non-nullptr,
      *  distance is computed relative to \p distance_reference, else it
@@ -100,11 +100,11 @@ namespace GEO {
     /**
      * \brief Computes a point sampling of a surfacic or volumetric
      *  mesh.
-     * \details If \p CVT is in volumetric mode and the mesh has cells, 
+     * \details If \p CVT is in volumetric mode and the mesh has cells,
      *  then the sampling is in the volume, else the sampling is on the
      *  surface (facets) of the mesh.
      * \see CentroidalVoronoiTesselation::set_volumetric()
-     * \param[in,out] CVT a CentroidalVoronoiTesselation plugged 
+     * \param[in,out] CVT a CentroidalVoronoiTesselation plugged
      *  on the volumetric mesh to be sampled
      * \param[in] nb_points number of points to be created
      * \param[in] project_on_border if true, points near the
@@ -112,7 +112,7 @@ namespace GEO {
      *  VORPALINE to be supported.
      * \param[in] BRIO if true, use Biased Random Insertion
      *  Order [Amenta et.al]
-     * \param[in] multilevel if true, use multilevel sampling 
+     * \param[in] multilevel if true, use multilevel sampling
      *  (note: BRIO implies multilevel)
      * \param[in] ratio ratio between the sizes of two sucessive
      *  levels
@@ -124,7 +124,7 @@ namespace GEO {
         index_t nb_points, bool project_on_border,
         bool BRIO=true, bool multilevel=true,
         double ratio=0.125,
-        vector<index_t>* levels=nullptr        
+        vector<index_t>* levels=nullptr
     );
 }
 

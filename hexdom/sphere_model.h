@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -43,21 +43,21 @@
 #include <exploragram/basic/common.h>
 #include <geogram/basic/geometry.h>
 
-#define HEXDOM_LOW_RESOLUTION_SPHERE 
+#define HEXDOM_LOW_RESOLUTION_SPHERE
 
 namespace GEO {
 
-#ifdef HEXDOM_LOW_RESOLUTION_SPHERE    
+#ifdef HEXDOM_LOW_RESOLUTION_SPHERE
     const index_t SPHERE_MODEL_NB_PTS = 642;
     const index_t SPHERE_MODEL_NB_TRIANGLES = 1280;
 #else
     const index_t SPHERE_MODEL_NB_PTS = 2562;
     const index_t SPHERE_MODEL_NB_TRIANGLES = 5120;
-#endif    
-    
+#endif
+
     extern EXPLORAGRAM_API const vec3 SPHERE_MODEL_PTS[SPHERE_MODEL_NB_PTS];
     extern EXPLORAGRAM_API const index_t SPHERE_MODEL_TRIANGLES[SPHERE_MODEL_NB_TRIANGLES][3];
 }
 
 #endif
-    
+

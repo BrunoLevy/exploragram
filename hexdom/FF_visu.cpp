@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -40,7 +40,7 @@
 #include <exploragram/hexdom/FF_visu.h>
 #include <exploragram/hexdom/basic.h>
 #include <exploragram/hexdom/mesh_utils.h>
-#include <exploragram/hexdom/frame.h>  
+#include <exploragram/hexdom/frame.h>
 #include <exploragram/hexdom/spherical_harmonics_l4.h>
 #include <exploragram/hexdom/sphere_model.h>  // a sphere for sh glyph
 
@@ -97,8 +97,8 @@ namespace GEO {
                 index_t off_v = render->vertices.create_vertices(SPHERE_MODEL_NB_PTS);
                 FOR(vs, SPHERE_MODEL_NB_PTS) {
                     vec3 q = SPHERE_MODEL_PTS[vs];
-					val[off_v + vs] = .5 + (sh[v].value(q) - .5) / .64;
-					X(render)[off_v + vs] = X(m)[v] + scale * (3.+2. * (val[off_v + vs]))*q;
+                    val[off_v + vs] = .5 + (sh[v].value(q) - .5) / .64;
+                    X(render)[off_v + vs] = X(m)[v] + scale * (3.+2. * (val[off_v + vs]))*q;
                 }
 
                 index_t off_f = render->facets.create_triangles(SPHERE_MODEL_NB_TRIANGLES);
@@ -135,19 +135,19 @@ namespace GEO {
         FOR(v, m->vertices.nb()) {
             vec3 dir[3];
             FOR(i, 3)dir[i] = col(B[v], i);
-            
-			int extracteddim = 0;
+
+            int extracteddim = 0;
             for (index_t dim = 0; dim < 3; dim++) {
                 if (lockU[v][dim] == 0 && !extractall) continue;
-				extracteddim++;
-				vec3 x = scale * dir[dim];
+                extracteddim++;
+                vec3 x = scale * dir[dim];
                     index_t off_v = render->vertices.create_vertices(2);
                     X(render)[off_v] = X(m)[v] + x ;
                     X(render)[off_v + 1] = X(m)[v] - x ;
                     index_t f = render->edges.create_edge(off_v + 0, off_v + 1);
-					//orient[f] = dim;
-					orient[f] = extracteddim;
-				}
+                    //orient[f] = dim;
+                    orient[f] = extracteddim;
+                }
             }
         }
 

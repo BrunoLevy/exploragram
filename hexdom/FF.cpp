@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -58,11 +58,11 @@ namespace GEO {
         num_l_v = m->vertices.nb();
         num_ln_v = m->vertices.nb();
         FOR(inv_v, m->vertices.nb()) {
-	    index_t v = m->vertices.nb()-1 - inv_v;
-	    if (lockB[v][0] <.5) num_l_v = v;
-	    if (lockB[v][2] <.5) num_ln_v = v;
+        index_t v = m->vertices.nb()-1 - inv_v;
+        if (lockB[v][0] <.5) num_l_v = v;
+        if (lockB[v][2] <.5) num_ln_v = v;
         }
-	if (num_ln_v == 0) num_ln_v = m->vertices.nb();
+    if (num_ln_v == 0) num_ln_v = m->vertices.nb();
     }
 
     FFopt::~FFopt() {
@@ -81,9 +81,9 @@ namespace GEO {
         double smooth_coeff = 1.;
         double normal_coeff = 100.;
 
-		plop(num_l_v);
-		plop(num_ln_v);
-		plop("construct system");
+        plop(num_l_v);
+        plop(num_ln_v);
+        plop("construct system");
         nlNewContext();
         nlSolverParameteri(NL_LEAST_SQUARES, NL_TRUE);
         nlSolverParameteri(NL_NB_VARIABLES, NLint(2 * (num_ln_v - num_l_v) + 9 * m->vertices.nb()));
@@ -125,9 +125,9 @@ namespace GEO {
                 nlRowScaling(normal_coeff);
                 nlBegin(NL_ROW);
                 nlCoefficient(v * 9 + i, 1.);
-				nlCoefficient(m->vertices.nb() * 9 + v - num_l_v, sh0[i]);
-				nlCoefficient(m->vertices.nb() * 9 + (num_ln_v - num_l_v) + v - num_l_v, sh8[i]);
-				nlRightHandSide(sh4[i]);
+                nlCoefficient(m->vertices.nb() * 9 + v - num_l_v, sh0[i]);
+                nlCoefficient(m->vertices.nb() * 9 + (num_ln_v - num_l_v) + v - num_l_v, sh8[i]);
+                nlRightHandSide(sh4[i]);
                 nlEnd(NL_ROW);
             }
         }
@@ -140,9 +140,9 @@ namespace GEO {
 
         plop("project SH");
         // convert spherical harmonic coefficients to a rotation
-#ifdef GEO_OPENMP	
+#ifdef GEO_OPENMP
 #pragma omp parallel
-#endif	
+#endif
         {
             get_thread_range(m->vertices.nb(), start, end);
             for (index_t v = start; v < end; v++) {
@@ -151,17 +151,17 @@ namespace GEO {
                 if (generate_sh) sh[v] = fv;
                 if (v >= num_l_v) {
                     vec3 oldz = col(B[v], 2);
-					if (v > start && v > num_l_v) {
+                    if (v > start && v > num_l_v) {
                         vec3  prev = mat3_to_euler(normalize_columns(B[v - 1]));
-						B[v] = fv.project_mat3(1e-3, 1e-5, &prev);
-                    } else 
+                        B[v] = fv.project_mat3(1e-3, 1e-5, &prev);
+                    } else
                         B[v] = fv.project_mat3(1e-3, 1e-5, nullptr);
                     if (v <= num_ln_v) {
                         AxisPermutation ap;
                         ap.make_col2_equal_to_z(B[v], normalize(oldz));
                         B[v] = Frame(B[v]).apply_permutation(ap);
-						FOR(d, 3) B[v](d, 2) = oldz[d];// restore size as well
-					}
+                        FOR(d, 3) B[v](d, 2) = oldz[d];// restore size as well
+                    }
                 }
             }
         }
@@ -185,9 +185,9 @@ namespace GEO {
 
 
 namespace {
-    
+
     using namespace GEO;
-    
+
     namespace FF_LBFGS {
         FFopt* ffopt_ptr;
         index_t Num_ln_v;
@@ -213,36 +213,37 @@ namespace {
         mat3 mEx = mat3_from_coeffs( 0, 0, 0, 0, 0, -1, 0, 1, 0 );
         mat3 mEy = mat3_from_coeffs(0, 0, 1, 0, 0, 0, -1, 0, 0 );
         mat3 mEz = mat3_from_coeffs(0, -1, 0, 1, 0, 0, 0, 0, 0 );
-        
+
         Attribute<mat3> B(FF_LBFGS::ffopt_ptr->m->vertices.attributes(), "B");
         index_t nverts = FF_LBFGS::ffopt_ptr->m->vertices.nb();
         geo_assert(N == 3 * (nverts - FF_LBFGS::Num_ln_v) + FF_LBFGS::Num_ln_v);
 
 
-		Attribute<bool> border_vertex(FF_LBFGS::ffopt_ptr->m->vertices.attributes(), "border_vertex");
-		FOR(v, FF_LBFGS::ffopt_ptr->m->vertices.nb()) border_vertex[v] = false;
-		FOR(c, FF_LBFGS::ffopt_ptr->m->cells.nb())  FOR(cf, 4) if (FF_LBFGS::ffopt_ptr->m->cells.adjacent(c, cf) == NOT_AN_ID)
-			FOR(cfv, 3) border_vertex[FF_LBFGS::ffopt_ptr->m->cells.facet_vertex(c, cf, cfv)] = true;
+        Attribute<bool> border_vertex(FF_LBFGS::ffopt_ptr->m->vertices.attributes(), "border_vertex");
+        FOR(v, FF_LBFGS::ffopt_ptr->m->vertices.nb()) border_vertex[v] = false;
+        FOR(c, FF_LBFGS::ffopt_ptr->m->cells.nb())  FOR(cf, 4) if (FF_LBFGS::ffopt_ptr->m->cells.adjacent(c, cf) == NOT_AN_ID)
+            FOR(cfv, 3) border_vertex[FF_LBFGS::ffopt_ptr->m->cells.facet_vertex(c, cf, cfv)] = true;
 
 #ifdef GEO_OPENMP
         int max_threads = omp_get_max_threads();
 #else
-        int max_threads = 1;	
-#endif	
-        double *f_chunks = new double[max_threads](); // f_chunks is initialized to be zero
+        int max_threads = 1;
+#endif
+        // f_chunks is initialized to be zero
+        double *f_chunks = new double[size_t(max_threads)]();
 
-#ifdef GEO_OPENMP	
+#ifdef GEO_OPENMP
 #pragma omp parallel
-#endif	
+#endif
         {
-#ifdef GEO_OPENMP	    
+#ifdef GEO_OPENMP
             int thread_id = omp_get_thread_num();
 #else
-	    int thread_id = 0;
-#endif	    
+        int thread_id = 0;
+#endif
             get_thread_range(nverts, istart, iend);
 
-           
+
             mat3 mJR[3], mR, mSinv, mPst, mJPst[3];
             for (index_t v1 = istart; v1 < iend; v1++) {
                 if (v1 >= FF_LBFGS::Num_ln_v) {
@@ -271,22 +272,22 @@ namespace {
                         mSinv = euler_to_mat3(vec3(x[idx], x[idx + 1], x[idx + 2]));
                     } else  // init S = constraint * Rz
                         mSinv = normalize_columns(B[v2]) * rotz(x[v2]);
-                    
-       
+
+
                     mSinv = mSinv.transpose();
                     mPst = mSinv* mR; // Pst = S^{-1} * R
 
-					double scale = 1.;
-					if (HexdomParam::FF.rigid_border) {
-						if (border_vertex[v1])scale += 100.;
-						if (border_vertex[v2])scale += 100.;
-					}
-					if (v1 > v2) FOR(i, 3)
+                    double scale = 1.;
+                    if (HexdomParam::FF.rigid_border) {
+                        if (border_vertex[v1])scale += 100.;
+                        if (border_vertex[v2])scale += 100.;
+                    }
+                    if (v1 > v2) FOR(i, 3)
                         f_chunks[thread_id] += scale *(10. / 3.*(pow(mPst(0,i) * mPst(1,i), 2) + pow(mPst(0,i) * mPst(2,i), 2) + pow(mPst(1,i )* mPst(2,i), 2)));
-                    
+
                     if (v1 >= FF_LBFGS::Num_ln_v) {
                         index_t idx = FF_LBFGS::Num_ln_v + (v1 - FF_LBFGS::Num_ln_v) * 3;
-                        FOR(d,3) {                         
+                        FOR(d,3) {
                             mJPst[d] = mSinv* mJR[d]; // JPst[d] = S^{-1} * JR[d]
                             FOR(i,3)FOR(j,3)
                                 g[idx + d] += scale *(20. / 3.*mPst(i,j) * (pow(mPst(i, (j + 1)%3), 2) + pow(mPst(i , (j + 2) % 3), 2))*mJPst[d](i , j));
@@ -308,10 +309,10 @@ namespace {
 namespace GEO {
 
     void FFopt::FF_smooth() {
-		
+
         Attribute<mat3> B(m->vertices.attributes(), "B");
 
-		Attribute<SphericalHarmonicL4> sh(m->vertices.attributes(), "sh");
+        Attribute<SphericalHarmonicL4> sh(m->vertices.attributes(), "sh");
 
         // init global variables that must be visible in callbacks
         FF_LBFGS::ffopt_ptr = this;
@@ -357,7 +358,7 @@ namespace GEO {
 
         }
 
-        // apply a euler rotation to rot... 
+        // apply a euler rotation to rot...
         for (index_t i = nverts; i--;) {
             if (i >= FF_LBFGS::Num_ln_v) {
                 index_t idx = (i - FF_LBFGS::Num_ln_v) * 3 + FF_LBFGS::Num_ln_v;
@@ -365,11 +366,11 @@ namespace GEO {
             }
             else  B[i]  = B[i] * rotz(x[i]);
 
-			FOR(d, 9)sh[i][d] = 0;
-			sh[i][4] = std::sqrt(7. / 12.);
-			sh[i][8] = std::sqrt(5. / 12.);
-			sh[i].euler_rot(mat3_to_euler(normalize_columns(B[i])));
-	}
+            FOR(d, 9)sh[i][d] = 0;
+            sh[i][4] = std::sqrt(7. / 12.);
+            sh[i][8] = std::sqrt(5. / 12.);
+            sh[i].euler_rot(mat3_to_euler(normalize_columns(B[i])));
+    }
         delete[] x;
     }
 
@@ -405,7 +406,7 @@ namespace GEO {
                         B[v] = B[v]* M.get_mat();
                         FOR(d, 3) if (std::abs(lockU[v][d]) < .1) lockU[v][d] = 0;
                     }
-					Q.push_back(v);
+                    Q.push_back(v);
                 }
             }
         }

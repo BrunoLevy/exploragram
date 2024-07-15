@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -51,8 +51,8 @@ namespace GEO {
     extern const index_t EXPLORAGRAM_API diamon_quad_split[16][3];
 
 
-	
-	struct EXPLORAGRAM_API BBox {
+
+    struct EXPLORAGRAM_API BBox {
         BBox() {
             min = vec3(1e20, 1e20, 1e20);
             max = vec3(-1e20, -1e20, -1e20);
@@ -63,10 +63,10 @@ namespace GEO {
         bool is_null() const;
         void add(const BBox& b);
         void add(const vec3& P);
-		void dilate(double eps) {
-			min -= vec3(eps, eps, eps);
-			max += vec3(eps, eps, eps);
-		}
+        void dilate(double eps) {
+            min -= vec3(eps, eps, eps);
+            max += vec3(eps, eps, eps);
+        }
         vec3 bary() const;
 
         vec3 min;
@@ -75,7 +75,7 @@ namespace GEO {
 
     struct EXPLORAGRAM_API HBoxes {
         HBoxes() {
-	}
+    }
 
         HBoxes(vector<BBox>& inboxes) {
             init(inboxes);
@@ -88,7 +88,7 @@ namespace GEO {
 
         void sort(vector<vec3> &G, index_t org, index_t dest);
         void intersect(BBox& b, vector<index_t>& primitives, index_t node = 0);
-	
+
         int STAT_nb_visits;
         int STAT_nb_leafs;
         int STAT_nb_requests;
@@ -101,7 +101,7 @@ namespace GEO {
 
     struct EXPLORAGRAM_API DynamicHBoxes {
         void init(vector<BBox>& inboxes);
-	
+
         void intersect(BBox& b, vector<index_t>& primitives);
 
         void update_bbox(index_t id, BBox b = BBox());
@@ -110,28 +110,28 @@ namespace GEO {
         vector<index_t> moved;
         vector<BBox>    movedbbox;
     };
-	
 
 
-	// double tetra_volume(vec3 A, vec3 B, vec3 C, vec3 D);
-	 double tetra_volume_sign(vec3 A, vec3 B, vec3 C, vec3 D);
-	 bool same_sign(double a, double b);
 
-	//bool naive_tri_tri_intersect(vec3 v0, vec3 v1, vec3 v2, vec3 u0, vec3 u1, vec3 u2);
+    // double tetra_volume(vec3 A, vec3 B, vec3 C, vec3 D);
+     double tetra_volume_sign(vec3 A, vec3 B, vec3 C, vec3 D);
+     bool same_sign(double a, double b);
 
-	 vector<BBox> facets_bbox(Mesh* m);
-	struct FacetIntersect {
-		FacetIntersect(Mesh* p_m);
-		vector<index_t> get_intersections(vector<vec3>& P);
-		vector<index_t> get_intersections(index_t& f);
-		vector<BBox> inboxes;
-		DynamicHBoxes hb;
-		Mesh* m;
-	};
+    //bool naive_tri_tri_intersect(vec3 v0, vec3 v1, vec3 v2, vec3 u0, vec3 u1, vec3 u2);
+
+     vector<BBox> facets_bbox(Mesh* m);
+    struct FacetIntersect {
+        FacetIntersect(Mesh* p_m);
+        vector<index_t> get_intersections(vector<vec3>& P);
+        vector<index_t> get_intersections(index_t& f);
+        vector<BBox> inboxes;
+        DynamicHBoxes hb;
+        Mesh* m;
+    };
 
 
-	bool polyintersect(vector<vec3>& P, vector<vec3>& Q);
-	vector<index_t> get_intersecting_faces(Mesh* m);
-	void check_no_intersecting_faces(Mesh* m,bool allow_duplicated = false);
+    bool polyintersect(vector<vec3>& P, vector<vec3>& Q);
+    vector<index_t> get_intersecting_faces(Mesh* m);
+    void check_no_intersecting_faces(Mesh* m,bool allow_duplicated = false);
 }
 #endif

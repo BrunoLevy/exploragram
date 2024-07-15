@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -54,38 +54,38 @@
 
 namespace GEO {
 
-	struct FF_param {
-		FF_param();
-		bool rigid_border;
-	};
-	struct HexdomParam {
-		static FF_param  FF;
-	};
+    struct FF_param {
+        FF_param();
+        bool rigid_border;
+    };
+    struct HexdomParam {
+        static FF_param  FF;
+    };
 
-	template<class T> void min_equal(T& A, T B) { if (A > B) A = B; }
-	template<class T> void max_equal(T& A, T B) { if (A < B) A = B; }
+    template<class T> void min_equal(T& A, T B) { if (A > B) A = B; }
+    template<class T> void max_equal(T& A, T B) { if (A < B) A = B; }
 
-	inline double nint(double x) { return floor(x + .5); }
+    inline double nint(double x) { return floor(x + .5); }
 
     inline index_t next_mod(index_t i, index_t imax) {
-	return (i + 1) % imax;
+    return (i + 1) % imax;
     }
 
     inline index_t prev_mod(index_t i, index_t imax) {
-	return (i + index_t(int(imax) - 1)) % imax;
+    return (i + index_t(int(imax) - 1)) % imax;
     }
 
     template <class T> T clamp(T in, T vmin, T vmax) {
-	if (in<vmin) return vmin;
-	if (in>vmax) return vmax;
-	return in;
+    if (in<vmin) return vmin;
+    if (in>vmax) return vmax;
+    return in;
     }
 
     const index_t NOT_AN_ID = index_t(-1);
 
     struct EXPLORAGRAM_API  IdPair : public std::pair < index_t, index_t > {
         IdPair(index_t a = index_t(-1), index_t b = index_t(-1)) : std::pair < index_t, index_t >(a, b) {
-	}
+    }
     };
 
     typedef vecng<3, Numeric::int32> vec3i;
@@ -99,11 +99,11 @@ namespace GEO {
             }
         }
     }
-    
+
     inline vec3 col(const mat3& M, index_t j) {
         return vec3(M(0, j), M(1, j), M(2, j));
     }
-    
+
     inline vec3 operator*(const mat3& M, const vec3& v) {
         return vec3(
             M(0, 0)*v[0] + M(0, 1)*v[1] + M(0, 2)*v[2],
@@ -127,62 +127,62 @@ namespace GEO {
         res(2, 0) = a20;        res(2, 1) = a21;        res(2, 2) = a22;
         return res;
     }
-    
+
     inline mat3 mat3_from_coeffs(double* c) {
         mat3 res;
         FOR(i, 9) res.data()[i] = c[i];
-	return res;
+    return res;
     }
 
     inline double trace(const mat3& m) { return m(0, 0) + m(1, 1) + m(2, 2); }
-    
+
     inline double Frobenius_norm(const mat3& m) {return trace(m.transpose()*m);}// easy to optimmize
-    
+
     inline vec2 operator*(const mat2& M, const vec2& v) {
-	return vec2(M(0, 0)*v[0] + M(0, 1)*v[1], M(1, 0)*v[0] + M(1, 1)*v[1]) ;
+    return vec2(M(0, 0)*v[0] + M(0, 1)*v[1], M(1, 0)*v[0] + M(1, 1)*v[1]) ;
     }
 
-    
+
     inline vec3i snap_to_integer(const vec3& f) {
-	return vec3i(int(round(f[0])), int(round(f[1])), int(round(f[2])));
+    return vec3i(int(round(f[0])), int(round(f[1])), int(round(f[2])));
     }
 
     inline bool is_integer(double d) {
-	return d == floor(d);
+    return d == floor(d);
     }
 
 
-    // a une periode pres    
-    template <class T> inline 
+    // a une periode pres
+    template <class T> inline
         T& aupp(int id, vector<T>& data){
-		while (id <0) id += int(data.size());
-		while (id >= int(data.size())) id -= int(data.size());
-		return data[id];
+        while (id <0) id += int(data.size());
+        while (id >= int(data.size())) id -= int(data.size());
+        return data[id];
     }
 
-    // a une periode pres    
-    template <class T> inline 
+    // a une periode pres
+    template <class T> inline
         T& aupp(index_t id, vector<T>& data){
-	while (id >= data.size()) id -= data.size();
-	return data[id];
+    while (id >= data.size()) id -= data.size();
+    return data[id];
     }
 
 
 
 
 struct EXPLORAGRAM_API BBox1 {
-	BBox1() { min = 1e20; max = -1e20; }
-	double length() { return max - min; }
-	bool intersect(const BBox1& b) const { return contains(b.min) || contains(b.max) || b.contains(min) || b.contains(max); }
-	bool contains(const double& v) const { return v > min && v < max; }
-	bool is_null() const;
-	void add(const BBox1& b);
-	void add(const double& P) { min_equal(min, P); max_equal(max, P);}
-	void dilate(double eps) { min -= eps; max += eps; }
-	double bary() const { return (max + min) / 2.; }
+    BBox1() { min = 1e20; max = -1e20; }
+    double length() { return max - min; }
+    bool intersect(const BBox1& b) const { return contains(b.min) || contains(b.max) || b.contains(min) || b.contains(max); }
+    bool contains(const double& v) const { return v > min && v < max; }
+    bool is_null() const;
+    void add(const BBox1& b);
+    void add(const double& P) { min_equal(min, P); max_equal(max, P);}
+    void dilate(double eps) { min -= eps; max += eps; }
+    double bary() const { return (max + min) / 2.; }
 
-	double min;
-	double max;
+    double min;
+    double max;
 };
 }
 
@@ -223,19 +223,19 @@ inline std::string plop_unquote(const char* str) {
 /***************** OS/multithreading *******************************/
 
 #ifdef GEO_OPENMP
-#define get_thread_range(nb_tasks,istart,iend)	\
-    index_t istart ;				\
-    index_t iend ;				\
-    {int thread_id = omp_get_thread_num();	\
-	int n_threads = omp_get_num_threads();			        \
-	istart = index_t((thread_id*int(nb_tasks)) / n_threads);	\
-	iend = index_t(((thread_id + 1)*int(nb_tasks)) / n_threads);	\
-	if (thread_id == n_threads - 1) iend = nb_tasks;		\
+#define get_thread_range(nb_tasks,istart,iend)    \
+    index_t istart ;                \
+    index_t iend ;                \
+    {int thread_id = omp_get_thread_num();    \
+    int n_threads = omp_get_num_threads();                    \
+    istart = index_t((thread_id*int(nb_tasks)) / n_threads);    \
+    iend = index_t(((thread_id + 1)*int(nb_tasks)) / n_threads);    \
+    if (thread_id == n_threads - 1) iend = nb_tasks;        \
     }
 #else
-#define get_thread_range(nb_tasks,istart,iend)	\
-    index_t istart=0;	   \
-    index_t iend=nb_tasks; 
+#define get_thread_range(nb_tasks,istart,iend)    \
+    index_t istart=0;       \
+    index_t iend=nb_tasks;
 #endif
 
 #endif

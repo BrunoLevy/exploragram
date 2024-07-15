@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -134,7 +134,7 @@ namespace GEO {
         bool triangulate() {
             // 2 charts max, and incomplete fan must not have more than 1 chart
             Attribute<bool> selection(m_->vertices.attributes(), "selection");
-            if (2<ncharts() || (incomplete_ && 1!=ncharts())) { 
+            if (2<ncharts() || (incomplete_ && 1!=ncharts())) {
                 selection[v_] = true;
                 return false;
             }
@@ -167,7 +167,7 @@ namespace GEO {
                 pts3d.pop_back(); // v_ was useful for computing the normal, removing it for the triangulation
 
                 vector<vec2> pts2d;
-                FOR(ivert, pts3d.size()) { 
+                FOR(ivert, pts3d.size()) {
                     pts2d.push_back(b.project_xy(pts3d[ivert]));
                 }
 

@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -44,23 +44,23 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <time.h> 
+#include <time.h>
 #include <fstream>
 
 /**
  * LogTime reports a hierarchical execution pipeline:
- *	A logger outputs the steps during execution
- *	It summarizes execution time in each step
- *	It outputs important values (stats) at the end of the execution
+ *    A logger outputs the steps during execution
+ *    It summarizes execution time in each step
+ *    It outputs important values (stats) at the end of the execution
  */
 
 struct EXPLORAGRAM_API LogTime {
-    //                         _   ___ ___ 
+    //                         _   ___ ___
     //                        /_\ | _ \_ _|
-    //                       / _ \|  _/| | 
+    //                       / _ \|  _/| |
     //                      /_/ \_\_| |___|
-    //                                                                        
-	LogTime() { post_fix = ""; }
+    //
+    LogTime() { post_fix = ""; }
     ~LogTime(){}
     // construct API
     /**
@@ -85,22 +85,22 @@ struct EXPLORAGRAM_API LogTime {
     void add_string(std::string str, std::string val);
 
     // output API
-	
+
     /**
      * show is to have the summary in the console
      */
     void show();
     /**
-     * drop_file is to have the summary in a file. 
+     * drop_file is to have the summary in a file.
      */
     void drop_file(std::string filename, bool append = false,unsigned int timing_depth=1000);
 
-	void set_suffix(const std::string& suffix) { post_fix=suffix; }
-    //                                _          _       
-    //                       _ __ _ _(_)_ ____ _| |_ ___ 
+    void set_suffix(const std::string& suffix) { post_fix=suffix; }
+    //                                _          _
+    //                       _ __ _ _(_)_ ____ _| |_ ___
     //                      | '_ \ '_| \ V / _` |  _/ -_)
     //                      | .__/_| |_|\_/\__,_|\__\___|
-    //                      |_|                         
+    //                      |_|
 
  private:
     /**
@@ -109,11 +109,11 @@ struct EXPLORAGRAM_API LogTime {
      * "right" is the next item at the same level
      */
     struct CheckPoint{
-	CheckPoint(const std::string& p_n, unsigned int p_up){ n = p_n; up = p_up; t = clock(); right = (unsigned int)(-1); }
-	std::string n;
-	clock_t t;
-	unsigned int right;
-	unsigned int up;
+    CheckPoint(const std::string& p_n, unsigned int p_up){ n = p_n; up = p_up; t = clock(); right = (unsigned int)(-1); }
+    std::string n;
+    clock_t t;
+    unsigned int right;
+    unsigned int up;
     };
 
     bool is_start_section(unsigned int i);
@@ -126,9 +126,9 @@ struct EXPLORAGRAM_API LogTime {
     std::string cur_stack();
     void report(std::ostream &out, unsigned int timing_depth = 10000);
     void report_py(std::ostream &out, unsigned int timing_depth = 10000);
-	
+
 private:
-	std::string post_fix;
+    std::string post_fix;
     std::vector<CheckPoint> check;
     std::vector<std::pair<std::string, double> > out_values;
     std::vector<std::pair<std::string, std::string> > out_strings;

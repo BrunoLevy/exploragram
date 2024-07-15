@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -51,8 +51,8 @@ namespace GEO {
     }
 
     static bool get_a_triangle_patch(
-            const Mesh& M, 
-            index_t facet, 
+            const Mesh& M,
+            index_t facet,
             std::vector<bool>& tri_patch_flag,
             index_t& patch_size,
             double cos_angle,
@@ -74,7 +74,7 @@ namespace GEO {
             if (a == GEO::NO_FACET) continue;
             vec3 n_a = normalize(triangle_normal(M, a));
             if (dot(n, n_a) > cos_angle) {
-                if (!tri_patch_flag[a]) 
+                if (!tri_patch_flag[a])
                     get_a_triangle_patch(M, a, tri_patch_flag, patch_size, cos_angle, nb_tri_min_in_patch);
             }
         }
@@ -138,7 +138,7 @@ namespace GEO {
                 }
             }
         } else {
-            /* The relaxation of constraints is achieved by storing only the normals of "valid" 
+            /* The relaxation of constraints is achieved by storing only the normals of "valid"
              * triangles.
              * They are flagged via the facet attribute is_valid
              * One possibility for flag them is to use generate_facet_is_in_patch_attribute()
@@ -171,17 +171,17 @@ namespace GEO {
                 AxisPermutation ap;
                 ap.make_col2_equal_to_z(B[v], n[0]);
                 B[v] = Frame(B[v]).apply_permutation(ap);
-                FOR(i, n.size()) FOR(a, 3) 
+                FOR(i, n.size()) FOR(a, 3)
                     if (std::abs(dot(col(B[v], a), n[i])) > .7) {
                         lockU[v][a] = 1;
                         lockB[v][a] = 1;
                     }
-				if (lockB[v].length2() == 1) lockB[v] = vec3(0, 0, 1); // it may not always be true (happened once)
-				if (lockB[v].length2() > 1) lockB[v] = vec3(1, 1, 1);
-				U[v] = vec3(0, 0, 0);
+                if (lockB[v].length2() == 1) lockB[v] = vec3(0, 0, 1); // it may not always be true (happened once)
+                if (lockB[v].length2() > 1) lockB[v] = vec3(1, 1, 1);
+                U[v] = vec3(0, 0, 0);
             }
-			
-			//FOR(i,3) FOR(j,3) B[v](i,j) *= 5.;
+
+            //FOR(i,3) FOR(j,3) B[v](i,j) *= 5.;
         }
 
         if (relaxed) {
@@ -196,68 +196,68 @@ namespace GEO {
         index_t n = 0;
         index_t num_l_v = 0;
         index_t num_ln_v = 0;
-		FOR(v, m->vertices.nb()) if (lockB[v][0] == 1) { geo_assert(lockB[v][1] == 1); geo_assert(lockB[v][2] == 1); ind_map[n] = v; n++; }
-        num_l_v = n;		
-		FOR(v, m->vertices.nb()) if (lockB[v][0] == 0 && lockB[v][2] == 1) { geo_assert(lockB[v][1] == 0);  ind_map[n] = v; n++; }
+        FOR(v, m->vertices.nb()) if (lockB[v][0] == 1) { geo_assert(lockB[v][1] == 1); geo_assert(lockB[v][2] == 1); ind_map[n] = v; n++; }
+        num_l_v = n;
+        FOR(v, m->vertices.nb()) if (lockB[v][0] == 0 && lockB[v][2] == 1) { geo_assert(lockB[v][1] == 0);  ind_map[n] = v; n++; }
         num_ln_v = n;
-		FOR(v, m->vertices.nb()) if (lockB[v][2] == 0) { ind_map[n] = v; n++; }
+        FOR(v, m->vertices.nb()) if (lockB[v][2] == 0) { ind_map[n] = v; n++; }
 
         for (index_t i = 0; i < num_l_v; i++)                   geo_assert(lockB[ind_map[i]][0] == 1);
-		for (index_t i = num_l_v; i < num_ln_v; i++)            geo_assert(lockB[ind_map[i]][2] == 1);
-		for (index_t i = num_ln_v; i < m->vertices.nb(); i++)   geo_assert(lockB[ind_map[i]][2] == 0);
+        for (index_t i = num_l_v; i < num_ln_v; i++)            geo_assert(lockB[ind_map[i]][2] == 1);
+        for (index_t i = num_ln_v; i < m->vertices.nb(); i++)   geo_assert(lockB[ind_map[i]][2] == 0);
 
         geo_assert(num_l_v <= num_ln_v && num_ln_v <= m->vertices.nb());
 
-		plop(hibert_sort);
-		if (hibert_sort) {
-			compute_Hilbert_order(m->vertices.nb(), m->vertices.point_ptr(0), ind_map, 0, num_l_v,3);
-			compute_Hilbert_order(m->vertices.nb(), m->vertices.point_ptr(0), ind_map, num_l_v, num_ln_v, 3);
-			compute_Hilbert_order(m->vertices.nb(), m->vertices.point_ptr(0), ind_map, num_ln_v, m->vertices.nb(), 3);
-		}
+        plop(hibert_sort);
+        if (hibert_sort) {
+            compute_Hilbert_order(m->vertices.nb(), m->vertices.point_ptr(0), ind_map, 0, num_l_v,3);
+            compute_Hilbert_order(m->vertices.nb(), m->vertices.point_ptr(0), ind_map, num_l_v, num_ln_v, 3);
+            compute_Hilbert_order(m->vertices.nb(), m->vertices.point_ptr(0), ind_map, num_ln_v, m->vertices.nb(), 3);
+        }
         m->vertices.permute_elements(ind_map);          // note: it also updates the cell_corners.vertex... and invert ind_map :(
     }
 
 
     void produce_hexdom_input(Mesh* m,std::string& error_msg,bool hilbert_sort, bool relaxed) {
-		
-		m->edges.clear();
-		m->vertices.remove_isolated();
 
-		if (m->cells.nb() == 0) {
-			if (m->facets.nb() == 0) throw ("mesh have no cells and no facets");
-			mesh_tetrahedralize(*m, true, true, .8);
-		}
+        m->edges.clear();
+        m->vertices.remove_isolated();
+
+        if (m->cells.nb() == 0) {
+            if (m->facets.nb() == 0) throw ("mesh have no cells and no facets");
+            mesh_tetrahedralize(*m, true, true, .8);
+        }
 
         if (have_negative_tet_volume(m)) {
             throw ("contains tets with negative volume");
         }
 
-		if (!m->cells.are_simplices()) {
+        if (!m->cells.are_simplices()) {
             throw ("cells contains non tet elements");
         }
-		
-		if (!volume_boundary_is_manifold(m, error_msg)) {
+
+        if (!volume_boundary_is_manifold(m, error_msg)) {
             throw (error_msg.c_str());
         }
-		
-		if (!volume_is_tetgenifiable(m)) {
+
+        if (!volume_is_tetgenifiable(m)) {
             throw (" tetgen is not able to remesh the volume from its boundary");
         }
 
 
 
-		// add some attributes
-		compute_input_constraints(m, relaxed);
-		
+        // add some attributes
+        compute_input_constraints(m, relaxed);
 
-		// compute scale
+
+        // compute scale
         double wanted_edge_length = get_cell_average_edge_size(m);
-		
-		Attribute<mat3> B(m->vertices.attributes(), "B");
+
+        Attribute<mat3> B(m->vertices.attributes(), "B");
         FOR(v, m->vertices.nb()) FOR(ij, 9) B[v].data()[ij] *= wanted_edge_length;
         reorder_vertices_according_to_constraints(m,hilbert_sort );
 
-	}
+    }
 
 
 }

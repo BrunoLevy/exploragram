@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -49,9 +49,9 @@
 #include <cmath>
 
 namespace GEO {
-    
+
     struct EXPLORAGRAM_API Poly2d {
-	
+
         Poly2d(vector<vec2> &p_pts) : pts(p_pts) {
         }
 
@@ -72,8 +72,8 @@ namespace GEO {
 
         bool quads_are_valid(vector<index_t>& quads);
 
-		bool try_quad_cover(vector<index_t>& quads);
-		bool try_quadrangulate(vector<index_t>& quads);
+        bool try_quad_cover(vector<index_t>& quads);
+        bool try_quadrangulate(vector<index_t>& quads);
 
         vector<vec2> &pts;
     };
@@ -82,7 +82,7 @@ namespace GEO {
     struct EXPLORAGRAM_API Poly3d {
         Poly3d(vector<vec3> &p_pts) : pts(p_pts) {
         }
-		void dump_contour();
+        void dump_contour();
         vec3 barycenter();
 
         vec3 normal();

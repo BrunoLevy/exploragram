@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -37,8 +37,8 @@
  *
  */
 
-#include <exploragram/hexdom/quad_dominant.h> 
-#include <exploragram/hexdom/meshcomesh.h> 
+#include <exploragram/hexdom/quad_dominant.h>
+#include <exploragram/hexdom/meshcomesh.h>
 #include <exploragram/hexdom/PGP.h>
 #include <exploragram/hexdom/basic.h>
 #include <exploragram/hexdom/extra_connectivity.h>
@@ -156,7 +156,7 @@ namespace GEO {
     vector<vector<index_t> > generate_v2f(Mesh *m) {
         vector<vector<index_t> > v2f(m->vertices.nb());
         FOR(f, m->facets.nb()) {
-	    geo_assert(m->facets.nb_vertices(f) == 3);
+        geo_assert(m->facets.nb_vertices(f) == 3);
             FOR(lc, m->facets.nb_corners(f)) {
                 v2f[m->facets.vertex(f, lc)].push_back(f);
             }

@@ -13,7 +13,7 @@
  *  * Neither the name of the ALICE Project-Team nor the names of its
  *  contributors may be used to endorse or promote products derived from this
  *  software without specific prior written permission.
- * 
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -60,14 +60,14 @@ namespace GEO {
             return (180. / M_PI)*atan2(det(P[2] - P[1], P[0] - P[1]), dot(P[2] - P[1], P[0] - P[1]));
         }
 
-	double angle(index_t i) {
-	    return angle(int(i));
-	}
+    double angle(index_t i) {
+        return angle(int(i));
+    }
 
         vec2 point(int i) {
             return aupp(i , pts);
         }
-	
+
         vec2 point(index_t i) {
             return aupp(i , pts);
         }
@@ -151,7 +151,7 @@ namespace GEO {
                     nvP = nvP + point(v);
                     nvP = point(v) + vec[0] + vec[1];
 
-                    // check that there is no existing vertex 
+                    // check that there is no existing vertex
                     bool geometric_issue = false;
                     {
                         vec2 new_quad[4] = { point(v - 1),point(v),point(v + 1),nvP };
@@ -162,7 +162,7 @@ namespace GEO {
                                     + du*(1. - dv)*new_quad[1]
                                     + (1. - du)*dv*new_quad[3]
                                     + (1. - du)*(1. - dv)*new_quad[2];
-                                for (double c = 0; c < 1.; c += .2) FOR(vv, n) 
+                                for (double c = 0; c < 1.; c += .2) FOR(vv, n)
                                     if (((c*aupp(vv + 1, pts) + (1. - c)*point(vv)) - pixel).length() < .5*ave) geometric_issue = true;
                             }
                     }
@@ -209,7 +209,7 @@ namespace GEO {
     //        double tolerance = 45;
     //        if (alpha[0] > 90-tolerance && alpha[0] < 90 + tolerance
     //            &&  alpha[1] > 90 - tolerance && alpha[1] < 90 + tolerance) {
-    //            // check that there is no existing vertex 
+    //            // check that there is no existing vertex
     //            //bool geometric_issue = false;
     //            //for (double c = 0; c < 1.; c += .2) FOR(vv, n) if (((c*aupp(vv + 1, P) + (1. - c)*P[vv]) - nvP).length() < .5*ave_length(P)) geometric_issue = true;
     //            //if (geometric_issue) continue;
@@ -245,24 +245,24 @@ namespace GEO {
     //            nvP = nvP + P[v];
     //            nvP = P[v] + vec[0] + vec[1];
 
-    //            // check that there is no existing vertex 
+    //            // check that there is no existing vertex
     //            bool geometric_issue = false;
     //            {
     //                double ave = ave_length(P);
     //                vec2 new_quad[4] = { aupp(v - 1, P),aupp(v , P),aupp(v + 1, P),nvP };
     //                for (double du = 0; du < .3; du += .2)
     //                    for (double dv = .8; dv < 1; dv += .2) {
-    //                        vec2 pixel = 
-    //                            du*dv*new_quad[0] 
+    //                        vec2 pixel =
+    //                            du*dv*new_quad[0]
     //                            + du*(1. - dv)*new_quad[1]
-    //                            + (1. - du)*dv*new_quad[3] 
+    //                            + (1. - du)*dv*new_quad[3]
     //                            + (1. - du)*(1. - dv)*new_quad[2];
     //                        for (double c = 0; c < 1.; c += .2) FOR(vv, n) if (((c*aupp(vv + 1, P) + (1. - c)*P[vv]) - pixel).length() < .5*ave) geometric_issue = true;
     //                    }
     //            }
     //            if (geometric_issue) continue;
 
-    //        
+    //
     //            FOR(i, n) global_vid[0].push_back((i != v) ? ((i)%n) : P.size());
     //            FOR(i, 3) global_vid[1].push_back((v+i+n-1)%n);
     //            global_vid[1].push_back(P.size());
@@ -279,7 +279,7 @@ namespace GEO {
 
     //    vector<index_t> poly_quad[2];
     //    FOR(i, 2) if (!try_quadrangulate_with_punch_vertex(poly[i],poly_quad[i])) return false;
-    //        
+    //
     //    // add new pts to global
     //    FOR(i, 2) for (int d = global_vid[i].size(); d < poly[i].size(); d++) {
     //        global_vid[i].push_back(P.size());
