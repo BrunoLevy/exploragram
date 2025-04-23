@@ -651,7 +651,7 @@ namespace {
             index_t rvc = cell_region[c];
             for(index_t lv=0; lv<4; ++lv) {
                 index_t v = mesh.cells.vertex(c,lv);
-                center[rvc] += Geom::mesh_vertex(mesh,v);
+                center[rvc] += mesh.vertices.point(v);
                 ++nb[rvc];
             }
         }
