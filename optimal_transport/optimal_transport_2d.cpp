@@ -367,9 +367,14 @@ namespace {
                         hij =
                             edge_mass(P.vertex(k1), P.vertex(k2)) /
                             (2.0 * GEO::Geom::distance(pi,pj,2)) ;
-                    } else {
+                    } else if(OTM_->nb_air_particles() != 0) {
+			const double* pj = OTM_->point_ptr(j); // points and air
+                        hij =
+                            edge_mass(P.vertex(k1), P.vertex(k2)) /
+                            (2.0 * GEO::Geom::distance(pi,pj,2)) ;
+		    } else {
                         double R = OTM_->weight(i);
-                        geo_assert(R > 0.0);
+                        geo_assert(R >= 0.0);
                         R = ::sqrt(R);
                         hij = edge_mass(P.vertex(k1), P.vertex(k2)) / (2.0 * R);
                     }
@@ -697,6 +702,7 @@ namespace GEO {
             initialized = true;
             has_cholmod = (nlInitExtension("CHOLMOD") == NL_TRUE);
         }
+
         if(has_cholmod) {
             OTM.set_regularization(1e-3);
             OTM.set_linear_solver(OT_CHOLMOD);

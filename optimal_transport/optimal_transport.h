@@ -353,7 +353,7 @@ namespace GEO {
      *  (dimension()+1)d point \p i
      */
     const double* point_ptr(index_t i) const {
-        geo_debug_assert(i < nb_points());
+        geo_debug_assert(i < (nb_points() + nb_air_particles()));
         return &(points_dimp1_[dimp1_ * i]);
     }
 
