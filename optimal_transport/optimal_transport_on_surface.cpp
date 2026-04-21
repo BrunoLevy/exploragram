@@ -53,7 +53,7 @@ namespace {
     /**********************************************************************/
 
     // For more details on the algorithm / structure of the objective function,
-    // see also implementation notes at the beginning of optimal_transport_3d.cpp.
+    //see also implementation notes at the beginning of optimal_transport_3d.cpp.
 
     /**
      * \brief Computes the contribution of a polygon
@@ -124,7 +124,7 @@ namespace {
 
             if(eval_F_) {
                 Thread* thread = Thread::current();
-                index_t current_thread_id = (thread == nullptr) ? 0 : thread->id();
+                index_t current_thread_id = (thread==nullptr) ? 0 : thread->id();
                 double F = weighted_ ? eval_F_weighted(P, v) : eval_F(P, v);
                 const_cast<SurfaceOTMPolygonCallback*>(this)->
                     funcval_[current_thread_id] += F;
@@ -207,7 +207,9 @@ namespace {
          * \param[in] i the current seed
          * \param[in] t the current mesh facet
          */
-        void update_Hessian(const GEOGen::Polygon& P, index_t i, index_t t) const {
+        void update_Hessian(
+	    const GEOGen::Polygon& P, index_t i, index_t t
+	) const {
 
             vec3 N = normalize(facet_normal(t));
 
@@ -230,11 +232,13 @@ namespace {
                     const double* pj = OTM_->point_ptr(j);
 
                     vec3 pij(pj[0] - pi[0],pj[1] - pi[1],pj[2] - pi[2]);
-                    // Remove from pij the part that is normal to the current polygon.
+                    // Remove from pij the part that is normal
+		    // to the current polygon.
                     pij -= dot(pij,N)*N;
                     double lij = length(pij);
 
-                    double hij = edge_mass(P.vertex(k1), P.vertex(k2)) / (2.0 * lij);
+                    double hij =
+			edge_mass(P.vertex(k1), P.vertex(k2)) / (2.0 * lij);
 
                     // -hij because we maximize F <=> minimize -F
                     if(hij != 0.0) {
@@ -297,7 +301,8 @@ namespace {
             const GEOGen::Vertex& V1,
             const GEOGen::Vertex& V2
         ) const {
-            double m = Geom::triangle_area_3d(V0.point(), V1.point(), V2.point());
+            double m =
+		Geom::triangle_area_3d(V0.point(), V1.point(), V2.point());
             if(weighted_) {
                 m *= ((V0.weight() + V1.weight() + V2.weight())/3.0);
             }
@@ -441,7 +446,9 @@ namespace GEO {
         */
     }
 
-    void OptimalTransportMapOnSurface::compute_Laguerre_centroids(double* centroids) {
+    void OptimalTransportMapOnSurface::compute_Laguerre_centroids(
+	double* centroids
+    ) {
         vector<double> g(nb_points(), 0.0);
         Memory::clear(centroids, nb_points()*sizeof(double)*3);
 

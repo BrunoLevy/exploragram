@@ -261,7 +261,7 @@ namespace GEO {
             FOR(trQ, 4) {
                 if (trP > 0 && P.size() == 3) continue;
                 if (trQ > 0 && Q.size() == 3) continue;
-                vector<TriangleIsect> trash;
+                TriangleIsects trash;
                 conflict = conflict || triangles_intersections(
                     P[quad_split[trP][0]], P[quad_split[trP][1]], P[quad_split[trP][2]],
                     Q[quad_split[trQ][0]], Q[quad_split[trQ][1]], Q[quad_split[trQ][2]],

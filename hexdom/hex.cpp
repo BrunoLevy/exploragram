@@ -336,7 +336,7 @@ namespace GEO {
 
                             // check for non degenerated intersections
                             if (!is_quatri_face) {
-                                vector<TriangleIsect> result;
+                                TriangleIsects result;
                                 FOR(diam, 12) {
                                     if (P.size() == 3)
                                         have_intersection = have_intersection || triangles_intersections(
