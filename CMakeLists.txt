@@ -9,6 +9,7 @@ if(
    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang"
 )
    add_definitions(-Wno-extra-semi-stmt) # duplicated semicolons
+   add_definitions(-Wno-nrvo)            # eliding copy ctor
 endif()
 
 include_directories(${PROJECT_BINARY_DIR}/src/lib)
