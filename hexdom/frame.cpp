@@ -282,7 +282,7 @@ namespace GEO {
         return !is_identity_auvp(ac_rot);
     }
 
-    bool triangle_is_frame_singular___give_stable_direction(Mesh* m, int& stable_dir_index, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
+    bool triangle_is_frame_singular_and_give_stable_direction(Mesh* m, int& stable_dir_index, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
         mat3 ac_rot,id3D;
         stable_dir_index = -1;
         ac_rot.load_identity();
@@ -295,9 +295,9 @@ namespace GEO {
         }
         return true;
     }
-    bool triangle_is_frame_singular___give_stable_direction(Mesh* m, vec3& stable_dir_geom, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
+    bool triangle_is_frame_singular_and_give_stable_direction(Mesh* m, vec3& stable_dir_geom, Attribute<mat3>& B, index_t c, index_t cf, index_t cfv) {
         int stable_dir_index;
-        if (!triangle_is_frame_singular___give_stable_direction(m, stable_dir_index, B, c, cf,cfv)) return false;
+        if (!triangle_is_frame_singular_and_give_stable_direction(m, stable_dir_index, B, c, cf,cfv)) return false;
         stable_dir_geom = vec3(0, 0, 0);
         if (stable_dir_index == -1) return true;
         FOR(d, 3) stable_dir_geom[d] = B[m->cells.facet_vertex(c, cf, cfv)](d, index_t(stable_dir_index));

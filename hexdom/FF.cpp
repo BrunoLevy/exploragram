@@ -144,7 +144,7 @@ namespace GEO {
 #pragma omp parallel
 #endif
         {
-            get_thread_range(m->vertices.nb(), start, end);
+            get_thread_range(m->vertices.nb(), start, end)
             for (index_t v = start; v < end; v++) {
                 SphericalHarmonicL4 fv;
                 FOR(i, 9) fv[i] = nlGetVariable(v * 9 + i);
@@ -241,7 +241,7 @@ namespace {
 #else
             int thread_id = 0;
 #endif
-            get_thread_range(nverts, istart, iend);
+            get_thread_range(nverts, istart, iend)
 
 
             mat3 mJR[3], mR, mSinv, mPst, mJPst[3];
